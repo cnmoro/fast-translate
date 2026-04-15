@@ -129,11 +129,29 @@ def _extract_from_dmg(dmg_path: Path, out_path: Path) -> None:
     mount = Path(mount_points[-1])
 
     try:
+        app_candidates = list(mount.rglob("translateLocally.app"))
+        if app_candidates:
+            app_src = app_candidates[0]
+            app_dst = out_path.parent / "translateLocally.app"
+            if app_dst.exists():
+                shutil.rmtree(app_dst)
+            shutil.copytree(app_src, app_dst, symlinks=True)
+
+            if platform.system().lower() == "darwin":
+                launcher = (
+                    "#!/usr/bin/env bash\n"
+                    "set -euo pipefail\n"
+                    "DIR=\"$(cd \"$(dirname \"$0\")\" && pwd)\"\n"
+                    "exec \"$DIR/translateLocally.app/Contents/MacOS/translateLocally\" \"$@\"\n"
+                )
+                out_path.write_text(launcher, encoding="utf-8")
+                ensure_exec(out_path)
+                return
+
         candidates = list(mount.rglob("translateLocally"))
         if not candidates:
             raise RuntimeError("translateLocally binary not found inside DMG")
-        binary = candidates[0]
-        shutil.copy2(binary, out_path)
+        shutil.copy2(candidates[0], out_path)
         ensure_exec(out_path)
     finally:
         subprocess.run(["hdiutil", "detach", str(mount)], check=False, capture_output=True)

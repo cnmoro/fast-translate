@@ -324,11 +324,11 @@ def resolve_binary_path(binary_path: str | None = None, auto_download: bool = Tr
             return p
         raise TranslationError(f"TLPTBR binary not usable at: {p}")
 
-    from_path = shutil.which("translateLocally")
-    if from_path:
-        candidate = Path(from_path)
-        if _is_binary_usable(candidate):
-            return candidate
+    bundled = _bundled_binary_for_platform()
+    if bundled and bundled.exists():
+        _ensure_executable(bundled)
+        if _is_binary_usable(bundled):
+            return bundled
 
     if auto_download:
         downloaded = _download_binary_for_platform()
@@ -336,14 +336,15 @@ def resolve_binary_path(binary_path: str | None = None, auto_download: bool = Tr
             _ensure_executable(downloaded)
             return downloaded
 
-    bundled = _bundled_binary_for_platform()
-    if bundled and bundled.exists():
-        _ensure_executable(bundled)
-        if _is_binary_usable(bundled):
-            return bundled
+    from_path = shutil.which("translateLocally")
+    if from_path:
+        candidate = Path(from_path)
+        if _is_binary_usable(candidate):
+            return candidate
 
     raise TranslationError(
-        "No usable translateLocally binary found. Set TLPTBR_BINARY or provide/install a compatible binary."
+        "No usable translateLocally binary found. This package can auto-download it, "
+        "or you can set TLPTBR_BINARY explicitly."
     )
 
 
@@ -534,6 +535,18 @@ def _extract_from_dmg(dmg_path: Path, out_dir: Path) -> Path | None:
         return None
     mount = Path(mount_points[-1])
     try:
+        app_candidates = list(mount.rglob("translateLocally.app"))
+        if app_candidates:
+            app_src = app_candidates[0]
+            app_dst = out_dir / "translateLocally.app"
+            if app_dst.exists():
+                shutil.rmtree(app_dst)
+            shutil.copytree(app_src, app_dst, symlinks=True)
+            bin_in_app = app_dst / "Contents" / "MacOS" / "translateLocally"
+            if bin_in_app.exists():
+                _ensure_executable(bin_in_app)
+                return bin_in_app
+
         candidates = list(mount.rglob("translateLocally"))
         if not candidates:
             return None
