@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import io
 import os
 import platform
 import shutil
@@ -18,6 +19,7 @@ from pathlib import Path
 from typing import Any
 
 import httpx
+import zstandard as zstd
 from importlib.resources import files
 
 from .postprocess import postprocess
@@ -317,6 +319,7 @@ def get_models_root() -> Path:
 
 
 def resolve_binary_path(binary_path: str | None = None, auto_download: bool = True) -> Path:
+    reasons: list[str] = []
     explicit = binary_path or os.getenv("TLPTBR_BINARY")
     if explicit:
         p = Path(explicit).expanduser().resolve()
@@ -329,22 +332,30 @@ def resolve_binary_path(binary_path: str | None = None, auto_download: bool = Tr
         _ensure_executable(bundled)
         if _is_binary_usable(bundled):
             return bundled
+        reasons.append(f"bundled binary not usable: {bundled}")
 
     if auto_download:
-        downloaded = _download_binary_for_platform()
-        if downloaded and _is_binary_usable(downloaded):
-            _ensure_executable(downloaded)
-            return downloaded
+        try:
+            downloaded = _download_binary_for_platform()
+            if downloaded and _is_binary_usable(downloaded):
+                _ensure_executable(downloaded)
+                return downloaded
+            reasons.append("auto-downloaded binary missing or unusable")
+        except Exception as exc:
+            reasons.append(f"auto-download failed: {exc}")
 
     from_path = shutil.which("translateLocally")
     if from_path:
         candidate = Path(from_path)
         if _is_binary_usable(candidate):
             return candidate
+        reasons.append(f"PATH binary not usable: {candidate}")
 
+    details = "; ".join(reasons) if reasons else "no candidates found"
     raise TranslationError(
-        "No usable translateLocally binary found. This package can auto-download it, "
-        "or you can set TLPTBR_BINARY explicitly."
+        "No usable translateLocally binary found. "
+        "This package can auto-download it, or you can set TLPTBR_BINARY explicitly. "
+        f"Details: {details}"
     )
 
 
@@ -545,22 +556,10 @@ def _extract_from_deb(deb_path: Path, out_dir: Path) -> Path | None:
         extracted = tmpdir / "root"
         extracted.mkdir(parents=True, exist_ok=True)
 
-        dpkg = shutil.which("dpkg-deb")
-        if dpkg:
-            subprocess.run([dpkg, "-x", str(deb_path), str(extracted)], check=True)
-        else:
-            ar = shutil.which("ar")
-            tar = shutil.which("tar")
-            if not ar or not tar:
-                return None
-            subprocess.run([ar, "x", str(deb_path)], check=True, cwd=str(tmpdir))
-            data_tar = None
-            for cand in tmpdir.glob("data.tar.*"):
-                data_tar = cand
-                break
-            if data_tar is None:
-                return None
-            subprocess.run([tar, "-xf", str(data_tar), "-C", str(extracted)], check=True)
+        data_name, data_bytes = _read_data_tar_from_deb(deb_path)
+        tar_stream = _decompress_data_member(data_name, data_bytes)
+        with tarfile.open(fileobj=io.BytesIO(tar_stream), mode="r:") as tf:
+            tf.extractall(extracted)
 
         candidate = extracted / "usr" / "bin" / "translateLocally"
         if not candidate.exists():
@@ -573,6 +572,46 @@ def _extract_from_deb(deb_path: Path, out_dir: Path) -> Path | None:
         shutil.copy2(candidate, target)
         _ensure_executable(target)
         return target
+
+
+def _read_data_tar_from_deb(deb_path: Path) -> tuple[str, bytes]:
+    raw = deb_path.read_bytes()
+    if not raw.startswith(b"!<arch>\n"):
+        raise TranslationError(f"Invalid .deb archive format: {deb_path}")
+    pos = 8
+    while pos + 60 <= len(raw):
+        hdr = raw[pos : pos + 60]
+        name = hdr[0:16].decode("utf-8", errors="replace").strip().rstrip("/")
+        size_str = hdr[48:58].decode("utf-8", errors="replace").strip()
+        try:
+            size = int(size_str)
+        except ValueError as exc:
+            raise TranslationError(f"Invalid ar member size in {deb_path}") from exc
+        pos += 60
+        data = raw[pos : pos + size]
+        pos += size + (size % 2)
+        if name.startswith("data.tar"):
+            return name, data
+    raise TranslationError(f"Could not find data.tar.* inside .deb: {deb_path}")
+
+
+def _decompress_data_member(name: str, data: bytes) -> bytes:
+    low = name.lower()
+    if low.endswith(".zst"):
+        return zstd.ZstdDecompressor().decompress(data)
+    if low.endswith(".xz"):
+        import lzma
+
+        return lzma.decompress(data)
+    if low.endswith(".gz"):
+        import gzip
+
+        return gzip.decompress(data)
+    if low.endswith(".bz2"):
+        import bz2
+
+        return bz2.decompress(data)
+    return data
 
 
 def _extract_from_dmg(dmg_path: Path, out_dir: Path) -> Path | None:

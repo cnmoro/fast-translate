@@ -9,9 +9,11 @@ import subprocess
 import tarfile
 import tempfile
 import zipfile
+import io
 from pathlib import Path
 
 import httpx
+import zstandard as zstd
 
 REPO_API_BASE = "https://api.github.com/repos/XapaJIaMnu/translateLocally"
 RELEASES_LATEST_API = f"{REPO_API_BASE}/releases/latest"
@@ -139,22 +141,10 @@ def _extract_from_deb(deb_path: Path, out_path: Path) -> None:
         root = tmpdir / "root"
         root.mkdir(parents=True, exist_ok=True)
 
-        dpkg = shutil.which("dpkg-deb")
-        if dpkg:
-            subprocess.run([dpkg, "-x", str(deb_path), str(root)], check=True)
-        else:
-            ar = shutil.which("ar")
-            tar = shutil.which("tar")
-            if not ar or not tar:
-                raise RuntimeError("Cannot extract .deb (need dpkg-deb or ar+tar)")
-            subprocess.run([ar, "x", str(deb_path)], cwd=str(tmpdir), check=True)
-            data_tar = None
-            for cand in tmpdir.glob("data.tar.*"):
-                data_tar = cand
-                break
-            if data_tar is None:
-                raise RuntimeError("No data.tar.* found inside .deb")
-            subprocess.run([tar, "-xf", str(data_tar), "-C", str(root)], check=True)
+        data_name, data_bytes = _read_data_tar_from_deb(deb_path)
+        tar_stream = _decompress_data_member(data_name, data_bytes)
+        with tarfile.open(fileobj=io.BytesIO(tar_stream), mode="r:") as tf:
+            tf.extractall(root)
 
         candidate = root / "usr" / "bin" / "translateLocally"
         if not candidate.exists():
@@ -164,6 +154,43 @@ def _extract_from_deb(deb_path: Path, out_path: Path) -> None:
             candidate = hits[0]
         shutil.copy2(candidate, out_path)
         ensure_exec(out_path)
+
+
+def _read_data_tar_from_deb(deb_path: Path) -> tuple[str, bytes]:
+    raw = deb_path.read_bytes()
+    if not raw.startswith(b"!<arch>\n"):
+        raise RuntimeError(f"Invalid .deb archive format: {deb_path}")
+    pos = 8
+    while pos + 60 <= len(raw):
+        hdr = raw[pos : pos + 60]
+        name = hdr[0:16].decode("utf-8", errors="replace").strip().rstrip("/")
+        size_str = hdr[48:58].decode("utf-8", errors="replace").strip()
+        size = int(size_str)
+        pos += 60
+        data = raw[pos : pos + size]
+        pos += size + (size % 2)
+        if name.startswith("data.tar"):
+            return name, data
+    raise RuntimeError(f"Could not find data.tar.* inside .deb: {deb_path}")
+
+
+def _decompress_data_member(name: str, data: bytes) -> bytes:
+    low = name.lower()
+    if low.endswith(".zst"):
+        return zstd.ZstdDecompressor().decompress(data)
+    if low.endswith(".xz"):
+        import lzma
+
+        return lzma.decompress(data)
+    if low.endswith(".gz"):
+        import gzip
+
+        return gzip.decompress(data)
+    if low.endswith(".bz2"):
+        import bz2
+
+        return bz2.decompress(data)
+    return data
 
 
 def _extract_from_dmg(dmg_path: Path, out_path: Path) -> None:
