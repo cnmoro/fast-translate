@@ -112,13 +112,26 @@ class NativeWorker:
         self._warm_thread: threading.Thread | None = None
         self._stop_warm = threading.Event()
         self._last_stderr = ""
+        self._cli_fallback = os.getenv("TLPTBR_FORCE_CLI", "0").lower() in {"1", "true", "yes", "on"}
 
     def translate(self, text: str, direction: str) -> str:
         with self._lock:
+            if self._cli_fallback:
+                return self._translate_cli(text=text, direction=direction, timeout_s=self.timeout_s)
             if self._proc is None or self._proc.poll() is not None or direction != self._active_direction:
                 self._active_direction = direction
-                self._restart()
-            return self._send_translate(text, direction=direction, timeout_s=self.timeout_s)
+                try:
+                    self._restart()
+                except Exception as exc:
+                    if self._enable_cli_fallback(exc):
+                        return self._translate_cli(text=text, direction=direction, timeout_s=self.timeout_s)
+                    raise
+            try:
+                return self._send_translate(text, direction=direction, timeout_s=self.timeout_s)
+            except Exception as exc:
+                if self._enable_cli_fallback(exc):
+                    return self._translate_cli(text=text, direction=direction, timeout_s=self.timeout_s)
+                raise
 
     def close(self) -> None:
         self._stop_warm.set()
@@ -253,6 +266,38 @@ class NativeWorker:
             self._last_stderr = stderr_tail
             return f" (exit_code={code}, stderr={stderr_tail!r})"
         return f" (exit_code={code})"
+
+    def _enable_cli_fallback(self, exc: Exception) -> bool:
+        # CLI fallback is primarily useful on macOS where -p may be unstable on
+        # some machine/OS/CPU combinations while direct CLI translation still works.
+        if platform.system().lower() != "darwin":
+            return False
+        self.close()
+        self._cli_fallback = True
+        _vlog(f"native messaging failed, enabling CLI fallback: {exc}")
+        return True
+
+    def _translate_cli(self, text: str, direction: str, timeout_s: float) -> str:
+        model = "en-pt-tiny" if direction == "en-pt" else "pt-en-tiny"
+        proc = subprocess.run(
+            [str(self.binary), "-m", model],
+            input=text + "\n",
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=max(30.0, timeout_s),
+            check=False,
+            cwd=str(self.models_root),
+            env=_worker_env(),
+        )
+        if proc.returncode != 0:
+            tail = ((proc.stderr or "") + "\n" + (proc.stdout or ""))[-1200:].strip()
+            raise TranslationError(f"CLI fallback translation failed rc={proc.returncode}: {tail}")
+        out = (proc.stdout or "").strip()
+        if not out:
+            raise TranslationError("CLI fallback returned empty output")
+        # translateLocally CLI outputs one line per input line.
+        return out.splitlines()[0].strip()
 
 
 class Translator:
