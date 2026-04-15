@@ -1,0 +1,86 @@
+name: build-and-publish
+
+on:
+  push:
+    branches: ["main"]
+    tags:
+      - "v*"
+    paths-ignore:
+      - "**.md"
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: |
+          python -m pip install -U pip build twine pytest
+          python -m pip install -e .
+
+      - name: Fetch platform binary
+        run: python scripts/fetch_translatelocally_binary.py
+
+      - name: Run tests
+        run: pytest -q
+
+  package:
+    needs: ci
+    runs-on: ubuntu-latest
+    outputs:
+      dist-name: dist-ubuntu
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: |
+          python -m pip install -U pip build twine
+          python -m pip install -e .
+
+      - name: Build sdist and wheel
+        run: python -m build
+
+      - name: Check dist
+        run: twine check dist/*
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-ubuntu
+          path: dist/*
+
+  publish:
+    needs: package
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist-ubuntu
+          path: final-dist
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: final-dist
+          password: ${{ secrets.PYPI_API_TOKEN }}
