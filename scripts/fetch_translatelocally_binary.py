@@ -114,8 +114,21 @@ def main() -> int:
         print(f"binary already present: {out_path}")
         return 0
 
-    with httpx.Client(timeout=90.0) as client:
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "fast-translate-ci",
+    }
+    token = os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+
+    with httpx.Client(timeout=90.0, headers=headers) as client:
         rel = client.get(RELEASES_API)
+        if rel.status_code == 403:
+            msg = "GitHub API rate limit exceeded while fetching translateLocally release metadata."
+            if not token:
+                msg += " Set GITHUB_TOKEN/GH_TOKEN in CI to avoid anonymous rate limits."
+            raise RuntimeError(msg)
         rel.raise_for_status()
         payload = rel.json()
 

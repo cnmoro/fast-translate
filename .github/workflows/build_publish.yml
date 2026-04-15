@@ -36,6 +36,8 @@ jobs:
 
       - name: Fetch platform binary
         run: python scripts/fetch_translatelocally_binary.py
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Run tests
         run: pytest -q
