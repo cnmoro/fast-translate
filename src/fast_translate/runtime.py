@@ -39,12 +39,12 @@ class TranslationError(RuntimeError):
 
 
 def _verbose_enabled() -> bool:
-    return os.getenv("TLPTBR_VERBOSE", "0").lower() in {"1", "true", "yes", "on"}
+    return os.getenv("FAST_TRANSLATE_VERBOSE", "0").lower() in {"1", "true", "yes", "on"}
 
 
 def _vlog(message: str) -> None:
     if _verbose_enabled():
-        print(f"[tlptbr] {message}", file=sys.stderr)
+        print(f"[fast-translate] {message}", file=sys.stderr)
 
 
 @dataclass
@@ -114,8 +114,8 @@ class NativeWorker:
         self._warm_thread: threading.Thread | None = None
         self._stop_warm = threading.Event()
         self._last_stderr = ""
-        force_cli = os.getenv("TLPTBR_FORCE_CLI", "0").lower() in {"1", "true", "yes", "on"}
-        force_native = os.getenv("TLPTBR_FORCE_NATIVE", "0").lower() in {"1", "true", "yes", "on"}
+        force_cli = os.getenv("FAST_TRANSLATE_FORCE_CLI", "0").lower() in {"1", "true", "yes", "on"}
+        force_native = os.getenv("FAST_TRANSLATE_FORCE_NATIVE", "0").lower() in {"1", "true", "yes", "on"}
         # On macOS, native messaging mode is unstable on a subset of hosts.
         # Default to CLI mode for reliability unless explicitly forced native.
         self._cli_fallback = force_cli or (platform.system().lower() == "darwin" and not force_native)
@@ -321,16 +321,16 @@ class Translator:
         auto_download_binary: bool | None = None,
     ):
         self._cache = LRUTranslationCache(
-            maxsize=cache_size or int(os.getenv("TLPTBR_CACHE_SIZE", "64")),
-            max_entry_chars=cache_max_entry_chars or int(os.getenv("TLPTBR_CACHE_MAX_ENTRY_CHARS", "512")),
+            maxsize=cache_size or int(os.getenv("FAST_TRANSLATE_CACHE_SIZE", "64")),
+            max_entry_chars=cache_max_entry_chars or int(os.getenv("FAST_TRANSLATE_CACHE_MAX_ENTRY_CHARS", "512")),
         )
-        self._trim_every_n_calls = int(os.getenv("TLPTBR_TRIM_EVERY_N_CALLS", "8"))
+        self._trim_every_n_calls = int(os.getenv("FAST_TRANSLATE_TRIM_EVERY_N_CALLS", "8"))
         self._calls = 0
         self._libc = _load_libc()
 
-        keep_warm = keep_warm_interval_s or float(os.getenv("TLPTBR_KEEP_WARM_INTERVAL_S", "300"))
+        keep_warm = keep_warm_interval_s or float(os.getenv("FAST_TRANSLATE_KEEP_WARM_INTERVAL_S", "300"))
         if auto_download_binary is None:
-            auto_download_binary = os.getenv("TLPTBR_AUTO_DOWNLOAD", "1") not in {"0", "false", "False"}
+            auto_download_binary = os.getenv("FAST_TRANSLATE_AUTO_DOWNLOAD", "1") not in {"0", "false", "False"}
 
         models_root = get_models_root()
         _prepare_runtime_models(models_root, binary_hint=None)
@@ -389,7 +389,7 @@ class Translator:
 
 
 def get_models_root() -> Path:
-    models_dir = files("tlptbr_translate").joinpath("resources", "models")
+    models_dir = files("fast_translate").joinpath("resources", "models")
     path = Path(str(models_dir))
     if not path.exists():
         raise TranslationError("Bundled models directory not found")
@@ -403,14 +403,14 @@ def resolve_binary_path(
 ) -> Path:
     reasons: list[str] = []
     _vlog(f"resolve_binary_path(auto_download={auto_download}, explicit={bool(binary_path)})")
-    explicit = binary_path or os.getenv("TLPTBR_BINARY")
+    explicit = binary_path or os.getenv("FAST_TRANSLATE_BINARY")
     if explicit:
         p = Path(explicit).expanduser().resolve()
         ok, why = _check_binary_usable(p, models_root=models_root)
         if p.exists() and ok:
             _vlog(f"using explicit binary: {p}")
             return p
-        raise TranslationError(f"TLPTBR binary not usable at: {p}. Reason: {why}")
+        raise TranslationError(f"FAST_TRANSLATE binary not usable at: {p}. Reason: {why}")
 
     bundled = _bundled_binary_for_platform()
     if bundled and bundled.exists():
@@ -471,14 +471,14 @@ def resolve_binary_path(
     details = "; ".join(reasons) if reasons else "no candidates found"
     raise TranslationError(
         "No usable translateLocally binary found. "
-        "This package can auto-download it, or you can set TLPTBR_BINARY explicitly. "
+        "This package can auto-download it, or you can set FAST_TRANSLATE_BINARY explicitly. "
         f"Details: {details}"
     )
 
 
 def _bundled_binary_for_platform() -> Path | None:
     tag = _platform_tag()
-    bin_dir = Path(str(files("tlptbr_translate").joinpath("resources", "bin", tag)))
+    bin_dir = Path(str(files("fast_translate").joinpath("resources", "bin", tag)))
     if not bin_dir.exists():
         return None
     exe_name = "translateLocally.exe" if os.name == "nt" else "translateLocally"
@@ -511,7 +511,7 @@ def _platform_tag() -> str:
 def _download_binary_for_platform(models_root: Path | None = None) -> Path | None:
     tag = _platform_tag()
     _vlog(f"starting auto-download for tag: {tag}")
-    cache_root = Path.home() / ".cache" / "tlptbr_translate" / "bin" / tag
+    cache_root = Path.home() / ".cache" / "fast_translate" / "bin" / tag
     cache_root.mkdir(parents=True, exist_ok=True)
 
     exe_name = "translateLocally.exe" if tag.startswith("windows") else "translateLocally"
@@ -754,7 +754,7 @@ def _extract_candidate_binary(archive: Path, out_dir: Path) -> Path | None:
     if lower.endswith(".dmg"):
         return _extract_from_dmg(archive, out_dir)
 
-    with tempfile.TemporaryDirectory(prefix="tlptbr_extract_") as tmp:
+    with tempfile.TemporaryDirectory(prefix="fast_translate_extract_") as tmp:
         tmpdir = Path(tmp)
         if lower.endswith(".zip"):
             with zipfile.ZipFile(archive) as zf:
@@ -777,7 +777,7 @@ def _extract_candidate_binary(archive: Path, out_dir: Path) -> Path | None:
 
 def _extract_from_deb(deb_path: Path, out_dir: Path) -> Path | None:
     _vlog(f"extracting .deb: {deb_path}")
-    with tempfile.TemporaryDirectory(prefix="tlptbr_deb_") as tmp:
+    with tempfile.TemporaryDirectory(prefix="fast_translate_deb_") as tmp:
         tmpdir = Path(tmp)
         extracted = tmpdir / "root"
         extracted.mkdir(parents=True, exist_ok=True)

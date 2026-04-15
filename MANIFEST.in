@@ -1,1 +1,1 @@
-recursive-include src/tlptbr_translate/resources *
+recursive-include src/fast_translate/resources *

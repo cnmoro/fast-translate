@@ -297,7 +297,7 @@ def _extract_from_dmg(dmg_path: Path, out_path: Path) -> None:
 def main() -> int:
     root = Path(__file__).resolve().parents[1]
     tag = platform_tag()
-    bin_dir = root / "src" / "tlptbr_translate" / "resources" / "bin" / tag
+    bin_dir = root / "src" / "fast_translate" / "resources" / "bin" / tag
     bin_dir.mkdir(parents=True, exist_ok=True)
     exe_name = "translateLocally.exe" if tag.startswith("windows") else "translateLocally"
     out_path = bin_dir / exe_name

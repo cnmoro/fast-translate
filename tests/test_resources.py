@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from tlptbr_translate.runtime import get_models_root
+from fast_translate.runtime import get_models_root
 
 
 def test_baked_models_exist() -> None:

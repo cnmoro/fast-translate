@@ -1,3 +1,3 @@
-from tlptbr_translate import TranslationError, Translator
+from .runtime import TranslationError, Translator
 
 __all__ = ["Translator", "TranslationError"]

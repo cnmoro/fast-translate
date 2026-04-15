@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from tlptbr_translate.postprocess import postprocess
+from fast_translate.postprocess import postprocess
 
 
 def test_slide_context_playground() -> None:

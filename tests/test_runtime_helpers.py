@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from tlptbr_translate import runtime
+from fast_translate import runtime
 
 
 def test_official_fallback_assets_macos_arm64() -> None:
