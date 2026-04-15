@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import os
 import platform
+import re
 import shutil
 import stat
 import subprocess
@@ -42,16 +43,25 @@ def platform_tag() -> str:
 
 def pick_asset(assets: list[dict], tag: str) -> dict | None:
     parts = asset_match_markers(tag)
+    host_macos_major = host_macos_major_version()
 
     def score(name: str) -> tuple[int, int]:
         low = name.lower()
         platform_hits = sum(1 for p in parts if p in low)
         ext_bonus = 0
         penalty = 0
+        mac_bonus = 0
         if tag.startswith("linux") and low.endswith(".deb"):
             ext_bonus = 6
         if "core-avx" in low or ".avx" in low or "avx." in low:
             penalty = -2
+        if tag.startswith("macos"):
+            asset_major = asset_macos_major(low)
+            if host_macos_major is not None and asset_major is not None:
+                if asset_major > host_macos_major:
+                    penalty -= 20
+                else:
+                    mac_bonus += max(0, 8 - (host_macos_major - asset_major))
         if low.endswith(".zip"):
             ext_bonus = 5
         elif low.endswith(".tar.gz") or low.endswith(".tgz"):
@@ -62,7 +72,7 @@ def pick_asset(assets: list[dict], tag: str) -> dict | None:
             ext_bonus = 3
         elif low.endswith(".deb"):
             ext_bonus = 1
-        return (platform_hits + penalty, ext_bonus)
+        return (platform_hits + penalty + mac_bonus, ext_bonus)
 
     ranked = sorted(assets, key=lambda a: score(a.get("name", "")), reverse=True)
     for asset in ranked:
@@ -93,6 +103,28 @@ def asset_match_markers(tag: str) -> set[str]:
         markers.update({"arm64", "aarch64", "armv8", "armv8.5-a"})
 
     return markers
+
+
+def host_macos_major_version() -> int | None:
+    if platform.system().lower() != "darwin":
+        return None
+    ver = platform.mac_ver()[0]
+    if not ver:
+        return None
+    try:
+        return int(ver.split(".")[0])
+    except Exception:
+        return None
+
+
+def asset_macos_major(name: str) -> int | None:
+    m = re.search(r"macos-(\d+)", name)
+    if not m:
+        return None
+    try:
+        return int(m.group(1))
+    except Exception:
+        return None
 
 
 def ensure_exec(path: Path) -> None:
