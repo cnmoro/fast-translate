@@ -9,6 +9,7 @@ from tlptbr_translate import runtime
 def test_official_fallback_assets_macos_arm64() -> None:
     urls = runtime._official_fallback_assets("macos-arm64")
     assert any("macos-11.0.compat.dmg" in u for u in urls)
+    assert not any("armv8.5-a" in u for u in urls)
     assert all(u.startswith("https://translatelocally.com/files/latest/") for u in urls)
 
 
@@ -40,3 +41,11 @@ def test_model_candidates_include_shortname_and_dir(tmp_path: Path) -> None:
     assert "enpt-123" in en_candidates
     assert "pt-en-tiny" in pt_candidates
     assert "pten-456" in pt_candidates
+
+
+def test_resolve_app_bundle_from_launcher_path(tmp_path: Path) -> None:
+    app = tmp_path / "translateLocally.app"
+    bin_path = app / "Contents" / "MacOS" / "translateLocally"
+    bin_path.parent.mkdir(parents=True)
+    bin_path.write_text("", encoding="utf-8")
+    assert runtime._resolve_app_bundle_from_binary(bin_path) == app

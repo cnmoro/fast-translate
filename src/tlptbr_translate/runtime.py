@@ -4,6 +4,7 @@ import json
 import io
 import os
 import platform
+import plistlib
 import re
 import shutil
 import stat
@@ -332,15 +333,17 @@ class Translator:
             auto_download_binary = os.getenv("TLPTBR_AUTO_DOWNLOAD", "1") not in {"0", "false", "False"}
 
         models_root = get_models_root()
-        _prepare_runtime_models(models_root)
+        _prepare_runtime_models(models_root, binary_hint=None)
         resolved_binary = resolve_binary_path(
             binary_path=binary_path,
             auto_download=auto_download_binary,
             models_root=models_root,
         )
+        runtime_models_root = _prepare_runtime_models(models_root, binary_hint=resolved_binary)
+        _vlog(f"runtime models root: {runtime_models_root}")
         self._worker = NativeWorker(
             binary=resolved_binary,
-            models_root=models_root,
+            models_root=runtime_models_root,
             timeout_s=timeout_s,
             keep_warm_interval_s=keep_warm,
         )
@@ -708,7 +711,6 @@ def _official_fallback_assets(tag: str) -> list[str]:
     if tag == "macos-arm64":
         return [
             f"{_OFFICIAL_FILES_BASE}/translateLocally.macos-11.0.compat.dmg",
-            f"{_OFFICIAL_FILES_BASE}/translateLocally.macos-14.armv8.5-a.dmg",
         ]
     if tag == "macos-x86_64":
         return [
@@ -926,23 +928,36 @@ def _worker_env() -> dict[str, str]:
     return env
 
 
-def _prepare_runtime_models(models_root: Path) -> None:
+def _prepare_runtime_models(models_root: Path, binary_hint: Path | None = None) -> Path:
     if not models_root.exists():
-        return
-    targets: list[Path] = []
+        return models_root
+
+    targets: list[tuple[Path, bool]] = []
+    selected_root = models_root
     sysname = platform.system().lower()
     if sysname == "darwin":
-        targets.append(Path.home() / "Library" / "Application Support" / "translateLocally" / "models")
+        app_support = Path.home() / "Library" / "Application Support" / "translateLocally"
+        targets.append((app_support, False))
+        targets.append((app_support / "models", False))
+        for container_root in _darwin_container_model_roots(binary_hint):
+            # Inside sandbox/container, prefer copy over symlink.
+            targets.append((container_root, True))
+            targets.append((container_root / "models", True))
+            selected_root = container_root
     elif sysname == "linux":
-        targets.append(Path.home() / ".local" / "share" / "translateLocally" / "models")
+        local_share = Path.home() / ".local" / "share" / "translateLocally"
+        targets.append((local_share, False))
+        targets.append((local_share / "models", False))
+        selected_root = local_share
+
     if not targets:
-        return
+        return models_root
 
     model_dirs = [p for p in models_root.iterdir() if p.is_dir()]
     if not model_dirs:
-        return
+        return models_root
 
-    for target in targets:
+    for target, force_copy in targets:
         try:
             target.mkdir(parents=True, exist_ok=True)
         except Exception as exc:
@@ -952,15 +967,94 @@ def _prepare_runtime_models(models_root: Path) -> None:
             dst = target / src.name
             if dst.exists():
                 continue
-            try:
-                dst.symlink_to(src, target_is_directory=True)
-                _vlog(f"linked model dir: {dst} -> {src}")
-            except Exception:
+            if not force_copy:
                 try:
-                    shutil.copytree(src, dst, symlinks=True)
-                    _vlog(f"copied model dir: {dst}")
-                except Exception as exc:
-                    _vlog(f"failed to mirror model dir {src} -> {dst}: {exc}")
+                    dst.symlink_to(src, target_is_directory=True)
+                    _vlog(f"linked model dir: {dst} -> {src}")
+                    continue
+                except Exception:
+                    pass
+            try:
+                shutil.copytree(src, dst, symlinks=True)
+                _vlog(f"copied model dir: {dst}")
+            except Exception as exc:
+                _vlog(f"failed to mirror model dir {src} -> {dst}: {exc}")
+
+    return selected_root if selected_root.exists() else models_root
+
+
+def _darwin_container_model_roots(binary_hint: Path | None = None) -> list[Path]:
+    if platform.system().lower() != "darwin":
+        return []
+
+    out: list[Path] = []
+    seen: set[str] = set()
+
+    def add_bundle_id(bundle_id: str) -> None:
+        if not bundle_id or bundle_id in seen:
+            return
+        seen.add(bundle_id)
+        out.append(
+            Path.home()
+            / "Library"
+            / "Containers"
+            / bundle_id
+            / "Data"
+            / "Library"
+            / "Application Support"
+            / "translateLocally"
+        )
+
+    env_id = os.getenv("APP_SANDBOX_CONTAINER_ID", "").strip()
+    if env_id:
+        add_bundle_id(env_id)
+
+    app = _resolve_app_bundle_from_binary(binary_hint) if binary_hint else None
+    if app:
+        info_plist = app / "Contents" / "Info.plist"
+        if info_plist.exists():
+            try:
+                data = plistlib.loads(info_plist.read_bytes())
+                add_bundle_id(str(data.get("CFBundleIdentifier", "")).strip())
+            except Exception:
+                pass
+
+    base = Path.home() / "Library" / "Containers"
+    if base.exists():
+        for entry in base.iterdir():
+            if not entry.is_dir():
+                continue
+            if "translate" not in entry.name.lower():
+                continue
+            out.append(entry / "Data" / "Library" / "Application Support" / "translateLocally")
+
+    dedup: list[Path] = []
+    dedup_seen: set[str] = set()
+    for p in out:
+        key = str(p)
+        if key in dedup_seen:
+            continue
+        dedup_seen.add(key)
+        dedup.append(p)
+    return dedup
+
+
+def _resolve_app_bundle_from_binary(binary: Path | None) -> Path | None:
+    if binary is None:
+        return None
+    p = binary.resolve()
+    if p.name == "translateLocally" and p.parent.name == "MacOS" and p.parent.parent.name == "Contents":
+        app = p.parent.parent.parent
+        if app.name.endswith(".app"):
+            return app
+    if p.name == "translateLocally":
+        app = p.parent / "translateLocally.app"
+        if app.exists():
+            return app
+    for parent in p.parents:
+        if parent.name.endswith(".app"):
+            return parent
+    return None
 
 
 def _model_candidates_for_direction(direction: str, models_root: Path) -> list[str]:
@@ -1025,6 +1119,8 @@ def _check_binary_usable(binary: Path | None, models_root: Path | None = None) -
             # when direct CLI translation works.
             ok, why = _probe_cli_model(binary, models_root=models_root, direction="en-pt", timeout_s=45.0)
             if not ok:
+                if "we could not find a model identified as" in why.lower():
+                    return True, f"model lookup deferred on macOS: {why}"
                 return False, f"cli model probe failed: {why}"
         elif models_root is not None:
             probe = subprocess.run(

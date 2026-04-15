@@ -351,7 +351,6 @@ def official_fallback_assets(tag: str) -> list[str]:
     if tag == "macos-arm64":
         return [
             f"{OFFICIAL_FILES_BASE}/translateLocally.macos-11.0.compat.dmg",
-            f"{OFFICIAL_FILES_BASE}/translateLocally.macos-14.armv8.5-a.dmg",
         ]
     if tag == "macos-x86_64":
         return [
