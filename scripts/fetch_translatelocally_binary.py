@@ -39,7 +39,7 @@ def platform_tag() -> str:
 
 
 def pick_asset(assets: list[dict], tag: str) -> dict | None:
-    parts = set(tag.split("-"))
+    parts = asset_match_markers(tag)
 
     def score(name: str) -> tuple[int, int]:
         low = name.lower()
@@ -62,12 +62,32 @@ def pick_asset(assets: list[dict], tag: str) -> dict | None:
     ranked = sorted(assets, key=lambda a: score(a.get("name", "")), reverse=True)
     for asset in ranked:
         name = asset.get("name", "")
-        if score(name)[0] == 0:
+        low = name.lower()
+        if score(name)[0] == 0 and not (tag.startswith("linux") and low.endswith(".deb")):
             continue
-        if name.lower().endswith(".deb") and not tag.startswith("linux"):
+        if low.endswith(".deb") and not tag.startswith("linux"):
             continue
         return asset
     return None
+
+
+def asset_match_markers(tag: str) -> set[str]:
+    markers = set(tag.split("-"))
+    low_tag = tag.lower()
+
+    if "linux" in low_tag:
+        markers.update({"linux", "ubuntu", "debian"})
+    if "macos" in low_tag or "darwin" in low_tag:
+        markers.update({"macos", "darwin", "osx"})
+    if "windows" in low_tag:
+        markers.update({"windows", "win"})
+
+    if "x86_64" in low_tag or "amd64" in low_tag:
+        markers.update({"x86_64", "x86-64", "amd64", "x64"})
+    if "arm64" in low_tag or "aarch64" in low_tag:
+        markers.update({"arm64", "aarch64", "armv8", "armv8.5-a"})
+
+    return markers
 
 
 def ensure_exec(path: Path) -> None:
