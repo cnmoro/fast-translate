@@ -3,7 +3,7 @@
 Biblioteca Python portátil para tradução offline:
 
 - `en -> pt-BR`
-- `pt -> en`
+- `pt-BR -> en`
 
 Inclui:
 
@@ -38,4 +38,3 @@ tr.close()
 - `TLPTBR_KEEP_WARM_INTERVAL_S`: intervalo de warmup (default `300`)
 - `TLPTBR_AUTO_DOWNLOAD`: `1`/`0` para auto-download de binário (default `1`)
 - `TLPTBR_VERBOSE`: `1` para logs detalhados de resolução/download/bootstrap (default `0`)
-- `TLPTBR_FORCE_CLI`: `1` para forçar fallback CLI (útil para ambientes macOS com instabilidade em `-p`)
