@@ -504,8 +504,21 @@ def _download_binary_for_platform(models_root: Path | None = None) -> Path | Non
     exe_name = "translateLocally.exe" if tag.startswith("windows") else "translateLocally"
     final_path = cache_root / exe_name
     if final_path.exists():
-        _vlog(f"binary already cached: {final_path}")
-        return final_path
+        ok, why = _check_binary_usable(final_path, models_root=models_root)
+        if ok:
+            _vlog(f"binary already cached and valid: {final_path}")
+            return final_path
+        _vlog(f"cached binary invalid, purging cache candidate: {final_path} ({why})")
+        try:
+            final_path.unlink(missing_ok=True)
+        except Exception:
+            pass
+        app_bundle = cache_root / "translateLocally.app"
+        if app_bundle.exists():
+            try:
+                shutil.rmtree(app_bundle)
+            except Exception:
+                pass
 
     headers = {
         "Accept": "application/vnd.github+json",
@@ -902,11 +915,15 @@ def _check_binary_usable(binary: Path | None, models_root: Path | None = None) -
             missing = _linux_missing_libs(binary)
             extra = f"; missing libs: {missing}" if missing else ""
             return False, f"loader failure: {stderr[-300:]}{extra}"
+        if proc.returncode != 0:
+            return False, f"--help returned rc={proc.returncode}: {stderr[-300:]}"
         # Probe real model load when models are available, because some binaries
         # pass --help but fail only when translation engine/model initializes.
-        # On macOS this can generate false negatives for some app bundles.
-        do_model_probe = models_root is not None and platform.system().lower() != "darwin"
-        if do_model_probe:
+        if models_root is not None and platform.system().lower() == "darwin":
+            ok, why = _probe_native_messaging(binary, models_root=models_root, timeout_s=30.0)
+            if not ok:
+                return False, f"native messaging probe failed: {why}"
+        elif models_root is not None:
             probe = subprocess.run(
                 [str(binary), "-m", "en-pt-tiny"],
                 input="hello\n",
@@ -1004,6 +1021,64 @@ def _bootstrap_qt_runtime() -> bool:
         return _qt_runtime_lib_dir() is not None
     except Exception:
         return False
+
+
+def _probe_native_messaging(binary: Path, models_root: Path, timeout_s: float = 30.0) -> tuple[bool, str]:
+    proc: subprocess.Popen[bytes] | None = None
+    try:
+        proc = subprocess.Popen(
+            [str(binary), "-p", "-m", "en-pt-tiny"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            cwd=str(models_root),
+            env=_worker_env(),
+            bufsize=0,
+        )
+        if proc.stdin is None or proc.stdout is None:
+            return False, "failed to open stdin/stdout pipes"
+
+        payload = {
+            "command": "Translate",
+            "id": 1,
+            "data": {"src": "en", "trg": "pt", "text": "hello", "html": False},
+        }
+        raw = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        proc.stdin.write(struct.pack("@I", len(raw)))
+        proc.stdin.write(raw)
+        proc.stdin.flush()
+
+        deadline = time.monotonic() + timeout_s
+        while time.monotonic() < deadline:
+            header = proc.stdout.read(4)
+            if not header:
+                rc = proc.poll()
+                err = ""
+                if proc.stderr is not None:
+                    try:
+                        err = proc.stderr.read().decode("utf-8", errors="replace")[-600:]
+                    except Exception:
+                        err = ""
+                return False, f"stdout closed rc={rc} stderr={err!r}"
+            size = struct.unpack("@I", header)[0]
+            body = proc.stdout.read(size)
+            if not body:
+                return False, "empty body from native messaging"
+            msg = json.loads(body.decode("utf-8", errors="replace"))
+            if msg.get("id") != 1 or msg.get("update"):
+                continue
+            if msg.get("success") is True:
+                return True, "ok"
+            return False, f"native error: {msg.get('error', 'unknown')}"
+        return False, "native probe timeout"
+    except Exception as exc:
+        return False, f"native probe exception: {exc}"
+    finally:
+        if proc is not None:
+            try:
+                proc.terminate()
+            except Exception:
+                pass
 
 
 def _load_libc():
