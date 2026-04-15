@@ -30,6 +30,7 @@ _REPO_API_BASE = "https://api.github.com/repos/XapaJIaMnu/translateLocally"
 _RELEASES_LATEST_API = f"{_REPO_API_BASE}/releases/latest"
 _RELEASES_LIST_API = f"{_REPO_API_BASE}/releases"
 _DOWNLOAD_RETRIES = 3
+_OFFICIAL_FILES_BASE = "https://translatelocally.com/files/latest"
 
 
 class TranslationError(RuntimeError):
@@ -112,7 +113,11 @@ class NativeWorker:
         self._warm_thread: threading.Thread | None = None
         self._stop_warm = threading.Event()
         self._last_stderr = ""
-        self._cli_fallback = os.getenv("TLPTBR_FORCE_CLI", "0").lower() in {"1", "true", "yes", "on"}
+        force_cli = os.getenv("TLPTBR_FORCE_CLI", "0").lower() in {"1", "true", "yes", "on"}
+        force_native = os.getenv("TLPTBR_FORCE_NATIVE", "0").lower() in {"1", "true", "yes", "on"}
+        # On macOS, native messaging mode is unstable on a subset of hosts.
+        # Default to CLI mode for reliability unless explicitly forced native.
+        self._cli_fallback = force_cli or (platform.system().lower() == "darwin" and not force_native)
 
     def translate(self, text: str, direction: str) -> str:
         with self._lock:
@@ -278,26 +283,30 @@ class NativeWorker:
         return True
 
     def _translate_cli(self, text: str, direction: str, timeout_s: float) -> str:
-        model = "en-pt-tiny" if direction == "en-pt" else "pt-en-tiny"
-        proc = subprocess.run(
-            [str(self.binary), "-m", model],
-            input=text + "\n",
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            timeout=max(30.0, timeout_s),
-            check=False,
-            cwd=str(self.models_root),
-            env=_worker_env(),
-        )
-        if proc.returncode != 0:
-            tail = ((proc.stderr or "") + "\n" + (proc.stdout or ""))[-1200:].strip()
-            raise TranslationError(f"CLI fallback translation failed rc={proc.returncode}: {tail}")
-        out = (proc.stdout or "").strip()
-        if not out:
-            raise TranslationError("CLI fallback returned empty output")
-        # translateLocally CLI outputs one line per input line.
-        return out.splitlines()[0].strip()
+        errors: list[str] = []
+        for model in _model_candidates_for_direction(direction, self.models_root):
+            proc = subprocess.run(
+                [str(self.binary), "-m", model],
+                input=text + "\n",
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=max(30.0, timeout_s),
+                check=False,
+                cwd=str(self.models_root),
+                env=_worker_env(),
+            )
+            if proc.returncode != 0:
+                tail = ((proc.stderr or "") + "\n" + (proc.stdout or ""))[-500:].strip()
+                errors.append(f"{model}: rc={proc.returncode}: {tail}")
+                continue
+            out = (proc.stdout or "").strip()
+            if not out:
+                errors.append(f"{model}: empty output")
+                continue
+            return out.splitlines()[0].strip()
+
+        raise TranslationError(f"CLI fallback translation failed for all candidate models: {' | '.join(errors[-4:])}")
 
 
 class Translator:
@@ -323,6 +332,7 @@ class Translator:
             auto_download_binary = os.getenv("TLPTBR_AUTO_DOWNLOAD", "1") not in {"0", "false", "False"}
 
         models_root = get_models_root()
+        _prepare_runtime_models(models_root)
         resolved_binary = resolve_binary_path(
             binary_path=binary_path,
             auto_download=auto_download_binary,
@@ -532,6 +542,9 @@ def _download_binary_for_platform(models_root: Path | None = None) -> Path | Non
         payload = _fetch_release_payload(client=client, has_token=bool(token))
 
     ranked_assets = _rank_release_assets(payload.get("assets", []), tag)
+    official_assets = _official_fallback_assets(tag)
+    if official_assets:
+        ranked_assets = ranked_assets + [u for u in official_assets if u not in ranked_assets]
     if not ranked_assets:
         _vlog("no matching release asset found")
         return None
@@ -654,9 +667,9 @@ def _rank_release_assets(assets: list[dict[str, Any]], tag: str) -> list[str]:
         if not url:
             continue
         low = name.lower()
-        if score(name)[0] == 0 and not (tag.startswith("linux") and low.endswith(".deb")):
+        if not _asset_extension_allowed(tag, low):
             continue
-        if low.endswith(".deb") and not tag.startswith("linux"):
+        if score(name)[0] == 0 and not (tag.startswith("linux") and low.endswith(".deb")):
             continue
         out.append(url)
     return out
@@ -679,6 +692,31 @@ def _asset_match_markers(tag: str) -> set[str]:
         markers.update({"arm64", "aarch64", "armv8", "armv8.5-a"})
 
     return markers
+
+
+def _asset_extension_allowed(tag: str, name_lower: str) -> bool:
+    if tag.startswith("macos"):
+        return name_lower.endswith(".dmg")
+    if tag.startswith("windows"):
+        return name_lower.endswith(".exe") or name_lower.endswith(".zip")
+    if tag.startswith("linux"):
+        return name_lower.endswith(".deb") or name_lower.endswith(".appimage") or name_lower.endswith(".tar.gz") or name_lower.endswith(".tgz") or name_lower.endswith(".zip")
+    return True
+
+
+def _official_fallback_assets(tag: str) -> list[str]:
+    if tag == "macos-arm64":
+        return [
+            f"{_OFFICIAL_FILES_BASE}/translateLocally.macos-11.0.compat.dmg",
+            f"{_OFFICIAL_FILES_BASE}/translateLocally.macos-14.armv8.5-a.dmg",
+        ]
+    if tag == "macos-x86_64":
+        return [
+            f"{_OFFICIAL_FILES_BASE}/translateLocally.macos-11.0.compat.dmg",
+            f"{_OFFICIAL_FILES_BASE}/translateLocally.macos-13.x86-64.dmg",
+            f"{_OFFICIAL_FILES_BASE}/translateLocally.macos-12.x86-64.dmg",
+        ]
+    return []
 
 
 def _host_macos_major() -> int | None:
@@ -888,6 +926,69 @@ def _worker_env() -> dict[str, str]:
     return env
 
 
+def _prepare_runtime_models(models_root: Path) -> None:
+    if not models_root.exists():
+        return
+    targets: list[Path] = []
+    sysname = platform.system().lower()
+    if sysname == "darwin":
+        targets.append(Path.home() / "Library" / "Application Support" / "translateLocally" / "models")
+    elif sysname == "linux":
+        targets.append(Path.home() / ".local" / "share" / "translateLocally" / "models")
+    if not targets:
+        return
+
+    model_dirs = [p for p in models_root.iterdir() if p.is_dir()]
+    if not model_dirs:
+        return
+
+    for target in targets:
+        try:
+            target.mkdir(parents=True, exist_ok=True)
+        except Exception as exc:
+            _vlog(f"cannot create runtime model dir {target}: {exc}")
+            continue
+        for src in model_dirs:
+            dst = target / src.name
+            if dst.exists():
+                continue
+            try:
+                dst.symlink_to(src, target_is_directory=True)
+                _vlog(f"linked model dir: {dst} -> {src}")
+            except Exception:
+                try:
+                    shutil.copytree(src, dst, symlinks=True)
+                    _vlog(f"copied model dir: {dst}")
+                except Exception as exc:
+                    _vlog(f"failed to mirror model dir {src} -> {dst}: {exc}")
+
+
+def _model_candidates_for_direction(direction: str, models_root: Path) -> list[str]:
+    primary = "en-pt-tiny" if direction == "en-pt" else "pt-en-tiny"
+    fallback_prefix = "enpt" if direction == "en-pt" else "pten"
+    out: list[str] = [primary]
+    seen = set(out)
+
+    if models_root.exists():
+        for model_dir in sorted(p for p in models_root.iterdir() if p.is_dir()):
+            info = model_dir / "model_info.json"
+            short_name = ""
+            if info.exists():
+                try:
+                    raw = json.loads(info.read_text(encoding="utf-8"))
+                    short_name = str(raw.get("shortName", "")).strip()
+                except Exception:
+                    short_name = ""
+            for candidate in (short_name, model_dir.name):
+                if not candidate or candidate in seen:
+                    continue
+                if candidate == primary or candidate.startswith(fallback_prefix):
+                    out.append(candidate)
+                    seen.add(candidate)
+
+    return out
+
+
 def _check_binary_usable(binary: Path | None, models_root: Path | None = None) -> tuple[bool, str]:
     if binary is None:
         return False, "binary path is None"
@@ -920,9 +1021,11 @@ def _check_binary_usable(binary: Path | None, models_root: Path | None = None) -
         # Probe real model load when models are available, because some binaries
         # pass --help but fail only when translation engine/model initializes.
         if models_root is not None and platform.system().lower() == "darwin":
-            ok, why = _probe_native_messaging(binary, models_root=models_root, timeout_s=30.0)
+            # Prefer CLI probe on macOS because native messaging may fail even
+            # when direct CLI translation works.
+            ok, why = _probe_cli_model(binary, models_root=models_root, direction="en-pt", timeout_s=45.0)
             if not ok:
-                return False, f"native messaging probe failed: {why}"
+                return False, f"cli model probe failed: {why}"
         elif models_root is not None:
             probe = subprocess.run(
                 [str(binary), "-m", "en-pt-tiny"],
@@ -1079,6 +1182,35 @@ def _probe_native_messaging(binary: Path, models_root: Path, timeout_s: float = 
                 proc.terminate()
             except Exception:
                 pass
+
+
+def _probe_cli_model(binary: Path, models_root: Path, direction: str = "en-pt", timeout_s: float = 45.0) -> tuple[bool, str]:
+    errors: list[str] = []
+    for model in _model_candidates_for_direction(direction, models_root):
+        try:
+            probe = subprocess.run(
+                [str(binary), "-m", model],
+                input="hello\n",
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=timeout_s,
+                check=False,
+                cwd=str(models_root),
+                env=_worker_env(),
+            )
+            if probe.returncode != 0:
+                perr = ((probe.stderr or "") + "\n" + (probe.stdout or ""))[-350:].strip()
+                errors.append(f"{model}: rc={probe.returncode}: {perr}")
+                continue
+            out = (probe.stdout or "").strip()
+            if not out:
+                errors.append(f"{model}: empty output")
+                continue
+            return True, f"ok via model={model}"
+        except Exception as exc:
+            errors.append(f"{model}: exception: {exc}")
+    return False, " | ".join(errors[-4:])
 
 
 def _load_libc():

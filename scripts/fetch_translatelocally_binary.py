@@ -19,6 +19,7 @@ import zstandard as zstd
 REPO_API_BASE = "https://api.github.com/repos/XapaJIaMnu/translateLocally"
 RELEASES_LATEST_API = f"{REPO_API_BASE}/releases/latest"
 RELEASES_LIST_API = f"{REPO_API_BASE}/releases"
+OFFICIAL_FILES_BASE = "https://translatelocally.com/files/latest"
 
 
 def platform_tag() -> str:
@@ -78,9 +79,9 @@ def pick_asset(assets: list[dict], tag: str) -> dict | None:
     for asset in ranked:
         name = asset.get("name", "")
         low = name.lower()
-        if score(name)[0] == 0 and not (tag.startswith("linux") and low.endswith(".deb")):
+        if not asset_extension_allowed(tag, low):
             continue
-        if low.endswith(".deb") and not tag.startswith("linux"):
+        if score(name)[0] == 0 and not (tag.startswith("linux") and low.endswith(".deb")):
             continue
         return asset
     return None
@@ -103,6 +104,22 @@ def asset_match_markers(tag: str) -> set[str]:
         markers.update({"arm64", "aarch64", "armv8", "armv8.5-a"})
 
     return markers
+
+
+def asset_extension_allowed(tag: str, name_lower: str) -> bool:
+    if tag.startswith("macos"):
+        return name_lower.endswith(".dmg")
+    if tag.startswith("windows"):
+        return name_lower.endswith(".exe") or name_lower.endswith(".zip")
+    if tag.startswith("linux"):
+        return (
+            name_lower.endswith(".deb")
+            or name_lower.endswith(".appimage")
+            or name_lower.endswith(".tar.gz")
+            or name_lower.endswith(".tgz")
+            or name_lower.endswith(".zip")
+        )
+    return True
 
 
 def host_macos_major_version() -> int | None:
@@ -300,23 +317,49 @@ def main() -> int:
     with httpx.Client(timeout=90.0, headers=headers) as client:
         payload = fetch_release_payload(client=client, has_token=bool(token))
 
+    candidate_urls: list[str] = []
     asset = pick_asset(payload.get("assets", []), tag)
-    if not asset:
+    if asset:
+        candidate_urls.append(asset["browser_download_url"])
+    for url in official_fallback_assets(tag):
+        if url not in candidate_urls:
+            candidate_urls.append(url)
+    if not candidate_urls:
         raise RuntimeError(f"No release asset found for {tag}")
 
-    url = asset["browser_download_url"]
-    name = asset.get("name", Path(url).name)
-    download_path = bin_dir / name
+    last_error = ""
+    for url in candidate_urls:
+        name = Path(url).name
+        download_path = bin_dir / name
+        try:
+            with httpx.stream("GET", url, timeout=240.0, follow_redirects=True) as resp:
+                resp.raise_for_status()
+                with download_path.open("wb") as f:
+                    for chunk in resp.iter_bytes(chunk_size=1024 * 1024):
+                        f.write(chunk)
+            extract_binary(download_path, out_path)
+            print(f"saved: {out_path}")
+            return 0
+        except Exception as exc:
+            last_error = f"{url}: {exc}"
+            continue
 
-    with httpx.stream("GET", url, timeout=240.0, follow_redirects=True) as resp:
-        resp.raise_for_status()
-        with download_path.open("wb") as f:
-            for chunk in resp.iter_bytes(chunk_size=1024 * 1024):
-                f.write(chunk)
+    raise RuntimeError(f"All binary download candidates failed for {tag}. Last error: {last_error}")
 
-    extract_binary(download_path, out_path)
-    print(f"saved: {out_path}")
-    return 0
+
+def official_fallback_assets(tag: str) -> list[str]:
+    if tag == "macos-arm64":
+        return [
+            f"{OFFICIAL_FILES_BASE}/translateLocally.macos-11.0.compat.dmg",
+            f"{OFFICIAL_FILES_BASE}/translateLocally.macos-14.armv8.5-a.dmg",
+        ]
+    if tag == "macos-x86_64":
+        return [
+            f"{OFFICIAL_FILES_BASE}/translateLocally.macos-11.0.compat.dmg",
+            f"{OFFICIAL_FILES_BASE}/translateLocally.macos-13.x86-64.dmg",
+            f"{OFFICIAL_FILES_BASE}/translateLocally.macos-12.x86-64.dmg",
+        ]
+    return []
 
 
 def fetch_release_payload(client: httpx.Client, has_token: bool) -> dict:
