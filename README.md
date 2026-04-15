@@ -29,12 +29,6 @@ print(tr.translate("Como você está hoje?", direction="pt-en"))
 tr.close()
 ```
 
-Compatibilidade legada:
-
-```python
-from tlptbr_translate import Translator  # ainda suportado
-```
-
 ## Variáveis de ambiente
 
 - `TLPTBR_BINARY`: caminho explícito do executável `translateLocally`
