@@ -5,6 +5,7 @@ import os
 import platform
 import shutil
 import stat
+import subprocess
 import tarfile
 import tempfile
 import zipfile
@@ -80,6 +81,9 @@ def extract_binary(download: Path, out_path: Path) -> None:
         shutil.copy2(download, out_path)
         ensure_exec(out_path)
         return
+    if low.endswith(".dmg"):
+        _extract_from_dmg(download, out_path)
+        return
 
     with tempfile.TemporaryDirectory(prefix="tl_extract_") as tmp:
         tmpdir = Path(tmp)
@@ -102,6 +106,37 @@ def extract_binary(download: Path, out_path: Path) -> None:
                 return
 
     raise RuntimeError("translateLocally executable not found inside downloaded asset")
+
+
+def _extract_from_dmg(dmg_path: Path, out_path: Path) -> None:
+    if platform.system().lower() != "darwin":
+        raise RuntimeError("DMG extraction is only supported on macOS runners")
+
+    attach = subprocess.run(
+        ["hdiutil", "attach", "-nobrowse", "-readonly", str(dmg_path)],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    mount_points: list[str] = []
+    for line in attach.stdout.splitlines():
+        cols = line.split("\t")
+        if cols and cols[-1].startswith("/Volumes/"):
+            mount_points.append(cols[-1].strip())
+
+    if not mount_points:
+        raise RuntimeError("Could not determine DMG mount point")
+    mount = Path(mount_points[-1])
+
+    try:
+        candidates = list(mount.rglob("translateLocally"))
+        if not candidates:
+            raise RuntimeError("translateLocally binary not found inside DMG")
+        binary = candidates[0]
+        shutil.copy2(binary, out_path)
+        ensure_exec(out_path)
+    finally:
+        subprocess.run(["hdiutil", "detach", str(mount)], check=False, capture_output=True)
 
 
 def main() -> int:
@@ -135,7 +170,7 @@ def main() -> int:
     name = asset.get("name", Path(url).name)
     download_path = bin_dir / name
 
-    with httpx.stream("GET", url, timeout=240.0) as resp:
+    with httpx.stream("GET", url, timeout=240.0, follow_redirects=True) as resp:
         resp.raise_for_status()
         with download_path.open("wb") as f:
             for chunk in resp.iter_bytes(chunk_size=1024 * 1024):

@@ -386,9 +386,8 @@ def _download_binary_for_platform() -> Path | None:
     if not asset_url:
         return None
 
-    suffix = Path(asset_url).suffix.lower()
     download_path = cache_root / Path(asset_url).name
-    with httpx.stream("GET", asset_url, timeout=180.0) as r:
+    with httpx.stream("GET", asset_url, timeout=180.0, follow_redirects=True) as r:
         r.raise_for_status()
         with download_path.open("wb") as f:
             for chunk in r.iter_bytes(chunk_size=1024 * 512):
@@ -473,6 +472,8 @@ def _extract_candidate_binary(archive: Path, out_dir: Path) -> Path | None:
     if lower.endswith(".appimage") or lower.endswith(".exe"):
         _ensure_executable(archive)
         return archive
+    if lower.endswith(".dmg"):
+        return _extract_from_dmg(archive, out_dir)
 
     with tempfile.TemporaryDirectory(prefix="tlptbr_extract_") as tmp:
         tmpdir = Path(tmp)
@@ -493,6 +494,37 @@ def _extract_candidate_binary(archive: Path, out_dir: Path) -> Path | None:
                 _ensure_executable(target)
                 return target
     return None
+
+
+def _extract_from_dmg(dmg_path: Path, out_dir: Path) -> Path | None:
+    if platform.system().lower() != "darwin":
+        return None
+
+    attach = subprocess.run(
+        ["hdiutil", "attach", "-nobrowse", "-readonly", str(dmg_path)],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    mount_points: list[str] = []
+    for line in attach.stdout.splitlines():
+        cols = line.split("\t")
+        if cols and cols[-1].startswith("/Volumes/"):
+            mount_points.append(cols[-1].strip())
+
+    if not mount_points:
+        return None
+    mount = Path(mount_points[-1])
+    try:
+        candidates = list(mount.rglob("translateLocally"))
+        if not candidates:
+            return None
+        target = out_dir / "translateLocally"
+        shutil.copy2(candidates[0], target)
+        _ensure_executable(target)
+        return target
+    finally:
+        subprocess.run(["hdiutil", "detach", str(mount)], check=False, capture_output=True)
 
 
 def _ensure_executable(path: Path) -> None:
