@@ -939,11 +939,14 @@ def _prepare_runtime_models(models_root: Path, binary_hint: Path | None = None) 
         app_support = Path.home() / "Library" / "Application Support" / "translateLocally"
         targets.append((app_support, False))
         targets.append((app_support / "models", False))
-        for container_root in _darwin_container_model_roots(binary_hint):
+        container_roots = _darwin_container_model_roots(binary_hint)
+        preferred_container: Path | None = container_roots[0] if container_roots else None
+        for container_root in container_roots:
             # Inside sandbox/container, prefer copy over symlink.
             targets.append((container_root, True))
             targets.append((container_root / "models", True))
-            selected_root = container_root
+        if preferred_container is not None:
+            selected_root = preferred_container
     elif sysname == "linux":
         local_share = Path.home() / ".local" / "share" / "translateLocally"
         targets.append((local_share, False))
@@ -1024,13 +1027,29 @@ def _darwin_container_model_roots(binary_hint: Path | None = None) -> list[Path]
         for entry in base.iterdir():
             if not entry.is_dir():
                 continue
-            if "translate" not in entry.name.lower():
+            low = entry.name.lower()
+            # Avoid matching Apple's own Translate app containers.
+            if "translatelocally" not in low:
                 continue
             out.append(entry / "Data" / "Library" / "Application Support" / "translateLocally")
 
+    # Prioritize the official bundle id first if present.
+    scored: list[tuple[int, Path]] = []
+    for p in out:
+        low = str(p).lower()
+        score = 0
+        if "com.translatelocally.translatelocally" in low:
+            score += 100
+        if "com.translatelocally" in low:
+            score += 50
+        if "containers" in low:
+            score += 10
+        scored.append((score, p))
+    scored.sort(key=lambda it: it[0], reverse=True)
+
     dedup: list[Path] = []
     dedup_seen: set[str] = set()
-    for p in out:
+    for _, p in scored:
         key = str(p)
         if key in dedup_seen:
             continue

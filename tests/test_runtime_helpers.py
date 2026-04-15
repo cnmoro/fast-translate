@@ -49,3 +49,23 @@ def test_resolve_app_bundle_from_launcher_path(tmp_path: Path) -> None:
     bin_path.parent.mkdir(parents=True)
     bin_path.write_text("", encoding="utf-8")
     assert runtime._resolve_app_bundle_from_binary(bin_path) == app
+
+
+def test_prepare_runtime_models_prefers_translatelocally_container(tmp_path: Path, monkeypatch) -> None:
+    src_models = tmp_path / "src_models"
+    enpt = src_models / "enpt-1"
+    enpt.mkdir(parents=True)
+    (enpt / "model_info.json").write_text('{"shortName":"en-pt-tiny"}', encoding="utf-8")
+
+    home = tmp_path / "home"
+    (home / "Library" / "Containers" / "com.apple.Translate.TranslationAppIntentsExtension").mkdir(parents=True)
+    (home / "Library" / "Containers" / "com.translatelocally.translateLocally").mkdir(parents=True)
+
+    monkeypatch.setattr(runtime.platform, "system", lambda: "Darwin")
+    monkeypatch.setattr(runtime.Path, "home", lambda: home)
+    monkeypatch.setattr(runtime, "_darwin_container_model_roots", lambda binary_hint=None: [
+        home / "Library" / "Containers" / "com.translatelocally.translateLocally" / "Data" / "Library" / "Application Support" / "translateLocally",
+    ])
+
+    chosen = runtime._prepare_runtime_models(src_models, binary_hint=None)
+    assert "com.translatelocally.translateLocally" in str(chosen)
