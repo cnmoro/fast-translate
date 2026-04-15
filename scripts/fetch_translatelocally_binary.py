@@ -45,6 +45,8 @@ def pick_asset(assets: list[dict], tag: str) -> dict | None:
         low = name.lower()
         platform_hits = sum(1 for p in parts if p in low)
         ext_bonus = 0
+        if tag.startswith("linux") and low.endswith(".deb"):
+            ext_bonus = 6
         if low.endswith(".zip"):
             ext_bonus = 5
         elif low.endswith(".tar.gz") or low.endswith(".tgz"):
@@ -62,7 +64,7 @@ def pick_asset(assets: list[dict], tag: str) -> dict | None:
         name = asset.get("name", "")
         if score(name)[0] == 0:
             continue
-        if name.lower().endswith(".deb"):
+        if name.lower().endswith(".deb") and not tag.startswith("linux"):
             continue
         return asset
     return None
@@ -80,6 +82,9 @@ def extract_binary(download: Path, out_path: Path) -> None:
     if low.endswith(".appimage") or low.endswith(".exe"):
         shutil.copy2(download, out_path)
         ensure_exec(out_path)
+        return
+    if low.endswith(".deb"):
+        _extract_from_deb(download, out_path)
         return
     if low.endswith(".dmg"):
         _extract_from_dmg(download, out_path)
@@ -106,6 +111,39 @@ def extract_binary(download: Path, out_path: Path) -> None:
                 return
 
     raise RuntimeError("translateLocally executable not found inside downloaded asset")
+
+
+def _extract_from_deb(deb_path: Path, out_path: Path) -> None:
+    with tempfile.TemporaryDirectory(prefix="tl_deb_") as tmp:
+        tmpdir = Path(tmp)
+        root = tmpdir / "root"
+        root.mkdir(parents=True, exist_ok=True)
+
+        dpkg = shutil.which("dpkg-deb")
+        if dpkg:
+            subprocess.run([dpkg, "-x", str(deb_path), str(root)], check=True)
+        else:
+            ar = shutil.which("ar")
+            tar = shutil.which("tar")
+            if not ar or not tar:
+                raise RuntimeError("Cannot extract .deb (need dpkg-deb or ar+tar)")
+            subprocess.run([ar, "x", str(deb_path)], cwd=str(tmpdir), check=True)
+            data_tar = None
+            for cand in tmpdir.glob("data.tar.*"):
+                data_tar = cand
+                break
+            if data_tar is None:
+                raise RuntimeError("No data.tar.* found inside .deb")
+            subprocess.run([tar, "-xf", str(data_tar), "-C", str(root)], check=True)
+
+        candidate = root / "usr" / "bin" / "translateLocally"
+        if not candidate.exists():
+            hits = list(root.rglob("translateLocally"))
+            if not hits:
+                raise RuntimeError("translateLocally binary not found inside .deb")
+            candidate = hits[0]
+        shutil.copy2(candidate, out_path)
+        ensure_exec(out_path)
 
 
 def _extract_from_dmg(dmg_path: Path, out_path: Path) -> None:

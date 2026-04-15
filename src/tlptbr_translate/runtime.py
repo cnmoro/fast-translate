@@ -460,6 +460,8 @@ def _pick_release_asset(assets: list[dict[str, Any]], tag: str) -> str | None:
         n = name.lower()
         platform_hits = sum(1 for p in tag_parts if p in n)
         ext_bonus = 0
+        if tag.startswith("linux") and n.endswith(".deb"):
+            ext_bonus = 6
         if n.endswith(".zip"):
             ext_bonus = 5
         elif n.endswith(".tar.gz") or n.endswith(".tgz"):
@@ -480,7 +482,7 @@ def _pick_release_asset(assets: list[dict[str, Any]], tag: str) -> str | None:
             continue
         if score(name)[0] == 0:
             continue
-        if name.lower().endswith(".deb"):
+        if name.lower().endswith(".deb") and not tag.startswith("linux"):
             continue
         return url
     return None
@@ -491,6 +493,8 @@ def _extract_candidate_binary(archive: Path, out_dir: Path) -> Path | None:
     if lower.endswith(".appimage") or lower.endswith(".exe"):
         _ensure_executable(archive)
         return archive
+    if lower.endswith(".deb"):
+        return _extract_from_deb(archive, out_dir)
     if lower.endswith(".dmg"):
         return _extract_from_dmg(archive, out_dir)
 
@@ -513,6 +517,42 @@ def _extract_candidate_binary(archive: Path, out_dir: Path) -> Path | None:
                 _ensure_executable(target)
                 return target
     return None
+
+
+def _extract_from_deb(deb_path: Path, out_dir: Path) -> Path | None:
+    with tempfile.TemporaryDirectory(prefix="tlptbr_deb_") as tmp:
+        tmpdir = Path(tmp)
+        extracted = tmpdir / "root"
+        extracted.mkdir(parents=True, exist_ok=True)
+
+        dpkg = shutil.which("dpkg-deb")
+        if dpkg:
+            subprocess.run([dpkg, "-x", str(deb_path), str(extracted)], check=True)
+        else:
+            ar = shutil.which("ar")
+            tar = shutil.which("tar")
+            if not ar or not tar:
+                return None
+            subprocess.run([ar, "x", str(deb_path)], check=True, cwd=str(tmpdir))
+            data_tar = None
+            for cand in tmpdir.glob("data.tar.*"):
+                data_tar = cand
+                break
+            if data_tar is None:
+                return None
+            subprocess.run([tar, "-xf", str(data_tar), "-C", str(extracted)], check=True)
+
+        candidate = extracted / "usr" / "bin" / "translateLocally"
+        if not candidate.exists():
+            hits = list(extracted.rglob("translateLocally"))
+            if not hits:
+                return None
+            candidate = hits[0]
+
+        target = out_dir / "translateLocally"
+        shutil.copy2(candidate, target)
+        _ensure_executable(target)
+        return target
 
 
 def _extract_from_dmg(dmg_path: Path, out_dir: Path) -> Path | None:
@@ -583,7 +623,16 @@ def _is_binary_usable(binary: Path) -> bool:
             timeout=20,
             check=False,
         )
-        return proc.returncode == 0
+        if proc.returncode == 0:
+            return True
+        stderr = (proc.stderr or b"").decode("utf-8", errors="replace").lower()
+        hard_fail_markers = (
+            "error while loading shared libraries",
+            "cannot open shared object file",
+            "no such file or directory",
+            "not found",
+        )
+        return not any(marker in stderr for marker in hard_fail_markers)
     except Exception:
         return False
 
