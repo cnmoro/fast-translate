@@ -11,6 +11,10 @@ Inclui:
 - Pós-processamento focado em pt-BR (corrige traços pt-PT)
 - Runtime nativo com `translateLocally` via Native Messaging (`-p`)
 - Fallback cross-platform: binário empacotado, PATH ou auto-download do GitHub Releases
+- Hardening estrutural para conteúdo técnico:
+  - blocos de código (fenced e inline) são preservados
+  - blocos LaTeX de fórmulas são preservados
+  - texto puro ao redor continua sendo traduzido
 
 ## Como o projeto foi desenvolvido
 
@@ -79,3 +83,15 @@ Métricas medidas em Linux (`AMD Ryzen 7 3700X`, `16 vCPUs`, Python `3.12.7`) co
   - Delta de init: `+0.50 MB`
 
 Com cache ativo (default), workloads com repetição tendem a ficar substancialmente mais rápidos.
+
+## Hardening para código e LaTeX
+
+Para cenários técnicos (documentação, prompts, notebooks, artigos), a biblioteca aplica uma camada estrutural antes da tradução:
+
+- Protege blocos de código:
+  - fenced code blocks: ```...``` / `~~~...~~~`
+  - inline code: `` `...` ``
+- Protege fórmulas LaTeX:
+  - `$$...$$`, `\\(...\\)`, `\\[...\\]`
+  - ambientes como `equation`, `align`, `gather`, `multline`, etc.
+- Traduz somente texto natural fora desses blocos.

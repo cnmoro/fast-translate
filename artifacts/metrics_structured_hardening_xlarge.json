@@ -1,0 +1,31 @@
+{
+  "datasets": {
+    "en": [
+      "HuggingFaceH4/ultrachat_200k (train_sft)",
+      "AI-MO/NuminaMath-CoT (train)",
+      "code_search_net/python (train)"
+    ],
+    "pt": [
+      "orion-research/little-stories-en_US-pt_BR (train, output column + structured templates)"
+    ]
+  },
+  "limits": {
+    "en": 999,
+    "pt": 1000
+  },
+  "metrics": {
+    "en_pt": {
+      "total": 999,
+      "code_exact_rate": 1.0,
+      "latex_exact_rate": 1.0,
+      "combined_exact_rate": 1.0
+    },
+    "pt_en": {
+      "total": 1000,
+      "code_exact_rate": 1.0,
+      "latex_exact_rate": 1.0,
+      "combined_exact_rate": 1.0
+    }
+  },
+  "target_combined_exact_rate": 0.99
+}

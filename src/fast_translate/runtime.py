@@ -26,6 +26,7 @@ import zstandard as zstd
 from importlib.resources import files
 
 from .postprocess import postprocess
+from .structure import maybe_has_structured_content, translate_preserving_structure
 
 _REPO_API_BASE = "https://api.github.com/repos/XapaJIaMnu/translateLocally"
 _RELEASES_LATEST_API = f"{_REPO_API_BASE}/releases/latest"
@@ -359,8 +360,10 @@ class Translator:
         if cached is not None:
             return cached
 
-        raw = self._worker.translate(text, direction=direction)
-        post = postprocess(raw, direction=direction)
+        if maybe_has_structured_content(text):
+            post = translate_preserving_structure(text, lambda line: self._translate_line(line, direction=direction))
+        else:
+            post = self._translate_line(text, direction=direction)
         self._cache.set(key, post)
 
         self._calls += 1
@@ -368,6 +371,10 @@ class Translator:
             _malloc_trim(self._libc)
 
         return post
+
+    def _translate_line(self, text: str, direction: str) -> str:
+        raw = self._worker.translate(text, direction=direction)
+        return postprocess(raw, direction=direction)
 
     def close(self) -> None:
         self._worker.close()
