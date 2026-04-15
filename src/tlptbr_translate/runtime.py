@@ -4,6 +4,7 @@ import json
 import io
 import os
 import platform
+import re
 import shutil
 import stat
 import struct
@@ -365,7 +366,7 @@ def resolve_binary_path(
 
     if auto_download:
         try:
-            downloaded = _download_binary_for_platform()
+            downloaded = _download_binary_for_platform(models_root=models_root)
             ok, why = _check_binary_usable(downloaded, models_root=models_root) if downloaded else (False, "download failed")
             if downloaded and ok:
                 _ensure_executable(downloaded)
@@ -383,7 +384,7 @@ def resolve_binary_path(
             candidates = [bundled] if bundled else []
             if auto_download:
                 try:
-                    dl = _download_binary_for_platform()
+                    dl = _download_binary_for_platform(models_root=models_root)
                     if dl:
                         candidates.append(dl)
                 except Exception:
@@ -449,7 +450,7 @@ def _platform_tag() -> str:
     return f"{sysname}-{arch}"
 
 
-def _download_binary_for_platform() -> Path | None:
+def _download_binary_for_platform(models_root: Path | None = None) -> Path | None:
     tag = _platform_tag()
     _vlog(f"starting auto-download for tag: {tag}")
     cache_root = Path.home() / ".cache" / "tlptbr_translate" / "bin" / tag
@@ -472,43 +473,52 @@ def _download_binary_for_platform() -> Path | None:
     with httpx.Client(timeout=90.0, headers=headers) as client:
         payload = _fetch_release_payload(client=client, has_token=bool(token))
 
-    asset_url = _pick_release_asset(payload.get("assets", []), tag)
-    if not asset_url:
+    ranked_assets = _rank_release_assets(payload.get("assets", []), tag)
+    if not ranked_assets:
         _vlog("no matching release asset found")
         return None
-    _vlog(f"selected asset: {asset_url}")
 
-    download_path = cache_root / Path(asset_url).name
-    last_exc: Exception | None = None
-    for attempt in range(1, _DOWNLOAD_RETRIES + 1):
-        try:
-            _vlog(f"download attempt {attempt}/{_DOWNLOAD_RETRIES}: {asset_url}")
-            with httpx.stream("GET", asset_url, timeout=180.0, follow_redirects=True) as r:
-                r.raise_for_status()
-                with download_path.open("wb") as f:
-                    for chunk in r.iter_bytes(chunk_size=1024 * 512):
-                        f.write(chunk)
-            break
-        except Exception as exc:
-            last_exc = exc
-            _vlog(f"download attempt {attempt} failed: {exc}")
-            if attempt == _DOWNLOAD_RETRIES:
-                raise
-            time.sleep(1.5 * attempt)
-    if not download_path.exists():
-        if last_exc:
-            raise TranslationError(f"download did not produce file: {last_exc}") from last_exc
-        return None
+    for asset_url in ranked_assets:
+        _vlog(f"trying asset: {asset_url}")
+        download_path = cache_root / Path(asset_url).name
+        last_exc: Exception | None = None
+        ok_download = False
+        for attempt in range(1, _DOWNLOAD_RETRIES + 1):
+            try:
+                _vlog(f"download attempt {attempt}/{_DOWNLOAD_RETRIES}: {asset_url}")
+                with httpx.stream("GET", asset_url, timeout=180.0, follow_redirects=True) as r:
+                    r.raise_for_status()
+                    with download_path.open("wb") as f:
+                        for chunk in r.iter_bytes(chunk_size=1024 * 512):
+                            f.write(chunk)
+                ok_download = True
+                break
+            except Exception as exc:
+                last_exc = exc
+                _vlog(f"download attempt {attempt} failed: {exc}")
+                if attempt < _DOWNLOAD_RETRIES:
+                    time.sleep(1.5 * attempt)
+        if not ok_download:
+            if last_exc:
+                _vlog(f"asset failed permanently: {last_exc}")
+            continue
 
-    extracted = _extract_candidate_binary(download_path, cache_root)
-    if extracted and extracted.exists():
-        # On macOS DMG extraction may return a launcher script already at final_path.
+        extracted = _extract_candidate_binary(download_path, cache_root)
+        if not extracted or not extracted.exists():
+            _vlog(f"failed to extract binary from asset: {asset_url}")
+            continue
+
+        probe_ok, probe_why = _check_binary_usable(extracted, models_root=models_root)
+        if not probe_ok:
+            _vlog(f"asset probe failed: {probe_why}")
+            continue
+
         if extracted != final_path:
             shutil.copy2(extracted, final_path)
-        _vlog(f"extracted binary to: {final_path}")
+        _vlog(f"selected working binary: {final_path}")
         return final_path
 
-    _vlog("failed to extract binary from downloaded asset")
+    _vlog("all candidate assets failed")
     return None
 
 
@@ -541,22 +551,31 @@ def _fetch_release_payload(client: httpx.Client, has_token: bool) -> dict[str, A
     return rel.json()
 
 
-def _pick_release_asset(assets: list[dict[str, Any]], tag: str) -> str | None:
+def _rank_release_assets(assets: list[dict[str, Any]], tag: str) -> list[str]:
     if not assets:
-        return None
-
+        return []
     tag_parts = _asset_match_markers(tag)
+
+    host_macos_major = _host_macos_major()
 
     def score(name: str) -> tuple[int, int]:
         n = name.lower()
         platform_hits = sum(1 for p in tag_parts if p in n)
         ext_bonus = 0
         penalty = 0
+        mac_bonus = 0
         if tag.startswith("linux") and n.endswith(".deb"):
             ext_bonus = 6
         # Prefer generic compatibility binaries over AVX-specific ones.
         if "core-avx" in n or ".avx" in n or "avx." in n:
             penalty = -2
+        if tag.startswith("macos"):
+            asset_major = _asset_macos_major(n)
+            if host_macos_major is not None and asset_major is not None:
+                if asset_major > host_macos_major:
+                    penalty -= 20
+                else:
+                    mac_bonus += max(0, 8 - (host_macos_major - asset_major))
         if n.endswith(".zip"):
             ext_bonus = 5
         elif n.endswith(".tar.gz") or n.endswith(".tgz"):
@@ -567,9 +586,10 @@ def _pick_release_asset(assets: list[dict[str, Any]], tag: str) -> str | None:
             ext_bonus = 3
         elif n.endswith(".deb"):
             ext_bonus = 1
-        return (platform_hits + penalty, ext_bonus)
+        return (platform_hits + penalty + mac_bonus, ext_bonus)
 
     ranked = sorted(assets, key=lambda a: score(a.get("name", "")), reverse=True)
+    out: list[str] = []
     for item in ranked:
         name = item.get("name", "")
         url = item.get("browser_download_url")
@@ -580,8 +600,8 @@ def _pick_release_asset(assets: list[dict[str, Any]], tag: str) -> str | None:
             continue
         if low.endswith(".deb") and not tag.startswith("linux"):
             continue
-        return url
-    return None
+        out.append(url)
+    return out
 
 
 def _asset_match_markers(tag: str) -> set[str]:
@@ -601,6 +621,28 @@ def _asset_match_markers(tag: str) -> set[str]:
         markers.update({"arm64", "aarch64", "armv8", "armv8.5-a"})
 
     return markers
+
+
+def _host_macos_major() -> int | None:
+    if platform.system().lower() != "darwin":
+        return None
+    ver = platform.mac_ver()[0]
+    if not ver:
+        return None
+    try:
+        return int(ver.split(".")[0])
+    except Exception:
+        return None
+
+
+def _asset_macos_major(name: str) -> int | None:
+    m = re.search(r"macos-(\d+)", name)
+    if not m:
+        return None
+    try:
+        return int(m.group(1))
+    except Exception:
+        return None
 
 
 def _extract_candidate_binary(archive: Path, out_dir: Path) -> Path | None:
@@ -817,7 +859,9 @@ def _check_binary_usable(binary: Path | None, models_root: Path | None = None) -
             return False, f"loader failure: {stderr[-300:]}{extra}"
         # Probe real model load when models are available, because some binaries
         # pass --help but fail only when translation engine/model initializes.
-        if models_root is not None:
+        # On macOS this can generate false negatives for some app bundles.
+        do_model_probe = models_root is not None and platform.system().lower() != "darwin"
+        if do_model_probe:
             probe = subprocess.run(
                 [str(binary), "-m", "en-pt-tiny"],
                 input="hello\n",
