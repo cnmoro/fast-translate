@@ -8,6 +8,7 @@ import shutil
 import stat
 import struct
 import subprocess
+import sys
 import tarfile
 import tempfile
 import threading
@@ -27,10 +28,20 @@ from .postprocess import postprocess
 _REPO_API_BASE = "https://api.github.com/repos/XapaJIaMnu/translateLocally"
 _RELEASES_LATEST_API = f"{_REPO_API_BASE}/releases/latest"
 _RELEASES_LIST_API = f"{_REPO_API_BASE}/releases"
+_DOWNLOAD_RETRIES = 3
 
 
 class TranslationError(RuntimeError):
     pass
+
+
+def _verbose_enabled() -> bool:
+    return os.getenv("TLPTBR_VERBOSE", "0").lower() in {"1", "true", "yes", "on"}
+
+
+def _vlog(message: str) -> None:
+    if _verbose_enabled():
+        print(f"[tlptbr] {message}", file=sys.stderr)
 
 
 @dataclass
@@ -320,36 +331,71 @@ def get_models_root() -> Path:
 
 def resolve_binary_path(binary_path: str | None = None, auto_download: bool = True) -> Path:
     reasons: list[str] = []
+    _vlog(f"resolve_binary_path(auto_download={auto_download}, explicit={bool(binary_path)})")
     explicit = binary_path or os.getenv("TLPTBR_BINARY")
     if explicit:
         p = Path(explicit).expanduser().resolve()
-        if p.exists() and _is_binary_usable(p):
+        ok, why = _check_binary_usable(p)
+        if p.exists() and ok:
+            _vlog(f"using explicit binary: {p}")
             return p
-        raise TranslationError(f"TLPTBR binary not usable at: {p}")
+        raise TranslationError(f"TLPTBR binary not usable at: {p}. Reason: {why}")
 
     bundled = _bundled_binary_for_platform()
     if bundled and bundled.exists():
         _ensure_executable(bundled)
-        if _is_binary_usable(bundled):
+        ok, why = _check_binary_usable(bundled)
+        if ok:
+            _vlog(f"using bundled binary: {bundled}")
             return bundled
-        reasons.append(f"bundled binary not usable: {bundled}")
+        reasons.append(f"bundled binary not usable: {bundled} ({why})")
+        _vlog(reasons[-1])
 
     if auto_download:
         try:
             downloaded = _download_binary_for_platform()
-            if downloaded and _is_binary_usable(downloaded):
+            ok, why = _check_binary_usable(downloaded) if downloaded else (False, "download failed")
+            if downloaded and ok:
                 _ensure_executable(downloaded)
+                _vlog(f"using downloaded binary: {downloaded}")
                 return downloaded
-            reasons.append("auto-downloaded binary missing or unusable")
+            reasons.append(f"auto-downloaded binary missing or unusable ({why})")
+            _vlog(reasons[-1])
         except Exception as exc:
             reasons.append(f"auto-download failed: {exc}")
+            _vlog(reasons[-1])
+
+    if platform.system().lower() == "linux":
+        if _bootstrap_qt_runtime():
+            # Retry after Qt runtime bootstrap.
+            candidates = [bundled] if bundled else []
+            if auto_download:
+                try:
+                    dl = _download_binary_for_platform()
+                    if dl:
+                        candidates.append(dl)
+                except Exception:
+                    pass
+            if from_path := shutil.which("translateLocally"):
+                candidates.append(Path(from_path))
+            for c in candidates:
+                if c is None:
+                    continue
+                ok, why = _check_binary_usable(c)
+                if ok:
+                    _ensure_executable(c)
+                    return c
+                reasons.append(f"post-bootstrap candidate unusable: {c} ({why})")
 
     from_path = shutil.which("translateLocally")
     if from_path:
         candidate = Path(from_path)
-        if _is_binary_usable(candidate):
+        ok, why = _check_binary_usable(candidate)
+        if ok:
+            _vlog(f"using PATH binary: {candidate}")
             return candidate
-        reasons.append(f"PATH binary not usable: {candidate}")
+        reasons.append(f"PATH binary not usable: {candidate} ({why})")
+        _vlog(reasons[-1])
 
     details = "; ".join(reasons) if reasons else "no candidates found"
     raise TranslationError(
@@ -393,12 +439,14 @@ def _platform_tag() -> str:
 
 def _download_binary_for_platform() -> Path | None:
     tag = _platform_tag()
+    _vlog(f"starting auto-download for tag: {tag}")
     cache_root = Path.home() / ".cache" / "tlptbr_translate" / "bin" / tag
     cache_root.mkdir(parents=True, exist_ok=True)
 
     exe_name = "translateLocally.exe" if tag.startswith("windows") else "translateLocally"
     final_path = cache_root / exe_name
     if final_path.exists():
+        _vlog(f"binary already cached: {final_path}")
         return final_path
 
     headers = {
@@ -414,21 +462,40 @@ def _download_binary_for_platform() -> Path | None:
 
     asset_url = _pick_release_asset(payload.get("assets", []), tag)
     if not asset_url:
+        _vlog("no matching release asset found")
         return None
+    _vlog(f"selected asset: {asset_url}")
 
     download_path = cache_root / Path(asset_url).name
-    with httpx.stream("GET", asset_url, timeout=180.0, follow_redirects=True) as r:
-        r.raise_for_status()
-        with download_path.open("wb") as f:
-            for chunk in r.iter_bytes(chunk_size=1024 * 512):
-                f.write(chunk)
+    last_exc: Exception | None = None
+    for attempt in range(1, _DOWNLOAD_RETRIES + 1):
+        try:
+            _vlog(f"download attempt {attempt}/{_DOWNLOAD_RETRIES}: {asset_url}")
+            with httpx.stream("GET", asset_url, timeout=180.0, follow_redirects=True) as r:
+                r.raise_for_status()
+                with download_path.open("wb") as f:
+                    for chunk in r.iter_bytes(chunk_size=1024 * 512):
+                        f.write(chunk)
+            break
+        except Exception as exc:
+            last_exc = exc
+            _vlog(f"download attempt {attempt} failed: {exc}")
+            if attempt == _DOWNLOAD_RETRIES:
+                raise
+            time.sleep(1.5 * attempt)
+    if not download_path.exists():
+        if last_exc:
+            raise TranslationError(f"download did not produce file: {last_exc}") from last_exc
+        return None
 
     extracted = _extract_candidate_binary(download_path, cache_root)
     if extracted and extracted.exists():
         if extracted != final_path:
             shutil.copy2(extracted, final_path)
+        _vlog(f"extracted binary to: {final_path}")
         return final_path
 
+    _vlog("failed to extract binary from downloaded asset")
     return None
 
 
@@ -521,6 +588,7 @@ def _asset_match_markers(tag: str) -> set[str]:
 
 def _extract_candidate_binary(archive: Path, out_dir: Path) -> Path | None:
     lower = archive.name.lower()
+    _vlog(f"extract candidate binary from: {archive.name}")
     if lower.endswith(".appimage") or lower.endswith(".exe"):
         _ensure_executable(archive)
         return archive
@@ -551,6 +619,7 @@ def _extract_candidate_binary(archive: Path, out_dir: Path) -> Path | None:
 
 
 def _extract_from_deb(deb_path: Path, out_dir: Path) -> Path | None:
+    _vlog(f"extracting .deb: {deb_path}")
     with tempfile.TemporaryDirectory(prefix="tlptbr_deb_") as tmp:
         tmpdir = Path(tmp)
         extracted = tmpdir / "root"
@@ -617,6 +686,7 @@ def _decompress_data_member(name: str, data: bytes) -> bytes:
 def _extract_from_dmg(dmg_path: Path, out_dir: Path) -> Path | None:
     if platform.system().lower() != "darwin":
         return None
+    _vlog(f"extracting .dmg: {dmg_path}")
 
     attach = subprocess.run(
         ["hdiutil", "attach", "-nobrowse", "-readonly", str(dmg_path)],
@@ -670,10 +740,18 @@ def _worker_env() -> dict[str, str]:
     env.setdefault("MALLOC_ARENA_MAX", "2")
     env.setdefault("MALLOC_TRIM_THRESHOLD_", "131072")
     env.setdefault("MALLOC_MMAP_THRESHOLD_", "131072")
+    qt_lib = _qt_runtime_lib_dir()
+    if qt_lib is not None:
+        old = env.get("LD_LIBRARY_PATH", "")
+        env["LD_LIBRARY_PATH"] = f"{qt_lib}:{old}" if old else str(qt_lib)
     return env
 
 
-def _is_binary_usable(binary: Path) -> bool:
+def _check_binary_usable(binary: Path | None) -> tuple[bool, str]:
+    if binary is None:
+        return False, "binary path is None"
+    if not binary.exists():
+        return False, "binary path does not exist"
     try:
         proc = subprocess.run(
             [str(binary), "--help"],
@@ -681,17 +759,102 @@ def _is_binary_usable(binary: Path) -> bool:
             stderr=subprocess.PIPE,
             timeout=20,
             check=False,
+            env=_worker_env(),
         )
-        if proc.returncode == 0:
-            return True
         stderr = (proc.stderr or b"").decode("utf-8", errors="replace").lower()
         hard_fail_markers = (
             "error while loading shared libraries",
             "cannot open shared object file",
             "no such file or directory",
             "not found",
+            "undefined symbol",
+            "wrong elf class",
         )
-        return not any(marker in stderr for marker in hard_fail_markers)
+        if any(marker in stderr for marker in hard_fail_markers):
+            missing = _linux_missing_libs(binary)
+            extra = f"; missing libs: {missing}" if missing else ""
+            return False, f"loader failure: {stderr[-300:]}{extra}"
+        return True, f"returncode={proc.returncode}"
+    except Exception as exc:
+        return False, f"probe exception: {exc}"
+
+
+def _linux_missing_libs(binary: Path) -> list[str]:
+    if platform.system().lower() != "linux":
+        return []
+    try:
+        proc = subprocess.run(
+            ["ldd", str(binary)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=20,
+            check=False,
+        )
+        lines = (proc.stdout or "") + "\n" + (proc.stderr or "")
+        out = []
+        for ln in lines.splitlines():
+            if "=> not found" in ln:
+                out.append(ln.strip())
+        return out
+    except Exception:
+        return []
+
+
+def _qt_runtime_lib_dir() -> Path | None:
+    try:
+        import PyQt6  # type: ignore
+
+        root = Path(PyQt6.__file__).resolve().parent
+        cand = root / "Qt6" / "lib"
+        if cand.exists():
+            return cand
+    except Exception:
+        pass
+    return None
+
+
+def _bootstrap_qt_runtime() -> bool:
+    if _qt_runtime_lib_dir() is not None:
+        _vlog("qt runtime already available")
+        return True
+    _vlog("qt runtime missing; trying bootstrap via pip")
+    commands = [
+        [sys.executable, "-m", "pip", "install", "--quiet", "PyQt6>=6.6"],
+        [sys.executable, "-m", "pip", "install", "--quiet", "--break-system-packages", "PyQt6>=6.6"],
+    ]
+    if platform.system().lower() == "linux":
+        commands.append([sys.executable, "-m", "pip", "install", "--quiet", "PySide6>=6.6"])
+
+    last_err = ""
+    try:
+        subprocess.run([sys.executable, "-m", "ensurepip", "--upgrade"], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception:
+        pass
+
+    for cmd in commands:
+        try:
+            proc = subprocess.run(
+                cmd,
+                check=False,
+                timeout=900,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            if proc.returncode == 0 and _qt_runtime_lib_dir() is not None:
+                _vlog(f"qt runtime bootstrap succeeded with: {' '.join(cmd)}")
+                return True
+            tail = ((proc.stderr or "") + "\n" + (proc.stdout or ""))[-600:]
+            last_err = tail.strip()
+            _vlog(f"qt runtime bootstrap command failed ({proc.returncode}): {' '.join(cmd)} | {last_err}")
+        except Exception as exc:
+            last_err = str(exc)
+            _vlog(f"qt runtime bootstrap exception on {' '.join(cmd)}: {exc}")
+    if last_err:
+        _vlog(f"qt bootstrap failed final: {last_err}")
+    try:
+        return _qt_runtime_lib_dir() is not None
     except Exception:
         return False
 
