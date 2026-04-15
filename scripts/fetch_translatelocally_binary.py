@@ -12,7 +12,9 @@ from pathlib import Path
 
 import httpx
 
-RELEASES_API = "https://api.github.com/repos/XapaJIaMnu/translateLocally/releases/latest"
+REPO_API_BASE = "https://api.github.com/repos/XapaJIaMnu/translateLocally"
+RELEASES_LATEST_API = f"{REPO_API_BASE}/releases/latest"
+RELEASES_LIST_API = f"{REPO_API_BASE}/releases"
 
 
 def platform_tag() -> str:
@@ -123,14 +125,7 @@ def main() -> int:
         headers["Authorization"] = f"Bearer {token}"
 
     with httpx.Client(timeout=90.0, headers=headers) as client:
-        rel = client.get(RELEASES_API)
-        if rel.status_code == 403:
-            msg = "GitHub API rate limit exceeded while fetching translateLocally release metadata."
-            if not token:
-                msg += " Set GITHUB_TOKEN/GH_TOKEN in CI to avoid anonymous rate limits."
-            raise RuntimeError(msg)
-        rel.raise_for_status()
-        payload = rel.json()
+        payload = fetch_release_payload(client=client, has_token=bool(token))
 
     asset = pick_asset(payload.get("assets", []), tag)
     if not asset:
@@ -149,6 +144,36 @@ def main() -> int:
     extract_binary(download_path, out_path)
     print(f"saved: {out_path}")
     return 0
+
+
+def fetch_release_payload(client: httpx.Client, has_token: bool) -> dict:
+    rel = client.get(RELEASES_LATEST_API)
+    if rel.status_code == 403:
+        msg = "GitHub API rate limit exceeded while fetching translateLocally release metadata."
+        if not has_token:
+            msg += " Set GITHUB_TOKEN/GH_TOKEN in CI to avoid anonymous rate limits."
+        raise RuntimeError(msg)
+    if rel.status_code == 404:
+        # Some repositories don't expose /releases/latest (only drafts/prereleases).
+        lst = client.get(RELEASES_LIST_API)
+        if lst.status_code == 403:
+            msg = "GitHub API rate limit exceeded while fetching translateLocally release list."
+            if not has_token:
+                msg += " Set GITHUB_TOKEN/GH_TOKEN in CI to avoid anonymous rate limits."
+            raise RuntimeError(msg)
+        lst.raise_for_status()
+        releases = lst.json()
+        if not isinstance(releases, list) or not releases:
+            raise RuntimeError("No releases found for translateLocally repository.")
+        for release in releases:
+            if release.get("draft"):
+                continue
+            if release.get("assets"):
+                return release
+        return releases[0]
+
+    rel.raise_for_status()
+    return rel.json()
 
 
 if __name__ == "__main__":

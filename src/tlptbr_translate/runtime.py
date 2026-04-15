@@ -22,7 +22,9 @@ from importlib.resources import files
 
 from .postprocess import postprocess
 
-_RELEASES_API = "https://api.github.com/repos/XapaJIaMnu/translateLocally/releases/latest"
+_REPO_API_BASE = "https://api.github.com/repos/XapaJIaMnu/translateLocally"
+_RELEASES_LATEST_API = f"{_REPO_API_BASE}/releases/latest"
+_RELEASES_LIST_API = f"{_REPO_API_BASE}/releases"
 
 
 class TranslationError(RuntimeError):
@@ -369,10 +371,16 @@ def _download_binary_for_platform() -> Path | None:
     if final_path.exists():
         return final_path
 
-    with httpx.Client(timeout=90.0) as client:
-        rel = client.get(_RELEASES_API)
-        rel.raise_for_status()
-        payload = rel.json()
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "fast-translate-runtime",
+    }
+    token = os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+
+    with httpx.Client(timeout=90.0, headers=headers) as client:
+        payload = _fetch_release_payload(client=client, has_token=bool(token))
 
     asset_url = _pick_release_asset(payload.get("assets", []), tag)
     if not asset_url:
@@ -393,6 +401,35 @@ def _download_binary_for_platform() -> Path | None:
         return final_path
 
     return None
+
+
+def _fetch_release_payload(client: httpx.Client, has_token: bool) -> dict[str, Any]:
+    rel = client.get(_RELEASES_LATEST_API)
+    if rel.status_code == 403:
+        msg = "GitHub API rate limit exceeded while fetching translateLocally release metadata."
+        if not has_token:
+            msg += " Provide GITHUB_TOKEN/GH_TOKEN to avoid anonymous rate limits."
+        raise TranslationError(msg)
+    if rel.status_code == 404:
+        lst = client.get(_RELEASES_LIST_API)
+        if lst.status_code == 403:
+            msg = "GitHub API rate limit exceeded while fetching translateLocally release list."
+            if not has_token:
+                msg += " Provide GITHUB_TOKEN/GH_TOKEN to avoid anonymous rate limits."
+            raise TranslationError(msg)
+        lst.raise_for_status()
+        releases = lst.json()
+        if not isinstance(releases, list) or not releases:
+            raise TranslationError("No releases found for translateLocally repository.")
+        for release in releases:
+            if release.get("draft"):
+                continue
+            if release.get("assets"):
+                return release
+        return releases[0]
+
+    rel.raise_for_status()
+    return rel.json()
 
 
 def _pick_release_asset(assets: list[dict[str, Any]], tag: str) -> str | None:
