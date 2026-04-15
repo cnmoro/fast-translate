@@ -198,9 +198,13 @@ class NativeWorker:
             raise TranslationError("Worker is not running")
 
         raw = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-        self._proc.stdin.write(struct.pack("@I", len(raw)))
-        self._proc.stdin.write(raw)
-        self._proc.stdin.flush()
+        try:
+            self._proc.stdin.write(struct.pack("@I", len(raw)))
+            self._proc.stdin.write(raw)
+            self._proc.stdin.flush()
+        except (BrokenPipeError, OSError) as exc:
+            details = self._collect_process_error_details(self._proc)
+            raise TranslationError(f"translateLocally stdin write failed{details}") from exc
 
         deadline = time.monotonic() + timeout_s
         wanted_id = payload["id"]
@@ -490,6 +494,7 @@ def _download_binary_for_platform() -> Path | None:
 
     extracted = _extract_candidate_binary(download_path, cache_root)
     if extracted and extracted.exists():
+        # On macOS DMG extraction may return a launcher script already at final_path.
         if extracted != final_path:
             shutil.copy2(extracted, final_path)
         _vlog(f"extracted binary to: {final_path}")
@@ -714,7 +719,18 @@ def _extract_from_dmg(dmg_path: Path, out_dir: Path) -> Path | None:
             bin_in_app = app_dst / "Contents" / "MacOS" / "translateLocally"
             if bin_in_app.exists():
                 _ensure_executable(bin_in_app)
-                return bin_in_app
+                _clear_quarantine_recursive(app_dst)
+                launcher = out_dir / "translateLocally"
+                launcher.write_text(
+                    "#!/usr/bin/env bash\n"
+                    "set -euo pipefail\n"
+                    "DIR=\"$(cd \"$(dirname \"$0\")\" && pwd)\"\n"
+                    "exec \"$DIR/translateLocally.app/Contents/MacOS/translateLocally\" \"$@\"\n",
+                    encoding="utf-8",
+                )
+                _ensure_executable(launcher)
+                _clear_quarantine_recursive(launcher)
+                return launcher
 
         candidates = list(mount.rglob("translateLocally"))
         if not candidates:
@@ -722,6 +738,7 @@ def _extract_from_dmg(dmg_path: Path, out_dir: Path) -> Path | None:
         target = out_dir / "translateLocally"
         shutil.copy2(candidates[0], target)
         _ensure_executable(target)
+        _clear_quarantine_recursive(target)
         return target
     finally:
         subprocess.run(["hdiutil", "detach", str(mount)], check=False, capture_output=True)
@@ -732,6 +749,18 @@ def _ensure_executable(path: Path) -> None:
         return
     mode = path.stat().st_mode
     path.chmod(mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+
+
+def _clear_quarantine_recursive(path: Path) -> None:
+    if platform.system().lower() != "darwin":
+        return
+    xattr = shutil.which("xattr")
+    if not xattr:
+        return
+    try:
+        subprocess.run([xattr, "-dr", "com.apple.quarantine", str(path)], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception:
+        return
 
 
 def _worker_env() -> dict[str, str]:
