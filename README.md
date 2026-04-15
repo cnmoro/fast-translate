@@ -1,6 +1,6 @@
 # fast-translate
 
-Biblioteca Python portátil para tradução offline:
+Biblioteca Python portátil para tradução offline (desempenho rápido em CPU):
 
 - `en -> pt-BR`
 - `pt-BR -> en`
