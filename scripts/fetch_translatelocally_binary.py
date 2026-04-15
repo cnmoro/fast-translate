@@ -47,8 +47,11 @@ def pick_asset(assets: list[dict], tag: str) -> dict | None:
         low = name.lower()
         platform_hits = sum(1 for p in parts if p in low)
         ext_bonus = 0
+        penalty = 0
         if tag.startswith("linux") and low.endswith(".deb"):
             ext_bonus = 6
+        if "core-avx" in low or ".avx" in low or "avx." in low:
+            penalty = -2
         if low.endswith(".zip"):
             ext_bonus = 5
         elif low.endswith(".tar.gz") or low.endswith(".tgz"):
@@ -59,7 +62,7 @@ def pick_asset(assets: list[dict], tag: str) -> dict | None:
             ext_bonus = 3
         elif low.endswith(".deb"):
             ext_bonus = 1
-        return (platform_hits, ext_bonus)
+        return (platform_hits + penalty, ext_bonus)
 
     ranked = sorted(assets, key=lambda a: score(a.get("name", "")), reverse=True)
     for asset in ranked:

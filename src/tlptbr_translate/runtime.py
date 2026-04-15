@@ -276,8 +276,12 @@ class Translator:
         if auto_download_binary is None:
             auto_download_binary = os.getenv("TLPTBR_AUTO_DOWNLOAD", "1") not in {"0", "false", "False"}
 
-        resolved_binary = resolve_binary_path(binary_path=binary_path, auto_download=auto_download_binary)
         models_root = get_models_root()
+        resolved_binary = resolve_binary_path(
+            binary_path=binary_path,
+            auto_download=auto_download_binary,
+            models_root=models_root,
+        )
         self._worker = NativeWorker(
             binary=resolved_binary,
             models_root=models_root,
@@ -333,13 +337,17 @@ def get_models_root() -> Path:
     return path
 
 
-def resolve_binary_path(binary_path: str | None = None, auto_download: bool = True) -> Path:
+def resolve_binary_path(
+    binary_path: str | None = None,
+    auto_download: bool = True,
+    models_root: Path | None = None,
+) -> Path:
     reasons: list[str] = []
     _vlog(f"resolve_binary_path(auto_download={auto_download}, explicit={bool(binary_path)})")
     explicit = binary_path or os.getenv("TLPTBR_BINARY")
     if explicit:
         p = Path(explicit).expanduser().resolve()
-        ok, why = _check_binary_usable(p)
+        ok, why = _check_binary_usable(p, models_root=models_root)
         if p.exists() and ok:
             _vlog(f"using explicit binary: {p}")
             return p
@@ -348,7 +356,7 @@ def resolve_binary_path(binary_path: str | None = None, auto_download: bool = Tr
     bundled = _bundled_binary_for_platform()
     if bundled and bundled.exists():
         _ensure_executable(bundled)
-        ok, why = _check_binary_usable(bundled)
+        ok, why = _check_binary_usable(bundled, models_root=models_root)
         if ok:
             _vlog(f"using bundled binary: {bundled}")
             return bundled
@@ -358,7 +366,7 @@ def resolve_binary_path(binary_path: str | None = None, auto_download: bool = Tr
     if auto_download:
         try:
             downloaded = _download_binary_for_platform()
-            ok, why = _check_binary_usable(downloaded) if downloaded else (False, "download failed")
+            ok, why = _check_binary_usable(downloaded, models_root=models_root) if downloaded else (False, "download failed")
             if downloaded and ok:
                 _ensure_executable(downloaded)
                 _vlog(f"using downloaded binary: {downloaded}")
@@ -385,7 +393,7 @@ def resolve_binary_path(binary_path: str | None = None, auto_download: bool = Tr
             for c in candidates:
                 if c is None:
                     continue
-                ok, why = _check_binary_usable(c)
+                ok, why = _check_binary_usable(c, models_root=models_root)
                 if ok:
                     _ensure_executable(c)
                     return c
@@ -394,7 +402,7 @@ def resolve_binary_path(binary_path: str | None = None, auto_download: bool = Tr
     from_path = shutil.which("translateLocally")
     if from_path:
         candidate = Path(from_path)
-        ok, why = _check_binary_usable(candidate)
+        ok, why = _check_binary_usable(candidate, models_root=models_root)
         if ok:
             _vlog(f"using PATH binary: {candidate}")
             return candidate
@@ -543,8 +551,12 @@ def _pick_release_asset(assets: list[dict[str, Any]], tag: str) -> str | None:
         n = name.lower()
         platform_hits = sum(1 for p in tag_parts if p in n)
         ext_bonus = 0
+        penalty = 0
         if tag.startswith("linux") and n.endswith(".deb"):
             ext_bonus = 6
+        # Prefer generic compatibility binaries over AVX-specific ones.
+        if "core-avx" in n or ".avx" in n or "avx." in n:
+            penalty = -2
         if n.endswith(".zip"):
             ext_bonus = 5
         elif n.endswith(".tar.gz") or n.endswith(".tgz"):
@@ -555,7 +567,7 @@ def _pick_release_asset(assets: list[dict[str, Any]], tag: str) -> str | None:
             ext_bonus = 3
         elif n.endswith(".deb"):
             ext_bonus = 1
-        return (platform_hits, ext_bonus)
+        return (platform_hits + penalty, ext_bonus)
 
     ranked = sorted(assets, key=lambda a: score(a.get("name", "")), reverse=True)
     for item in ranked:
@@ -776,7 +788,7 @@ def _worker_env() -> dict[str, str]:
     return env
 
 
-def _check_binary_usable(binary: Path | None) -> tuple[bool, str]:
+def _check_binary_usable(binary: Path | None, models_root: Path | None = None) -> tuple[bool, str]:
     if binary is None:
         return False, "binary path is None"
     if not binary.exists():
@@ -803,6 +815,23 @@ def _check_binary_usable(binary: Path | None) -> tuple[bool, str]:
             missing = _linux_missing_libs(binary)
             extra = f"; missing libs: {missing}" if missing else ""
             return False, f"loader failure: {stderr[-300:]}{extra}"
+        # Probe real model load when models are available, because some binaries
+        # pass --help but fail only when translation engine/model initializes.
+        if models_root is not None:
+            probe = subprocess.run(
+                [str(binary), "-m", "en-pt-tiny"],
+                input="hello\n",
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=45,
+                check=False,
+                cwd=str(models_root),
+                env=_worker_env(),
+            )
+            if probe.returncode != 0:
+                perr = ((probe.stderr or "") + "\n" + (probe.stdout or ""))[-400:]
+                return False, f"model probe failed rc={probe.returncode}: {perr}"
         return True, f"returncode={proc.returncode}"
     except Exception as exc:
         return False, f"probe exception: {exc}"
