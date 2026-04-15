@@ -21,12 +21,18 @@ pip install fast-translate
 ## Uso rápido
 
 ```python
-from tlptbr_translate import Translator
+from fast_translate import Translator
 
 tr = Translator()
 print(tr.translate("How are you today?", direction="en-pt"))
 print(tr.translate("Como você está hoje?", direction="pt-en"))
 tr.close()
+```
+
+Compatibilidade legada:
+
+```python
+from tlptbr_translate import Translator  # ainda suportado
 ```
 
 ## Variáveis de ambiente
