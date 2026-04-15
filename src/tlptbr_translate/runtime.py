@@ -97,6 +97,7 @@ class NativeWorker:
         self._active_direction = "en-pt"
         self._warm_thread: threading.Thread | None = None
         self._stop_warm = threading.Event()
+        self._last_stderr = ""
 
     def translate(self, text: str, direction: str) -> str:
         with self._lock:
@@ -134,7 +135,7 @@ class NativeWorker:
             cmd,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
             cwd=str(self.models_root),
             env=_worker_env(),
             bufsize=0,
@@ -217,9 +218,23 @@ class NativeWorker:
                 raise TranslationError("Read timeout from translateLocally")
             chunk = self._proc.stdout.read(n - len(out))
             if not chunk:
-                raise TranslationError("translateLocally closed stdout unexpectedly")
+                details = self._collect_process_error_details(self._proc)
+                raise TranslationError(f"translateLocally closed stdout unexpectedly{details}")
             out.extend(chunk)
         return bytes(out)
+
+    def _collect_process_error_details(self, proc: subprocess.Popen[bytes]) -> str:
+        code = proc.poll()
+        stderr_tail = ""
+        if proc.stderr is not None:
+            try:
+                stderr_tail = proc.stderr.read().decode("utf-8", errors="replace")[-1200:].strip()
+            except Exception:
+                stderr_tail = ""
+        if stderr_tail:
+            self._last_stderr = stderr_tail
+            return f" (exit_code={code}, stderr={stderr_tail!r})"
+        return f" (exit_code={code})"
 
 
 class Translator:
@@ -305,27 +320,30 @@ def resolve_binary_path(binary_path: str | None = None, auto_download: bool = Tr
     explicit = binary_path or os.getenv("TLPTBR_BINARY")
     if explicit:
         p = Path(explicit).expanduser().resolve()
-        if p.exists():
+        if p.exists() and _is_binary_usable(p):
             return p
-        raise TranslationError(f"TLPTBR binary not found at: {p}")
+        raise TranslationError(f"TLPTBR binary not usable at: {p}")
+
+    from_path = shutil.which("translateLocally")
+    if from_path:
+        candidate = Path(from_path)
+        if _is_binary_usable(candidate):
+            return candidate
+
+    if auto_download:
+        downloaded = _download_binary_for_platform()
+        if downloaded and _is_binary_usable(downloaded):
+            _ensure_executable(downloaded)
+            return downloaded
 
     bundled = _bundled_binary_for_platform()
     if bundled and bundled.exists():
         _ensure_executable(bundled)
-        return bundled
-
-    from_path = shutil.which("translateLocally")
-    if from_path:
-        return Path(from_path)
-
-    if auto_download:
-        downloaded = _download_binary_for_platform()
-        if downloaded:
-            _ensure_executable(downloaded)
-            return downloaded
+        if _is_binary_usable(bundled):
+            return bundled
 
     raise TranslationError(
-        "translateLocally binary not found. Set TLPTBR_BINARY or install/provide a compatible binary."
+        "No usable translateLocally binary found. Set TLPTBR_BINARY or provide/install a compatible binary."
     )
 
 
@@ -541,6 +559,20 @@ def _worker_env() -> dict[str, str]:
     env.setdefault("MALLOC_TRIM_THRESHOLD_", "131072")
     env.setdefault("MALLOC_MMAP_THRESHOLD_", "131072")
     return env
+
+
+def _is_binary_usable(binary: Path) -> bool:
+    try:
+        proc = subprocess.run(
+            [str(binary), "--help"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
+            timeout=20,
+            check=False,
+        )
+        return proc.returncode == 0
+    except Exception:
+        return False
 
 
 def _load_libc():
