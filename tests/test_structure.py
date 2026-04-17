@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-from fast_translate.structure import maybe_has_structured_content, translate_preserving_structure
+from fast_translate.structure import (
+    extract_latex_segments,
+    maybe_has_structured_content,
+    translate_preserving_structure,
+)
 
 
 def _fake_translate(line: str) -> str:
@@ -31,7 +35,23 @@ def test_preserves_latex_environment() -> None:
     assert "<<FINAL NOTE.>>" in out
 
 
+def test_preserves_inline_single_symbol_latex() -> None:
+    src = "Given $m$ and $x_i$, explain the relation."
+    out = translate_preserving_structure(src, _fake_translate)
+    assert "$m$" in out
+    assert "$x_i$" in out
+
+
+def test_extract_latex_segments_handles_triple_dollar() -> None:
+    src = "Example $$$m=3$$$ and $$x^2$$ plus $n$."
+    segs = extract_latex_segments(src)
+    assert "$$$m=3$$$" in segs
+    assert "$$x^2$$" in segs
+    assert "$n$" in segs
+
+
 def test_detects_structured_content() -> None:
     assert maybe_has_structured_content("Text with `code`.")
     assert maybe_has_structured_content("Math: $$a+b$$")
+    assert maybe_has_structured_content("Inline math: $m$ and $x_i$")
     assert not maybe_has_structured_content("Plain sentence only.")

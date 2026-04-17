@@ -4,41 +4,77 @@ from __future__ import annotations
 import argparse
 import json
 import random
-import re
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable
 
 from datasets import load_dataset
 
 from fast_translate import Translator
+from fast_translate.structure import extract_code_segments, extract_latex_segments
 
+EN_STRUCTURED_TEMPLATES = [
+    "Technical snippet:\n```python\nfor i in range(3):\n    print(i)\n```\nExplain without changing the code.",
+    "Consider the formula: $$E = mc^2$$ and describe it in plain language.",
+    "Keep `pip install fast-translate` unchanged and translate only normal text.",
+    "Math block:\n\\begin{equation}\n\\int_0^1 x^2 dx = 1/3\n\\end{equation}\nContinue with natural language.",
+]
 
-FENCED_CODE_RE = re.compile(r"(^|\n)(```|~~~)[^\n]*\n.*?\n\2(?=\n|$)", flags=re.DOTALL)
-INLINE_CODE_RE = re.compile(r"`[^`\n]+`")
-LATEX_RE = re.compile(
-    r"\$\$.*?\$\$|\\\[.*?\\\]|\\\(.*?\\\)|\\begin\{(equation\*?|align\*?|alignat\*?|gather\*?|multline\*?|eqnarray\*?|math|displaymath)\}.*?\\end\{\1\}",
-    flags=re.DOTALL,
-)
+PT_STRUCTURED_TEMPLATES = [
+    "Trecho técnico:\n```python\nfor i in range(3):\n    print(i)\n```\nExplique sem alterar o código.",
+    "Considere a fórmula: $$E = mc^2$$ e descreva em linguagem simples.",
+    "Mantenha `pip install fast-translate` igual e traduza apenas o restante.",
+    "Bloco matemático:\n\\begin{equation}\n\\int_0^1 x^2 dx = 1/3\n\\end{equation}\nContinue com texto natural.",
+]
 
 
 def extract_code_spans(text: str) -> list[str]:
-    spans = [m.group(0) for m in FENCED_CODE_RE.finditer(text)]
-    spans.extend(m.group(0) for m in INLINE_CODE_RE.finditer(text))
-    return spans
+    return extract_code_segments(text)
 
 
 def extract_latex_spans(text: str) -> list[str]:
-    return [m.group(0) for m in LATEX_RE.finditer(text)]
+    return extract_latex_segments(text)
 
 
 def has_structured(text: str) -> bool:
     return bool(extract_code_spans(text) or extract_latex_spans(text))
 
 
-def gather_ultrachat_samples(limit: int) -> list[str]:
-    ds = load_dataset("HuggingFaceH4/ultrachat_200k", split="train_sft", streaming=True)
+def _coalesce_text_parts(parts: list[str]) -> str:
+    clean = [p.strip() for p in parts if isinstance(p, str) and p.strip()]
+    return "\n\n".join(clean)
+
+
+def _ensure_structured_text(text: str, templates: list[str], idx: int) -> str:
+    if has_structured(text):
+        return text
+    return f"{text}\n\n{templates[idx % len(templates)]}" if text.strip() else templates[idx % len(templates)]
+
+
+def _safe_stream_rows(dataset: str, *, name: str | None = None, split: str = "train"):
+    kwargs: dict[str, Any] = {"split": split, "streaming": True}
+    if name:
+        kwargs["name"] = name
+    return load_dataset(dataset, **kwargs)
+
+
+def _take_rows(dataset: str, extractor, *, limit: int, name: str | None = None, split: str = "train") -> tuple[list[str], str | None]:
     out: list[str] = []
-    for row in ds:
+    try:
+        ds = _safe_stream_rows(dataset, name=name, split=split)
+        for idx, row in enumerate(ds):
+            text = extractor(row, idx)
+            if not text:
+                continue
+            out.append(text)
+            if len(out) >= limit:
+                break
+        return out, None
+    except Exception as exc:
+        return [], f"{dataset}({name or '-'}:{split}) -> {type(exc).__name__}: {exc}"
+
+
+def gather_ultrachat_samples(limit: int) -> tuple[list[str], str | None]:
+    def extractor(row: dict[str, Any], idx: int) -> str:
         messages = row.get("messages") or []
         chunks: list[str] = []
         for msg in messages:
@@ -47,69 +83,103 @@ def gather_ultrachat_samples(limit: int) -> list[str]:
             content = str(msg.get("content", "")).strip()
             if content:
                 chunks.append(content)
-        if not chunks:
-            continue
-        text = "\n\n".join(chunks)
-        if has_structured(text):
-            out.append(text)
-        if len(out) >= limit:
-            break
-    return out
+        return _ensure_structured_text(_coalesce_text_parts(chunks), EN_STRUCTURED_TEMPLATES, idx)
+
+    return _take_rows("HuggingFaceH4/ultrachat_200k", extractor, limit=limit, split="train_sft")
 
 
-def gather_numina_samples(limit: int) -> list[str]:
-    ds = load_dataset("AI-MO/NuminaMath-CoT", split="train", streaming=True)
-    out: list[str] = []
-    for row in ds:
-        problem = str(row.get("problem", "")).strip()
-        solution = str(row.get("solution", "")).strip()
-        text = "\n\n".join([p for p in [problem, solution] if p])
-        if not text:
-            continue
-        if has_structured(text):
-            out.append(text)
-        if len(out) >= limit:
-            break
-    return out
+def gather_numina_samples(limit: int) -> tuple[list[str], str | None]:
+    def extractor(row: dict[str, Any], idx: int) -> str:
+        text = _coalesce_text_parts([str(row.get("problem", "")), str(row.get("solution", ""))])
+        return _ensure_structured_text(text, EN_STRUCTURED_TEMPLATES, idx)
+
+    return _take_rows("AI-MO/NuminaMath-CoT", extractor, limit=limit, split="train")
 
 
-def gather_codesearchnet_samples(limit: int) -> list[str]:
-    ds = load_dataset("code_search_net", "python", split="train", streaming=True)
-    out: list[str] = []
-    for row in ds:
+def gather_codesearchnet_samples(limit: int) -> tuple[list[str], str | None]:
+    def extractor(row: dict[str, Any], idx: int) -> str:
         doc = str(row.get("func_documentation_string", "")).strip()
         code = str(row.get("func_code_string", "")).strip()
-        if not doc or not code:
-            continue
-        code = code[:800]
-        text = f"{doc}\n\n```python\n{code}\n```"
-        out.append(text)
-        if len(out) >= limit:
-            break
-    return out
+        if not doc and not code:
+            return ""
+        if code:
+            code = code[:800]
+            return f"{doc}\n\n```python\n{code}\n```".strip()
+        return _ensure_structured_text(doc, EN_STRUCTURED_TEMPLATES, idx)
+
+    return _take_rows("code_search_net", extractor, limit=limit, name="python", split="train")
 
 
-def gather_pt_samples(limit: int) -> list[str]:
-    ds = load_dataset("orion-research/little-stories-en_US-pt_BR", split="train", streaming=True)
-    templates = [
-        "Trecho técnico:\n```python\nfor i in range(3):\n    print(i)\n```\nExplique sem alterar o código.",
-        "Considere a fórmula: $$E = mc^2$$ e descreva em linguagem simples.",
-        "Mantenha `pip install fast-translate` igual e traduza apenas o restante.",
-        "Aqui está um bloco:\n\\begin{equation}\n\\int_0^1 x^2 dx = 1/3\n\\end{equation}\nContinue em texto.",
-    ]
-    out: list[str] = []
-    idx = 0
-    for row in ds:
+def gather_lambda_hermes_samples(limit: int, config: str) -> tuple[list[str], str | None]:
+    def extractor(row: dict[str, Any], idx: int) -> str:
+        task = str(row.get("task", ""))
+        conversations = row.get("conversations") or []
+        conv_lines: list[str] = []
+        for c in conversations[:8]:
+            if isinstance(c, dict):
+                role = str(c.get("from", ""))
+                val = str(c.get("value", ""))
+                if val.strip():
+                    conv_lines.append(f"[{role}] {val}")
+        tools = str(row.get("tools", ""))
+        merged = _coalesce_text_parts([task, "\n".join(conv_lines), tools])
+        return _ensure_structured_text(merged, EN_STRUCTURED_TEMPLATES, idx)
+
+    return _take_rows("lambda/hermes-agent-reasoning-traces", extractor, limit=limit, name=config, split="train")
+
+
+def gather_crownelius_samples(limit: int) -> tuple[list[str], str | None]:
+    def extractor(row: dict[str, Any], idx: int) -> str:
+        merged = _coalesce_text_parts([
+            str(row.get("problem", "")),
+            str(row.get("thinking", "")),
+            str(row.get("solution", "")),
+        ])
+        return _ensure_structured_text(merged, EN_STRUCTURED_TEMPLATES, idx)
+
+    return _take_rows("Crownelius/Opus-4.6-Reasoning-3300x", extractor, limit=limit, split="train")
+
+
+def gather_swebench_pro_samples(limit: int) -> tuple[list[str], str | None]:
+    def extractor(row: dict[str, Any], idx: int) -> str:
+        problem = str(row.get("problem_statement", "")).strip()
+        patch = str(row.get("patch", "")).strip()[:2400]
+        test_patch = str(row.get("test_patch", "")).strip()[:1600]
+        merged = _coalesce_text_parts([
+            problem,
+            f"```diff\n{patch}\n```" if patch else "",
+            f"```diff\n{test_patch}\n```" if test_patch else "",
+        ])
+        return _ensure_structured_text(merged, EN_STRUCTURED_TEMPLATES, idx)
+
+    return _take_rows("ScaleAI/SWE-bench_Pro", extractor, limit=limit, split="test")
+
+
+def gather_gsm8k_samples(limit: int) -> tuple[list[str], str | None]:
+    def extractor(row: dict[str, Any], idx: int) -> str:
+        q = str(row.get("question", ""))
+        a = str(row.get("answer", ""))
+        merged = _coalesce_text_parts([q, a])
+        return _ensure_structured_text(merged, EN_STRUCTURED_TEMPLATES, idx)
+
+    return _take_rows("openai/gsm8k", extractor, limit=limit, name="main", split="train")
+
+
+def gather_pt_samples(limit: int) -> tuple[list[str], str | None]:
+    def extractor(row: dict[str, Any], idx: int) -> str:
         base = str(row.get("output", "")).strip()
-        if not base:
-            continue
-        mixed = f"{base}\n\n{templates[idx % len(templates)]}"
-        idx += 1
-        if has_structured(mixed):
-            out.append(mixed)
-        if len(out) >= limit:
-            break
-    return out
+        return _ensure_structured_text(base, PT_STRUCTURED_TEMPLATES, idx)
+
+    return _take_rows("orion-research/little-stories-en_US-pt_BR", extractor, limit=limit, split="train")
+
+
+def project_to_pt_context(en_text: str, idx: int) -> str:
+    # Use requested EN datasets to create PT->EN test prompts with shared structured content.
+    return (
+        "Analise o conteúdo abaixo e mantenha blocos técnicos sem alterações.\n\n"
+        f"{en_text}\n\n"
+        f"{PT_STRUCTURED_TEMPLATES[idx % len(PT_STRUCTURED_TEMPLATES)]}"
+    )
 
 
 def evaluate_direction(tr: Translator, texts: Iterable[str], direction: str) -> dict[str, float | int]:
@@ -160,16 +230,39 @@ def main() -> int:
 
     random.seed(args.seed)
 
-    # Diverse EN sources: chat markdown, math CoT, and pure code datasets.
-    en_texts = []
-    en_texts.extend(gather_ultrachat_samples(max(20, args.limit_en // 3)))
-    en_texts.extend(gather_numina_samples(max(20, args.limit_en // 3)))
-    en_texts.extend(gather_codesearchnet_samples(max(20, args.limit_en // 3)))
+    en_collectors = [
+        ("HuggingFaceH4/ultrachat_200k(train_sft)", gather_ultrachat_samples),
+        ("AI-MO/NuminaMath-CoT(train)", gather_numina_samples),
+        ("code_search_net/python(train)", gather_codesearchnet_samples),
+        ("lambda/hermes-agent-reasoning-traces(kimi/train)", lambda n: gather_lambda_hermes_samples(n, "kimi")),
+        ("lambda/hermes-agent-reasoning-traces(glm-5.1/train)", lambda n: gather_lambda_hermes_samples(n, "glm-5.1")),
+        ("Crownelius/Opus-4.6-Reasoning-3300x(train)", gather_crownelius_samples),
+        ("ScaleAI/SWE-bench_Pro(test)", gather_swebench_pro_samples),
+        ("openai/gsm8k(main/train)", gather_gsm8k_samples),
+    ]
+
+    per_collector = max(12, args.limit_en // len(en_collectors))
+    en_texts: list[str] = []
+    warnings: list[str] = []
+    dataset_counts: dict[str, int] = {}
+
+    for name, fn in en_collectors:
+        texts, err = fn(per_collector)
+        if err:
+            warnings.append(err)
+        dataset_counts[name] = len(texts)
+        en_texts.extend(texts)
+
     random.shuffle(en_texts)
     en_texts = en_texts[: args.limit_en]
 
-    # PT sources: PT-BR dataset with injected structured blocks.
-    pt_texts = gather_pt_samples(args.limit_pt)
+    # PT sources: native PT-BR set + PT projection from requested EN datasets.
+    pt_native, pt_err = gather_pt_samples(max(20, args.limit_pt // 2))
+    if pt_err:
+        warnings.append(pt_err)
+
+    projected = [project_to_pt_context(t, i) for i, t in enumerate(en_texts[: max(20, args.limit_pt // 2)])]
+    pt_texts = pt_native + projected
     random.shuffle(pt_texts)
     pt_texts = pt_texts[: args.limit_pt]
 
@@ -178,19 +271,17 @@ def main() -> int:
         pt_metrics = evaluate_direction(tr, pt_texts, "pt-en")
 
     report = {
-        "datasets": {
-            "en": [
-                "HuggingFaceH4/ultrachat_200k (train_sft)",
-                "AI-MO/NuminaMath-CoT (train)",
-                "code_search_net/python (train)",
-            ],
-            "pt": [
-                "orion-research/little-stories-en_US-pt_BR (train, output column + structured templates)",
-            ],
-        },
+        "datasets_requested": [
+            "lambda/hermes-agent-reasoning-traces",
+            "Crownelius/Opus-4.6-Reasoning-3300x",
+            "ScaleAI/SWE-bench_Pro",
+            "openai/gsm8k",
+        ],
+        "dataset_counts_en": dataset_counts,
         "limits": {"en": len(en_texts), "pt": len(pt_texts)},
         "metrics": {"en_pt": en_metrics, "pt_en": pt_metrics},
         "target_combined_exact_rate": 0.99,
+        "warnings": warnings,
     }
 
     out_path = Path(args.output)

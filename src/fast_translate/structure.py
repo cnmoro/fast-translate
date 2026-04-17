@@ -13,6 +13,7 @@ class ProtectedSpan:
 
 _FENCED_CODE_RE = re.compile(r"(^|\n)(```|~~~)[^\n]*\n.*?\n\2(?=\n|$)", flags=re.DOTALL)
 _INLINE_CODE_RE = re.compile(r"`[^`\n]+`")
+_LATEX_TRIPLE_RE = re.compile(r"\$\$\$.*?\$\$\$", flags=re.DOTALL)
 _LATEX_DISPLAY_RE = re.compile(r"\$\$.*?\$\$|\\\[.*?\\\]|\\\(.*?\\\)", flags=re.DOTALL)
 _LATEX_ENV_RE = re.compile(
     r"\\begin\{(equation\*?|align\*?|alignat\*?|gather\*?|multline\*?|eqnarray\*?|math|displaymath|verbatim|lstlisting|minted)\}.*?\\end\{\1\}",
@@ -26,7 +27,42 @@ def maybe_has_structured_content(text: str) -> bool:
         return True
     if "\\begin{" in text or "\\[" in text or "\\(" in text or "$$" in text:
         return True
+    if "$" in text:
+        # Fast path: if we can find a balanced non-escaped single-dollar pair,
+        # run the structured-preservation pipeline.
+        non_escaped = re.findall(r"(?<!\\)\$", text)
+        if len(non_escaped) >= 2:
+            return True
     return False
+
+
+def extract_code_segments(text: str) -> list[str]:
+    spans: list[ProtectedSpan] = []
+    _add_spans(spans, text, _FENCED_CODE_RE)
+    _add_spans(spans, text, _INLINE_CODE_RE)
+    spans = _normalize_spans(spans)
+    return [text[s.start : s.end] for s in spans]
+
+
+def extract_latex_segments(text: str) -> list[str]:
+    spans: list[ProtectedSpan] = []
+    _add_spans(spans, text, _LATEX_TRIPLE_RE)
+    _add_spans(spans, text, _LATEX_ENV_RE)
+    _add_spans(spans, text, _LATEX_DISPLAY_RE)
+    _add_inline_math_spans(spans, text, protect_all=False)
+    # For evaluation/reporting, do not merge overlapping spans: a malformed
+    # broad match should not hide a valid narrow LaTeX block.
+    spans = sorted(spans, key=lambda s: (s.start, s.end))
+    dedup: list[ProtectedSpan] = []
+    seen = set()
+    for s in spans:
+        key = (s.start, s.end)
+        if key in seen:
+            continue
+        seen.add(key)
+        dedup.append(s)
+    segments = [text[s.start : s.end] for s in dedup]
+    return [seg for seg in segments if _count_as_latex_segment(seg)]
 
 
 def translate_preserving_structure(text: str, translate_line: Callable[[str], str]) -> str:
@@ -72,10 +108,11 @@ def _translate_text_preserving_layout(text: str, translate_line: Callable[[str],
 
 def _collect_protected_spans(text: str) -> list[ProtectedSpan]:
     spans: list[ProtectedSpan] = []
+    _add_spans(spans, text, _LATEX_TRIPLE_RE)
     _add_spans(spans, text, _FENCED_CODE_RE)
     _add_spans(spans, text, _LATEX_ENV_RE)
     _add_spans(spans, text, _LATEX_DISPLAY_RE)
-    _add_inline_math_spans(spans, text)
+    _add_inline_math_spans(spans, text, protect_all=True)
     _add_spans(spans, text, _INLINE_CODE_RE)
     return _normalize_spans(spans)
 
@@ -85,7 +122,7 @@ def _add_spans(spans: list[ProtectedSpan], text: str, pattern: re.Pattern[str]) 
         spans.append(ProtectedSpan(match.start(), match.end()))
 
 
-def _add_inline_math_spans(spans: list[ProtectedSpan], text: str) -> None:
+def _add_inline_math_spans(spans: list[ProtectedSpan], text: str, *, protect_all: bool) -> None:
     i = 0
     n = len(text)
     while i < n:
@@ -99,7 +136,12 @@ def _add_inline_math_spans(spans: list[ProtectedSpan], text: str) -> None:
         while j < n:
             if text[j] == "$" and text[j - 1] != "\\":
                 content = text[i + 1 : j]
-                if _looks_like_math(content):
+                if protect_all:
+                    # Preserve any balanced single-dollar fragment to avoid
+                    # accidental corruption of technical/currency notations.
+                    if content.strip() and len(content) <= 220:
+                        spans.append(ProtectedSpan(i, j + 1))
+                elif _looks_like_math(content):
                     spans.append(ProtectedSpan(i, j + 1))
                 i = j + 1
                 break
@@ -112,10 +154,69 @@ def _add_inline_math_spans(spans: list[ProtectedSpan], text: str) -> None:
 
 
 def _looks_like_math(content: str) -> bool:
-    if not content.strip():
+    stripped = content.strip()
+    if not stripped:
         return False
-    math_markers = ("\\", "^", "_", "=", "+", "-", "\\frac", "\\sum", "\\int", "{", "}")
-    return any(marker in content for marker in math_markers)
+    # Common inline math like $m$, $n$, $x_i$ should be treated as math.
+    if re.fullmatch(r"[A-Za-z](?:[A-Za-z0-9_]{0,7})", stripped):
+        return True
+
+    if len(stripped) > 96:
+        return False
+
+    math_markers = ("\\", "^", "_", "=", "/", "*", "{", "}", "(", ")", "<", ">", "|")
+    has_marker = any(marker in stripped for marker in math_markers)
+    if not has_marker:
+        return False
+
+    # Avoid classifying natural-language currency/text fragments as math.
+    words = re.findall(r"[A-Za-z]+", stripped)
+    if words:
+        allowed_words = {
+            "frac",
+            "sqrt",
+            "sum",
+            "prod",
+            "lim",
+            "mod",
+            "sin",
+            "cos",
+            "tan",
+            "log",
+            "ln",
+            "max",
+            "min",
+            "boxed",
+            "binom",
+            "text",
+            "overrightarrow",
+        }
+        if any((len(w) != 1) and (w.lower() not in allowed_words) for w in words):
+            return False
+
+    # Regex/URL-like or command blobs are not math.
+    if any(tok in stripped for tok in ("http://", "https://", "@", "\\x", "://")):
+        return False
+
+    return True
+
+
+def _count_as_latex_segment(segment: str) -> bool:
+    s = segment.strip()
+    if not s:
+        return False
+    if s.startswith("\\begin{") or s.startswith("\\[") or s.startswith("\\("):
+        return True
+    if s.startswith("$$$") and s.endswith("$$$") and len(s) >= 6:
+        inner = s[3:-3].strip()
+        return _looks_like_math(inner)
+    if s.startswith("$$") and s.endswith("$$") and len(s) >= 4:
+        inner = s[2:-2].strip()
+        return _looks_like_math(inner)
+    if s.startswith("$") and s.endswith("$") and len(s) >= 2:
+        inner = s[1:-1].strip()
+        return _looks_like_math(inner)
+    return False
 
 
 def _normalize_spans(spans: list[ProtectedSpan]) -> list[ProtectedSpan]:
