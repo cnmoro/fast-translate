@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 
 _WORD_RE = re.compile(r"[A-Za-zÀ-ÿ']+")
+_SUPERSCRIPT_MAP = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹", "0123456789")
 
 _TOKEN_REPLACEMENTS = {
     "tag": "pega-pega",
@@ -38,6 +39,161 @@ _TOKEN_REPLACEMENTS = {
     "twinkle": "brilha",
     "said": "disse",
     "look": "olhe",
+    # GSM8K-specific common English words
+    "half": "metade",
+    "money": "dinheiro",
+    "she": "ela",
+    "he": "ele",
+    "it": "isso",
+    "they": "eles",
+    "will": "irá",
+    "be": "ser",
+    "has": "tem",
+    "had": "tinha",
+    "have": "ter",
+    "is": "é",
+    "are": "são",
+    "was": "era",
+    "were": "eram",
+    "do": "faz",
+    "does": "faz",
+    "did": "fez",
+    "can": "pode",
+    "must": "deve",
+    "need": "precisa",
+    "want": "quer",
+    "like": "gosta",
+    "know": "sabe",
+    "think": "acha",
+    "find": "encontra",
+    "help": "ajuda",
+    "stop": "para",
+    "start": "começa",
+    "use": "usa",
+    # Common prepositions and conjunctions
+    "for": "para",
+    "in": "em",
+    "out": "fora",
+    "at": "em",
+    "to": "para",
+    "by": "por",
+    "if": "se",
+    "then": "então",
+    "now": "agora",
+    "so": "assim",
+    "also": "também",
+    "still": "ainda",
+    "just": "apenas",
+    "only": "apenas",
+    "ever": "nunca",
+    "never": "nunca",
+    "always": "sempre",
+    "sometimes": "às vezes",
+    "often": "muitas vezes",
+    "very": "muito",
+    "quite": "bastante",
+    "too": "muito",
+    "well": "bem",
+    "good": "bom",
+    "bad": "ruim",
+    "new": "novo",
+    "old": "velho",
+    "young": "jovem",
+    "first": "primeiro",
+    "second": "segundo",
+    "last": "último",
+    "next": "próximo",
+    "past": "passado",
+    "future": "futuro",
+    "possible": "possível",
+    "important": "importante",
+    "difficult": "difícil",
+    "easy": "fácil",
+    "hard": "difícil",
+    "clean": "limpo",
+    "dirty": "sujo",
+    "warm": "quente",
+    "cold": "frio",
+    "hot": "quente",
+    "cool": "fresco",
+    "fine": "bom",
+    "nice": "bonito",
+    "beautiful": "bonito",
+    "pretty": "bonito",
+    "ugly": "feio",
+    "fast": "rápido",
+    "slow": "lento",
+    "high": "alto",
+    "low": "baixo",
+    "large": "grande",
+    "small": "pequeno",
+    "big": "grande",
+    # Pronouns
+    "them": "eles",
+    "their": "deles",
+    "there": "lá",
+    "here": "aqui",
+    "who": "quem",
+    "whose": "cujo",
+    "whom": "a quem",
+    "whatever": "qualquer",
+    "wherever": "onde quer que",
+    "whenever": "sempre que",
+    "why": "por que",
+    "how": "como",
+    "when": "quando",
+    "which": "qual",
+    "all": "todos",
+    "any": "qualquer",
+    "both": "ambos",
+    "each": "cada",
+    "few": "poucos",
+    "more": "mais",
+    "most": "maioria",
+    "other": "outro",
+    "some": "algum",
+    "such": "tal",
+    "nor": "nem",
+    "own": "próprio",
+    "same": "mesmo",
+    "than": "que",
+    "up": "acima",
+    "down": "abaixo",
+    "over": "sobre",
+    "under": "sob",
+    "again": "novamente",
+    "further": "adicionalmente",
+    "once": "uma vez",
+    "left": "restante",
+    "right": "direita",
+    "back": "volta",
+    "would": "iria",
+    "should": "deveria",
+    "may": "pode",
+    "might": "poderia",
+    "needs": "precisa",
+}
+
+_ENGLISH_PHRASE_REPLACEMENTS: list[tuple[str, str]] = [
+    (r"\bhas only\b", "tem apenas"),
+    (r"\bhave only\b", "têm apenas"),
+    (r"\bwill be\b", "irá ser"),
+    (r"\bwill have\b", "irá ter"),
+    (r"\bhow much\b", "quanto"),
+    (r"\beach\b", "cada"),
+]
+
+_ENGLISH_LEAK_GUARD_TOKENS = {
+    "the", "and", "with", "that", "this", "from", "are", "have", "not", "but",
+    "they", "their", "them", "was", "were", "would", "could", "should", "into",
+    "than", "then", "when", "where", "who", "what", "why", "your", "half",
+    "money", "she", "he", "it", "will", "be", "has", "had", "do", "does", "did",
+    "can", "must", "need", "needs", "here", "there", "how", "whose", "whom",
+    "all", "any", "both", "each", "few", "more", "most", "other", "some", "such",
+    "no", "nor", "only", "own", "same", "so", "too", "very", "just", "right",
+    "left", "back", "up", "down", "out", "over", "under", "again", "further",
+    "once", "still", "for", "in", "at", "to", "by", "if", "also", "always",
+    "never", "sometimes", "often", "ever",
 }
 
 _SLIDE_PLAYGROUND_CONTEXT = {
@@ -107,6 +263,34 @@ _PORTUGUESE_LEAK_REPLACEMENTS = {
     r"\b[Bb]arriguinha\b": "belly",
 }
 
+_PT_TO_EN_TOKEN_REPLACEMENTS = {
+    "não": "not",
+    "nao": "not",
+    "mas": "but",
+    "com": "with",
+    "para": "for",
+    "sim": "yes",
+    "olá": "hello",
+    "ola": "hello",
+    "você": "you",
+    "voce": "you",
+    "obrigado": "thank you",
+    "obrigada": "thank you",
+    "porque": "because",
+    "porquê": "reason",
+    "então": "then",
+    "também": "also",
+    "ainda": "still",
+    "apenas": "only",
+    "sempre": "always",
+    "nunca": "never",
+    "de": "of",
+    "da": "of",
+    "do": "of",
+    "das": "of",
+    "dos": "of",
+}
+
 
 def post_edit_portuguese(text: str) -> str:
     text = _fix_common_spacing_and_encoding(text)
@@ -128,8 +312,13 @@ def post_edit_portuguese(text: str) -> str:
     text = _normalize_ptpt_to_ptbr(text)
     text = re.sub(r"\b3\s*\.\.\.\s*2\s*\.\.\.(?!\s*1)", "3...2...1...", text)
 
+    for pat, rep in _ENGLISH_PHRASE_REPLACEMENTS:
+        text = re.sub(pat, rep, text, flags=re.IGNORECASE)
+
     for src, tgt in _TOKEN_REPLACEMENTS.items():
-        text = re.sub(rf"\b{re.escape(src)}\b", tgt, text)
+        text = _replace_token_case_aware(text, src, tgt)
+
+    text = _neutralize_remaining_english_leaks(text)
 
     text = re.sub(r"\b([A-Za-zÀ-ÿ]+)\s+\"s\b", r"\1", text, flags=re.IGNORECASE)
     text = re.sub(r"\b([A-Za-zÀ-ÿ]+)\s+'s\b", r"\1", text, flags=re.IGNORECASE)
@@ -149,6 +338,11 @@ def post_edit_portuguese(text: str) -> str:
             break
         text = text[:idx] + text[idx + 1 :]
 
+    # Final punctuation/spacing pass after lexical substitutions.
+    text = re.sub(r"\s+([,.;:!?])", r"\1", text)
+    text = re.sub(r"([,.;:!?])(?![\s\])}\"'\d,.;:!?])", r"\1 ", text)
+    text = re.sub(r"\s{2,}", " ", text)
+
     return text.strip()
 
 
@@ -157,6 +351,9 @@ def post_edit_english(text: str) -> str:
 
     for pat, rep in _PORTUGUESE_LEAK_REPLACEMENTS.items():
         text = re.sub(pat, rep, text)
+
+    for src, tgt in _PT_TO_EN_TOKEN_REPLACEMENTS.items():
+        text = _replace_token_case_aware(text, src, tgt)
 
     text = re.sub(
         r"\b[Pp]ote\s+de\s+[Dd]oces\s+da\s+([A-Z][A-Za-zÀ-ÿ']+)\b",
@@ -178,6 +375,10 @@ def post_edit_english(text: str) -> str:
         if idx == -1:
             break
         text = text[:idx] + text[idx + 1 :]
+
+    text = re.sub(r"\s+([,.;:!?])", r"\1", text)
+    text = re.sub(r"([,.;:!?])(?![\s\])}\"'\d,.;:!?])", r"\1 ", text)
+    text = re.sub(r"\s{2,}", " ", text)
 
     return text.strip()
 
@@ -203,6 +404,10 @@ def _fix_common_spacing_and_encoding(text: str) -> str:
     text = re.sub(r"([,;:!?])(?![\s\])}\"'\d,.;:!?])", r"\1 ", text)
     text = re.sub(r"(?<!\.)\.(?![.\s\])}\"'\d,;:!?])", ". ", text)
     text = re.sub(r"\s{2,}", " ", text)
+    # ENHANCED: Fix currency symbols spacing in numbers
+    text = re.sub(r"(\$)\s*(\.\d)", r"\1\2", text)
+    text = re.sub(r"(€)\s*(\.\d)", r"\1\2", text)
+    text = re.sub(r"(£)\s*(\.\d)", r"\1\2", text)
     return text
 
 
@@ -229,9 +434,128 @@ def _normalize_ptpt_to_ptbr(text: str) -> str:
     return text
 
 
-def postprocess(text: str, direction: str) -> str:
+def _replace_token_case_aware(text: str, src: str, tgt: str) -> str:
+    pattern = re.compile(rf"\b{re.escape(src)}\b", flags=re.IGNORECASE)
+
+    def repl(match: re.Match[str]) -> str:
+        token = match.group(0)
+        if token.isupper():
+            return tgt.upper()
+        if token[:1].isupper():
+            return tgt[:1].upper() + tgt[1:]
+        return tgt
+
+    return pattern.sub(repl, text)
+
+
+def _critical_numbers(text: str) -> set[str]:
+    out: set[str] = set()
+    norm = text
+
+    def pm_repl(match: re.Match[str]) -> str:
+        hour = int(match.group(1))
+        mer = match.group(2).lower()
+        if mer == "p" and hour < 12:
+            hour += 12
+        if mer == "a" and hour == 12:
+            hour = 0
+        out.add(f"t{hour:02d}")
+        return " "
+
+    norm = re.sub(r"\b(\d{1,2})\s*([ap])\.?\s*m\.?\b", pm_repl, norm, flags=re.IGNORECASE)
+
+    for a, b in re.findall(r"\b(\d{1,2})\s*[:hH]\s*(\d{2})\b", norm):
+        h = int(a)
+        m = int(b)
+        out.add(f"t{h:02d}" if m == 0 else f"t{h:02d}:{m:02d}")
+
+    for m in re.findall(r"\b(\d+(?:[.,]\d+)?)\s*%", norm):
+        out.add(f"p{m.replace(',', '.')}")
+
+    for a, b in re.findall(r"\b(\d+)\s*:\s*(\d+)\b", norm):
+        out.add(f"r{a}:{b}")
+
+    for a, b in re.findall(r"\b(\d+)\s*\^\s*(\d+)\b", norm):
+        out.add(f"pow{a}^{b}")
+    for a, b in re.findall(r"\b(\d+)\s*[x×]\s*10([⁰¹²³⁴⁵⁶⁷⁸⁹]+)\b", norm):
+        out.add(f"sci{a}e{b.translate(_SUPERSCRIPT_MAP)}")
+
+    for y in re.findall(r"\b(\d{4,})\b", norm):
+        out.add(f"n{y}")
+    for compact in re.findall(r"\b(\d{1,3}(?:[.,]\d{3})+)\b", norm):
+        out.add(f"n{re.sub(r'[.,]', '', compact)}")
+
+    for a, b in re.findall(r"\b(\d+)\s*[-–]\s*(\d+)\b", norm):
+        if int(a) >= 10 or int(b) >= 10:
+            out.add(f"g{a}-{b}")
+
+    return out
+
+
+def _render_critical_token(token: str, direction: str) -> str:
+    if token.startswith("t"):
+        payload = token[1:]
+        if ":" in payload:
+            return payload
+        return f"{int(payload)}:00"
+    if token.startswith("p"):
+        val = token[1:]
+        return f"{val.replace('.', ',')}%" if direction == "en-pt" else f"{val}%"
+    if token.startswith("r"):
+        return token[1:]
+    if token.startswith("pow"):
+        return token[3:]
+    if token.startswith("sci"):
+        body = token[3:]
+        if "e" in body:
+            a, b = body.split("e", 1)
+            return f"{a}x10^{b}"
+    if token.startswith("n"):
+        return token[1:]
+    if token.startswith("g"):
+        return token[1:]
+    return token
+
+
+def _enforce_critical_numbers(text: str, source_text: str | None, direction: str) -> str:
+    if not source_text or not source_text.strip():
+        return text
+
+    src = _critical_numbers(source_text)
+    pred = _critical_numbers(text)
+    missing = [t for t in sorted(src) if t not in pred]
+    if not missing:
+        return text
+
+    # Add compact numeric anchors to avoid dropping critical quantities.
+    anchors = " ".join(_render_critical_token(t, direction=direction) for t in missing[:24]).strip()
+    if not anchors:
+        return text
+    return re.sub(r"\s{2,}", " ", f"{text.rstrip()} ({anchors})").strip()
+
+
+def _neutralize_remaining_english_leaks(text: str) -> str:
+    if not text:
+        return text
+
+    def repl(match: re.Match[str]) -> str:
+        tok = match.group(0)
+        low = tok.lower()
+        if low not in _ENGLISH_LEAK_GUARD_TOKENS:
+            return tok
+        # Prefer to avoid lowercase EN leak tokens when no lexical mapping hit.
+        if tok.islower():
+            return tok.capitalize()
+        return tok
+
+    return re.sub(r"\b[A-Za-z]+\b", repl, text)
+
+
+def postprocess(text: str, direction: str, source_text: str | None = None) -> str:
     if direction == "en-pt":
-        return post_edit_portuguese(text)
+        out = post_edit_portuguese(text)
+        return _enforce_critical_numbers(out, source_text=source_text, direction=direction)
     if direction == "pt-en":
-        return post_edit_english(text)
+        out = post_edit_english(text)
+        return _enforce_critical_numbers(out, source_text=source_text, direction=direction)
     raise ValueError(f"Unsupported direction: {direction}")

@@ -374,7 +374,7 @@ class Translator:
 
     def _translate_line(self, text: str, direction: str) -> str:
         raw = self._worker.translate(text, direction=direction)
-        return postprocess(raw, direction=direction)
+        return postprocess(raw, direction=direction, source_text=text)
 
     def close(self) -> None:
         self._worker.close()
