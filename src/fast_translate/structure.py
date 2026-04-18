@@ -28,10 +28,10 @@ def maybe_has_structured_content(text: str) -> bool:
     if "\\begin{" in text or "\\[" in text or "\\(" in text or "$$" in text:
         return True
     if "$" in text:
-        # Fast path: if we can find a balanced non-escaped single-dollar pair,
-        # run the structured-preservation pipeline.
-        non_escaped = re.findall(r"(?<!\\)\$", text)
-        if len(non_escaped) >= 2:
+        # For single-dollar spans, only treat as structured when they look like
+        # inline math. This avoids preserving normal currency text ($12 ... $3)
+        # as if it were LaTeX.
+        if _has_inline_math_like_pair(text):
             return True
     return False
 
@@ -112,7 +112,7 @@ def _collect_protected_spans(text: str) -> list[ProtectedSpan]:
     _add_spans(spans, text, _FENCED_CODE_RE)
     _add_spans(spans, text, _LATEX_ENV_RE)
     _add_spans(spans, text, _LATEX_DISPLAY_RE)
-    _add_inline_math_spans(spans, text, protect_all=True)
+    _add_inline_math_spans(spans, text, protect_all=False)
     _add_spans(spans, text, _INLINE_CODE_RE)
     return _normalize_spans(spans)
 
@@ -151,6 +151,27 @@ def _add_inline_math_spans(spans: list[ProtectedSpan], text: str, *, protect_all
             j += 1
         else:
             i += 1
+
+
+def _has_inline_math_like_pair(text: str) -> bool:
+    i = 0
+    n = len(text)
+    while i < n:
+        if text[i] != "$" or (i > 0 and text[i - 1] == "\\"):
+            i += 1
+            continue
+        if i + 1 < n and text[i + 1] == "$":
+            i += 2
+            continue
+        j = i + 1
+        while j < n:
+            if text[j] == "$" and text[j - 1] != "\\":
+                return _looks_like_math(text[i + 1 : j])
+            if text[j] == "\n":
+                break
+            j += 1
+        i += 1
+    return False
 
 
 def _looks_like_math(content: str) -> bool:
