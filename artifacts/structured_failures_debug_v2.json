@@ -1,0 +1,536 @@
+[
+  {
+    "idx": 2,
+    "dataset": "numina",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 1,
+    "out_latex_count": 1,
+    "src_latex_head": [
+      "$\\boxed{74.44}$"
+    ],
+    "out_latex_head": [
+      "$-boxed a 74,44 $"
+    ],
+    "src_excerpt": "The molecular weight of a certain substance is 74. What is the molecular weight of Bleach?\n\nBleach is a common name for a solution of sodium hypochlorite (NaOCl) in water. The molecular weight of sodium hypochlorite is calculated by adding the atomic weights of sodium (Na), oxygen (O), and chlorine (Cl). The atomic weights are approximately:\n\n- Sodium (Na): 22.99 g/mol\n- Oxygen (O): 16.00 g/mol\n- Chlorine (Cl): 35.45 g/mol\n\nThe molecular weight of sodium hypochlorite (NaOCl) is:\n\nNaOCl = Na + O + Cl\n       = 22.99 g/mol + 16.00 g/mol + 35.45 g/mol\n       = 74.44 g/mol\n\nSo, the molecular weight of sodium hypochlorite, which is the active ingredient in bleach, is approximately $\\boxed{74.44}$  g/mol. However, commercial bleach solutions contain a certain percentage of sodium hypochlorite dissolved in water, so the overall molecular weight of the solution would be different and depends on t",
+    "out_excerpt": "O peso molecular de uma determinada substância é 74. Qual é o peso molecular de Bleach? Bleach é um nome comum para uma solução de hipoclorito de sódio (NaOCl) em água. O peso molecular do hipoclorito de sódio é calculado adicionando os pesos atômicos de sódio (Na), oxigênio (O) e cloro (Cl). Os pesos atômicos são aproximadamente: - Sódio (Na): 22.99 g/mol\n- Oxigênio (O): 16.00 g/mol\n- Cloro (Cl): 35,45 g/mol O peso molecular do hipoclorito de sódio (NaOCl) é: NaOCl = Na + O + Cl = 22,99 g/mol + 16.00 g/mol + 35,45 g/mol = 74,44 g/mol Assim, o peso molecular do hipoclorito de sódio, que é o ingrediente ativo não alvejante, é aproximadamente $-boxed a 74,44 $ g/mol. No entanto, as soluções de alvejante comercial contêm uma certa porcentagem de hipoclorito de sódio dissolvido em água, de modo que o peso molecular geral da solução seria diferente e depende da concentração do hipoclorito de "
+  },
+  {
+    "idx": 9,
+    "dataset": "numina",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 7,
+    "out_latex_count": 7,
+    "src_latex_head": [
+      "$5/square foot * 6000 square feet = $",
+      "$30,000 = $",
+      "$30,000 (land) + $",
+      "$54,000 = $",
+      "$90,000 - $",
+      "$36,000 / $"
+    ],
+    "out_latex_head": [
+      "$5/pé quadrado * 6.000 pés quadrados = $",
+      "$30,000 = $",
+      "$30,000 (terra) + $",
+      "$90,000 Tom gasta $",
+      "$54.000 = $",
+      "$90,000 - $"
+    ],
+    "src_excerpt": "Tom decides to open a theater. He knows it will cost $5 per square foot of space that he needs and he needs 12 square feet for every seat in his theater. He wants a 500 seat theater. He also realizes construction will cost twice as much as the land. He has a partner who covers a certain percentage of the cost. Tom spends $54,000. What percentage of the cost does his partner cover?\n\nFirst, let's calculate the total square footage Tom needs for his 500 seat theater:\n\n12 square feet/seat * 500 seats = 6000 square feet\n\nNext, we calculate the cost of the land based on the square footage:\n\n$5/square foot * 6000 square feet = $30,000\n\nSince construction costs twice as much as the land, we calculate the construction cost:\n\n2 * $30,000 = $60,000\n\nNow we have the total cost of the project by adding the land and construction costs:\n\n$30,000 (land) + $60,000 (construction) = $90,000\n\nTom spends $54",
+    "out_excerpt": "Tom decide abrir um teatro. Ele sabe que vai custar US $ 5 por pé quadrado de espaço que ele precisa e ele precisa de 12 pés quadrados para cada assento em seu teatro. Ele quer um teatro de 500 lugares. Ele também percebe que a construção vai custar duas vezes mais do que a terra. Ele tem um parceiro que cobre uma certa porcentagem do custo. Tom gasta $54.000. Que percentagem do custo cobre o seu parceiro? Primeiro, vamos calcular o total de imagens quadradas que Tom precisa para o seu teatro de 500 lugares: 12 pés quadrados/sede * 500 assentos = 6000 pés quadrados Em seguida, calculamos o custo da terra com base na filmagem quadrada: $5/pé quadrado * 6.000 pés quadrados = $30,000 Desde a construção custa duas vezes mais do que o terreno, calculamos o custo de construção: 2 * $30,000 = $60,000 Agora temos o custo total do projeto adicionando os custos de terra e construção: $30,000 (terr"
+  },
+  {
+    "idx": 11,
+    "dataset": "gsm8k",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 2,
+    "out_latex_count": 2,
+    "src_latex_head": [
+      "$1750 which is 2*$",
+      "$1750+$"
+    ],
+    "out_latex_head": [
+      "$1750 = $",
+      "$1750+$"
+    ],
+    "src_excerpt": "Mr. Sam shared a certain amount of money between his two sons, Ken and Tony. If Ken got $1750, and Tony got twice as much as Ken, how much was the money shared?\n\nTony got twice $1750 which is 2*$1750 = $<<2*1750=3500>>3500\nThe total amount shared was $1750+$3500 = $<<1750+3500=5250>>5250\n#### 5250",
+    "out_excerpt": "O Sr. Sam compartilhou uma certa quantidade de dinheiro entre seus dois filhos, Ken e Tony. Se Ken obteve $1750, e Tony obteve o dobro de Ken, quanto foi o dinheiro compartilhado? Tony obteve duas vezes $1750 que é 2 * $1750 = $ 2 * 1750=3500>>3500\nO valor total compartilhado foi de $1750+$3500 = $1750+3500=5250>>5250\n5250"
+  },
+  {
+    "idx": 12,
+    "dataset": "gsm8k",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 5,
+    "out_latex_count": 5,
+    "src_latex_head": [
+      "$60 for a large painting and $",
+      "$60/large painting x 8 large paintings = $",
+      "$30/small painting x 4 small paintings = $",
+      "$480 + $",
+      "$600 x 2 = $"
+    ],
+    "out_latex_head": [
+      "$60 por uma grande pintura e US $",
+      "$60 / grande pintura x 8 grandes pinturas = $",
+      "$30/pequena pintura x 4 pequenas pinturas = $",
+      "$ 480 + US $",
+      "$ 600 x 2 = US $"
+    ],
+    "src_excerpt": "Noah is a painter. He paints pictures and sells them at the park. He charges $60 for a large painting and $30 for a small painting. Last month he sold eight large paintings and four small paintings. If he sold twice as much this month, how much is his sales for this month?\n\nNoah earned $60/large painting x 8 large paintings = $<<60*8=480>>480 for the large paintings.\nHe also earned $30/small painting x 4 small paintings = $<<30*4=120>>120 for the small paintings.\nHis total sales last month were $480 + $120 = $<<480+120=600>>600.\nSo, his sales this month are $600 x 2 = $<<600*2=1200>>1200.\n#### 1200",
+    "out_excerpt": "Noé é um pintor. Ele pinta fotos e as vende não parque. Ele cobra $60 por uma grande pintura e US $ 30 para uma pequena pintura. No mês passado, ele vendeu oito grandes pinturas e quatro pequenas pinturas. Se ele vendeu o dobro deste mês, quanto suas vendas para este mês? Noé ganhou $60 / grande pintura x 8 grandes pinturas = $60 * 8=480>>480 para as grandes pinturas.\nEle também ganhou $30/pequena pintura x 4 pequenas pinturas = $ 30 * 4=120>>120 para as pequenas pinturas.\nSuas vendas totais não mês passado foram de US $ 480 + US $ 120 = US $ 480 + 120=600>>600.\nEntão, suas vendas este mês são de US $ 600 x 2 = US $ 600 * 2=1200>>1200.\nR$ 1200"
+  },
+  {
+    "idx": 13,
+    "dataset": "gsm8k",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 6,
+    "out_latex_count": 6,
+    "src_latex_head": [
+      "$3 x 5 = $",
+      "$1.20 x 4 = $",
+      "$0.5 x 5 = $",
+      "$15 + $",
+      "$2.50 +$",
+      "$25/5 = $"
+    ],
+    "out_latex_head": [
+      "$ 3 x 5 = US $",
+      "$ 1,20 x 4 = US $",
+      "$ 0,5 x 5 = US $",
+      "$ 15 + US $",
+      "$ 2,50 + US $",
+      "$25/5 = $"
+    ],
+    "src_excerpt": "Five friends eat at a fast-food chain and order the following: 5 pieces of hamburger that cost $3 each; 4 sets of French fries that cost $1.20; 5 cups of soda that cost $0.5 each; and 1 platter of spaghetti that cost $2.7. How much will each of them pay if they will split the bill equally?\n\nThe cost of 5 pieces of hamburger is $3 x 5 = $<<3*5=15>>15.\nThe cost of 4 sets of French fries is $1.20 x 4 = $<<1.20*4=4.80>>4.80.\nThe cost of 5 cups of soda is $0.5 x 5 = $<<0.5*5=2.50>>2.50.\nSo their total bill is $15 + $4.80 + $2.50 +$2.7 = $<<15+4.8+2.5+2.7=25>>25.\nHence, each of the five friends will contribute $25/5 = $<<25/5=5>>5.\n#### 5",
+    "out_excerpt": "Cinco amigos comem em uma cadeia de fast-food e encomendam o seguinte: 5 peças de hambúrguer que custam US $ 3 cada; 4 conjuntos de batatas fritas que custam US $ 1,20; 5 xícaras de refrigerante que custam US $ 0,5 cada; e 1 prato de esparguete que custam US $ 2,7. Quanto cada um deles pagará se dividirem a conta igualmente? O custo de 5 peças de hambúrguer é de US $ 3 x 5 = US $ 3 * 5 = 15>>15.\nO custo de 4 conjuntos de batatas fritas é de US $ 1,20 x 4 = US $ 1,20 * 4,80>>4,80.\nO custo de 5 xícaras de refrigerante é de US $ 0,5 x 5 = US $ 0,5 * 5 = 2,50>>2.50.\nAssim, sua conta total é de US $ 15 + US $ 4,80 + US $ 2,50 + US $ 2,7 = US $ 15 + 4,8 + 2,5 + 2 + 25>25.\nAssim, cada um dos cinco amigos contribuirá com $25/5 = $25/5=5>>5.\n5 - 5"
+  },
+  {
+    "idx": 24,
+    "dataset": "numina",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 1,
+    "out_latex_count": 1,
+    "src_latex_head": [
+      "$\\boxed{7040}$"
+    ],
+    "out_latex_head": [
+      "$ 7040 a US$"
+    ],
+    "src_excerpt": "Julian is writing a comic book. On average, his story has 280 frames per page. In his 25-page book, 10 pages have 305 frames, 7 pages have 250 frames, and the remaining pages have the average number of frames. How many frames will there be in total in his comic book?\n\nFirst, let's calculate the total number of frames for the pages that don't have the average number of frames.\n\nFor the 10 pages with 305 frames each:\n10 pages * 305 frames/page = 3050 frames\n\nFor the 7 pages with 250 frames each:\n7 pages * 250 frames/page = 1750 frames\n\nNow, let's find out how many pages have the average number of frames. Julian's book has 25 pages in total, and we already know the frame count for 17 of them (10 with 305 frames and 7 with 250 frames).\n\n25 pages - 10 pages - 7 pages = 8 pages\n\nThese 8 pages have the average number of frames, which is 280 frames per page.\n\n8 pages * 280 frames/page = 2240 fra",
+    "out_excerpt": "Julian está escrevendo uma história em quadrinhos. Em média, sua história tem 280 quadros por página. Em seu livro de 25 páginas, 10 páginas têm 305 quadros, 7 páginas têm 250 quadros e as páginas restantes têm o número médio de quadros. Quantos quadros haverá não total em sua história em quadrinhos? Primeiro, vamos calcular o número total de quadros para as páginas que não têm o número médio de quadros. Para as 10 páginas com 305 quadros cada:\n10 páginas * 305 quadros/página = 3050 quadros Para as 7 páginas com 250 quadros cada:\n7 páginas * 250 frames/página = 1750 frames Agora, vamos descobrir quantas páginas têm o número médio de quadros. O livro de Julian tem 25 páginas não total, e já sabemos a contagem de quadros para 17 delas (10 com 305 quadros e 7 com 250 quadros). 25 páginas - 10 páginas - 7 páginas = 8 páginas Estas 8 páginas têm o número médio de quadros, que é de 280 quadros"
+  },
+  {
+    "idx": 36,
+    "dataset": "numina",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 48,
+    "out_latex_count": 31,
+    "src_latex_head": [
+      "$P$",
+      "$C$",
+      "$(x-2)^{2}+(y-2)^{2}=1$",
+      "$Q$",
+      "$l$",
+      "$x+y=1$"
+    ],
+    "out_latex_head": [
+      "$P$",
+      "$C$",
+      "$(x-2) - 2 + '+(y-2) - 2 - 2 - R$",
+      "$Q$",
+      "$l$",
+      "$x+y=1$"
+    ],
+    "src_excerpt": "Given that $P$ is any point on the circle $C$: $(x-2)^{2}+(y-2)^{2}=1$, and $Q$ is any point on the line $l$: $x+y=1$, find the minimum value of $| \\overrightarrow{OP}+ \\overrightarrow{OQ}|$.\n\nThe distance $d$ between the center of the circle $C(2,2)$ and the line $l$: $x+y=1$ is $d= \\frac{|2+2-1|}{ \\sqrt{2}}= \\frac{3}{ \\sqrt{2}} > 1$, hence the line $l$ and the circle $C$ are separate.\n\nLet the coordinates of $P$ be $(x,y)$, then $P$ is any point on the circle $C$: $(x-2)^{2}+(y-2)^{2}=1$.\n\nLet the coordinates of $Q$ be $(a,1-a)$, then $Q$ is any point on the line $l$: $x+y=1$.\n\nThus, $\\overrightarrow{OP}+ \\overrightarrow{OQ}=(x+a,y+1-a)$, and $| \\overrightarrow{OP}+ \\overrightarrow{OQ}|= \\sqrt{(x+a)^{2}+(y+1-a)^{2}}$, which represents the distance from the point $(-a,a-1)$ to any point on the circle $C$: $(x-2)^{2}+(y-2)^{2}=1$.\n\nLet the distance between the point $(-a,a-1)$ and the ce",
+    "out_excerpt": "Dado que $P$ é qualquer ponto não círculo $C$: $(x-2) - 2 + '+(y-2) - 2 - 2 - R$ 1, e $Q$ é qualquer ponto na linha $l$: $x+y=1$, encontrar o valor mínimo de $| -overrightarrow-OP'+ -overrightarrow-O. A distância $d$ entre o centro do círculo $C(2,2) e a linha $l$: $x+y=1$ é $d= frac-|2+2-1| sqrt -2 = frac $3 -2 - sqrt -2 > 1$, daí a linha $l$ e o círculo $C$ são separados. Deixe as coordenadas de $P$ ser $(x, y)$, então $P$ é qualquer ponto não círculo $C$: $(x-2) - 2 * + (+) - 2 a 1$. Deixe que as coordenadas de $ Q$ sejam $(a,1-a)$, então $Q$ é qualquer ponto na linha $l$: $x+y=1$. Assim, o $-overrightarrow-OP'+ (overrightarrow-OQ=(x+a, y+1-a)$, e $| -rightarrow-OP+ -overrightarrow-OQ-*== -sqrt-(x+a) -2+(y+1-a) 2 (em inglês) 2 a 2, que representa a distância do ponto $(-a, a)$. Deixe a distância entre o ponto $(-a, a-1)$ e o centro do círculo $C(2,2)$ ser $d$, em seguida, o valor míni"
+  },
+  {
+    "idx": 39,
+    "dataset": "lambda-kimi",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 9,
+    "out_latex_count": 10,
+    "src_latex_head": [
+      "$\\\",\\n    \\n    \\\"basic_rfc\\\": r\\\"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$",
+      "$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
+      "$%&'*+/=?^_`{|}~-]+(?:\\\\.[a-zA-Z0-9!#$",
+      "\\[\\\\x01-\\\\x09\\\\x0b\\\\x0c\\\\x0e-\\\\x7f])*\\\\\\\")@(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\\\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?|\\\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\\\\x01-\\\\x08\\\\x0b\\\\x0c\\\\x0e-\\\\x1f\\\\x21-\\\\x5a\\\\x53-\\\\x7f]|\\\\\\\\[\\\\x01-\\\\x09\\\\x0b\\\\x0c\\\\x0e-\\\\x7f])+)\\\\]",
+      "$\\\",\\n    \\n    \\\"practical\\\": r\\\"^[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]{1,255}\\\\.[a-zA-Z]{2,63}$",
+      "$%&'*+\\\\\\\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+    ],
+    "out_latex_head": [
+      "$\\\",\\n    \\n    \\\"basic_rfc\\\": r\\\"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$",
+      "$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
+      "$%&'*+/=?^_`{|}~-]+(?:\\\\.[a-zA-Z0-9!#$",
+      "\\[\\\\x01-\\\\x09\\\\x0b\\\\x0c\\\\x0e-\\\\x7f])*\\\\\\\")@(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\\\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?|\\\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\\\\x01-\\\\x08\\\\x0b\\\\x0c\\\\x0e-\\\\x1f\\\\x21-\\\\x5a\\\\x53-\\\\x7f]|\\\\\\\\[\\\\x01-\\\\x09\\\\x0b\\\\x0c\\\\x0e-\\\\x7f])+)\\\\]",
+      "$\\\",\\n    \\n    \\\"practical\\\": r\\\"^[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]{1,255}\\\\.[a-zA-Z]{2,63}$",
+      "$%&'*+\\\\\\\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+    ],
+    "src_excerpt": "Run a sandboxed experiment: test different regex patterns for email validation and benchmark them\n\n[system] You are a function calling AI model. You are provided with function signatures within <tools> </tools> XML tags. You may call one or more functions to assist with the user query. If available tools are not relevant in assisting with user query, just respond in natural conversational language. Don't make assumptions about what values to plug into functions. After calling & executing the functions, you will be provided with function results within <tool_response> </tool_response> XML tags. Here are the available tools:\n<tools>\n[{\"type\": \"function\", \"function\": {\"name\": \"clarify\", \"description\": \"Ask the user a question when you need clarification, feedback, or a decision before proceeding. Supports two modes:\\n\\n1. **Multiple choice** — provide up to 4 choices. The user picks one or ",
+    "out_excerpt": "Execute um experimento sandboxed: teste diferentes padrões de regex para validação de e-mail e avaliá-los\n\n[system] Você é uma função chamando modelo de IA. Você é fornecido com assinaturas de função dentro de tags XML 'tools> \"tools>>\". Você pode chamar uma ou mais funções para ajudar com a consulta de usuário. Se as ferramentas disponíveis não forem relevantes para auxiliar na consulta do usuário, basta responder em linguagem de conversação natural. Não faça suposições sobre quais valores se conectarem às funções. Depois de chamar e executar as funções, você será fornecido com resultados de função dentro das tags XML \"tool_response> \"/tool_response>>. Aqui estão as ferramentas disponíveis:\n'ferramentas>\n[\"tipo\":\"function\",\"function\":\"name\":\"clarificar\",\"description\":\"Pergunte ao usuário uma pergunta quando você precisar de esclarecimento, feedback ou uma decisão antes de prosseguir. Su"
+  },
+  {
+    "idx": 50,
+    "dataset": "lambda-kimi",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 0,
+    "out_latex_count": 1,
+    "src_latex_head": [],
+    "out_latex_head": [
+      "$1774738547.6166820290. /skills/mlops/models/stable-difusão/difusão/referências/referências/advancedersss/advancedente8547.6166820290. /skills/mlops/models/stable-diffusion/SKILL. md-n1774738547.6166820290. /skills/mps/models/DESCRTION. md-n1774738447.6166820290. /skills/mlops/models/segment-a.90. /skills/mlops/models/segment-anything/references/troubleshooting. md-n1774738747.6166820290. /skills/mlops/models/segment-anything/SKILL. md-n1774738547.6166820290. /skills/m. /skills/mlops/models/clip/SKILL. md-n1774738547.6166820290. /skills/mlops/models/audiocraft/references/advanced-usage. md. n1774738447.6166820290. /skills/mlops/models/audiocraft/references/ps/models/audiocraft/SKILL. md-n1774738547.6166820290. /skills/mlops/models/whisper/references/languages. md-n1774738547.6166820290. /skills/mlops/models/whisper/SKILL. md-n177473864. md-n1774747547.6126819500. /skills/mlops/cloud/modal/references/troubleshooting. md-n17747547.6126819500. /skills/mlops/cloud/ (a)/SKILL. md-n1774754547.6688995500. /skills/mlops/cloud/DESCR. /lambda-labs/references/advanced-usage. md-n1774738547.6126819500. /skills/mlops/cloud/lambda-labs/references/troubleshooting. md-n1774738547.6126819500. /skills/mlops/cloud/lambda-labs/SKI. torchtitan/references/checkpoint. md-n1774738547.6246821870. /skills/mlops/treinamento/torchtitan/references/custom-models. md. md. n1774738547.6246821870. /skills/mlops/treinamento/torchtitan/references/float8. itan/references/fsdp. md. n1774738547.6206821090. /skills/mlops/treinamento/torchtitan/SKILL. md-n1774738547.6206821090. /skills/mlops/treinamento/hermes-atropos-ambientes/referências/atropos-base-env. /hermes-atropos-ambientes/referências/agentresult-fields. md-n1774738547.6206821090. /skills/mlops/treinamento/hermes-atropos-ambientes/references/usage-patterns. md-n. md-n.1774738547.6206821090. /skills/mlops/mtrops/trepeamento/treinamento-atropos-ambientes/referenções/usage-patterns. md-n. md-1774738547.6206821090. /skills/mlops/mlops/hermes-atropos-ambientes/referências/referenças/referenças/referenças/aageage-patternas. md-n1774738547.6206821090. /skills/mlops/treinamentos dos amlops/treinamento/hermes-atroposs-ambientes/remtrotrodosos/remterclipos/referências/referências/referências/referências/raenferençass/agentes da entres resultados de referências. midos. mus-nd1774738547.62068210900290. /skills/mlops/treinamento/accelerate/references/megatron-integration. md. md-1774738547.6166820290. /skills/mlops/treinamento/accelerate/references/custom-plugins. md. md. n1774738547.6166820290. /skills/mlops/treinamento/recelerate/references/custom-plugins. m. m. n1774738547.6166820290. /skills/mlops/trelops/treinamento/receleração/referências/custom-plugins. m7473738547.616682820290. /skills/mlops/treinamento/aceleração/referências/referências/customtom-prossponstado. m$"
+    ],
+    "src_excerpt": "Start the background worker and the health checker as background processes\n\n[system] You are a function calling AI model. You are provided with function signatures within <tools> </tools> XML tags. You may call one or more functions to assist with the user query. If available tools are not relevant in assisting with user query, just respond in natural conversational language. Don't make assumptions about what values to plug into functions. After calling & executing the functions, you will be provided with function results within <tool_response> </tool_response> XML tags. Here are the available tools:\n<tools>\n[{\"type\": \"function\", \"function\": {\"name\": \"clarify\", \"description\": \"Ask the user a question when you need clarification, feedback, or a decision before proceeding. Supports two modes:\\n\\n1. **Multiple choice** — provide up to 4 choices. The user picks one or types their own answer ",
+    "out_excerpt": "Inicie o trabalhador de fundo e o verificador de saúde como processos de fundo\n\n[system] Você é uma função chamando modelo de IA. Você é fornecido com assinaturas de função dentro de tags XML 'tools> \"tools>>\". Você pode chamar uma ou mais funções para ajudar com a consulta de usuário. Se as ferramentas disponíveis não forem relevantes para auxiliar na consulta do usuário, basta responder em linguagem de conversação natural. Não faça suposições sobre quais valores se conectarem às funções. Depois de chamar e executar as funções, você será fornecido com resultados de função dentro das tags XML \"tool_response> \"/tool_response>>. Aqui estão as ferramentas disponíveis:\n'ferramentas>\n[\"tipo\":\"function\",\"function\":\"name\":\"clarificar\",\"description\":\"Pergunte ao usuário uma pergunta quando você precisar de esclarecimento, feedback ou uma decisão antes de prosseguir. Suporta dois modos: n. o 1. *"
+  },
+  {
+    "idx": 66,
+    "dataset": "gsm8k",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 4,
+    "out_latex_count": 3,
+    "src_latex_head": [
+      "$10 / 2 = $",
+      "$10 x 2 = $",
+      "$10 + $",
+      "$20 = $"
+    ],
+    "out_latex_head": [
+      "$ 10 x 2 = US $",
+      "$10 + $",
+      "$20 = $"
+    ],
+    "src_excerpt": "Jasper will serve charcuterie at his dinner party. He buys 2 pounds of cheddar cheese for $10, a pound of cream cheese that cost half the price of the cheddar cheese, and a pack of cold cuts that cost twice the price of the cheddar cheese. How much does he spend on the ingredients?\n\nA pound of cream cheese cost $10 / 2 = $<<10/2=5>>5.\nA pack of cold cuts cost $10 x 2 = $<<10*2=20>>20.\nJasper spent $10 + $5 + $20 = $<<10+5+20=35>>35 on the ingredients.\n#### 35",
+    "out_excerpt": "Jasper servirá charcuterie em seu jantar. Ele compra 2 quilos de queijo cheddar por US $ 10, uma libra de queijo creme que custa metade do preço do queijo cheddar, e um pacote de cortes frios que custam o dobro do preço do queijo cheddar. Quanto ele gasta com os ingredientes? Uma libra de queijo creme custa $10 / 2 = $10/2=5>5.\nUm pacote de cortes frios custam US $ 10 x 2 = US $ 10 * 2=20>>20.\nJasper gastou $10 + $5 + $20 = $10 + 5+20=35>>35 nos ingredientes.\n35 euros"
+  },
+  {
+    "idx": 72,
+    "dataset": "gsm8k",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 6,
+    "out_latex_count": 6,
+    "src_latex_head": [
+      "$18 per hour so she makes 8*18 = $",
+      "$18/hour so her overtime pay is 18*.5 = $",
+      "$144.00 per 8-hour shift and she works 5 days and makes 5 * $",
+      "$27.00 per hour and she works 2 hours of overtime per day and makes 27*2 = $",
+      "$720.00 and she makes $",
+      "$720 + $"
+    ],
+    "out_latex_head": [
+      "$18.00 por hora. Se ela trabalha mais de 8 horas por turno, ela é elegível para horas extras, que é paga pelo seu salário por hora + 1/2 seu salário por hora. Se ela trabalha 10 horas por dia durante 5 dias, quanto dinheiro ela ganha? Ela trabalha 8 horas por dia por US $",
+      "$18/hora para que seu pagamento de horas extras seja de 18 *.5 = $",
+      "$144.00 por turno de 8 horas e ela trabalha 5 dias e faz 5 * $",
+      "$ 27,00 por hora e ela trabalha 2 horas extras por dia e faz 27 * 2 = $",
+      "$720.00 e ela faz $",
+      "$720 + $"
+    ],
+    "src_excerpt": "Tina makes $18.00 an hour.  If she works more than 8 hours per shift, she is eligible for overtime, which is paid by your hourly wage + 1/2 your hourly wage.  If she works 10 hours every day for 5 days, how much money does she make?\n\nShe works 8 hours a day for $18 per hour so she makes 8*18 = $<<8*18=144.00>>144.00 per 8-hour shift\nShe works 10 hours a day and anything over 8 hours is eligible for overtime, so she gets 10-8 = <<10-8=2>>2 hours of overtime\nOvertime is calculated as time and a half so and she makes $18/hour so her overtime pay is 18*.5 = $<<18*.5=9.00>>9.00\nHer overtime pay is 18+9 = $<<18+9=27.00>>27.00\nHer base pay is $144.00 per 8-hour shift and she works 5 days and makes 5 * $144 = $<<144*5=720.00>>720.00\nHer overtime pay is $27.00 per hour and she works 2 hours of overtime per day and makes 27*2 = $<<27*2=54.00>>54.00 in overtime pay\n2 hours of overtime pay for 5 day",
+    "out_excerpt": "Tina faz $18.00 por hora. Se ela trabalha mais de 8 horas por turno, ela é elegível para horas extras, que é paga pelo seu salário por hora + 1/2 seu salário por hora. Se ela trabalha 10 horas por dia durante 5 dias, quanto dinheiro ela ganha? Ela trabalha 8 horas por dia por US $ 18 por hora, então ela faz 8 * 18 = $ 8 * 18=144,00>>144,00 por turno de 8 horas\nEla trabalha 10 horas por dia e qualquer coisa com mais de 8 horas é elegível para horas extras, então ela recebe 10-8 = 10-8=2>2 horas de horas extras\nO tempo extra é calculado como o tempo e meio assim e ela faz $18/hora para que seu pagamento de horas extras seja de 18 *.5 = $18*.5=9.00>9.00\nSeu pagamento de horas extras é 18+9 = $18+9=27.00>>27.00\nSeu pagamento base é de $144.00 por turno de 8 horas e ela trabalha 5 dias e faz 5 * $144 = $144*5=720.00>>720.00\nSeu pagamento de horas extras é de US $ 27,00 por hora e ela trabalha"
+  },
+  {
+    "idx": 87,
+    "dataset": "numina",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 7,
+    "out_latex_count": 7,
+    "src_latex_head": [
+      "$2^{12} = 4096$",
+      "$\\binom{n}{k}$",
+      "$n$",
+      "$k$",
+      "$\\binom{12}{9} = \\binom{12}{3} = \\frac{12 \\times 11 \\times 10}{3 \\times 2 \\times 1} = 220$",
+      "$\\dfrac{220}{4096}$"
+    ],
+    "out_latex_head": [
+      "$ 12 = 4096 $",
+      "$-binom'n'k'$",
+      "$n$",
+      "$k$",
+      "$-binom -12 a 9 = -binom -12 a 3 = -frac -12 -tempos 11 s-tempos de 10 a 3 vezes - 2 vezes - Tempos 1 - = 220 $",
+      "$'dfrac -220 a 4096 $"
+    ],
+    "src_excerpt": "We flip a fair coin 12 times. What is the probability that we get heads in exactly 9 of the 12 flips?\n\n- The total number of possible outcomes when flipping a coin 12 times is $2^{12} = 4096$.\n- The number of ways to achieve exactly 9 heads out of 12 flips can be determined using the combination formula $\\binom{n}{k}$, where $n$ is the total number of trials and $k$ is the number of successful trials. Here, $\\binom{12}{9} = \\binom{12}{3} = \\frac{12 \\times 11 \\times 10}{3 \\times 2 \\times 1} = 220$. \n- Therefore, the probability of flipping exactly 9 heads in 12 trials is $\\dfrac{220}{4096}$.\n\nThe final answer is $\\boxed{\\dfrac{220}{4096}}$.",
+    "out_excerpt": "Nós lançamos uma moeda justa 12 vezes. Qual é a probabilidade de que nós temos cabeças em exatamente 9 dos 12 flips? - O número total de possíveis resultados ao lançar uma moeda 12 vezes é de US $ 12 = 4096 $.\n- O número de maneiras de alcançar exatamente 9 cabeças de 12 flips pode ser determinado usando a fórmula de combinação $-binom'n'k'$, onde $n$ é o número total de testes e $k$ é o número de testes bem-sucedidos. Aqui, $-binom -12 a 9 = -binom -12 a 3 = -frac -12 -tempos 11 s-tempos de 10 a 3 vezes - 2 vezes - Tempos 1 - = 220 $. - Portanto, a probabilidade de virar exatamente 9 cabeças em 12 testes é $'dfrac -220 a 4096 $. A resposta final é $-boxed'dfrac -220 R$4096$."
+  },
+  {
+    "idx": 95,
+    "dataset": "numina",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 14,
+    "out_latex_count": 14,
+    "src_latex_head": [
+      "$A = (5, 9, 6)$",
+      "$B = (5, 14, 6)$",
+      "$C = (5, 14, 11)$",
+      "$A, B$",
+      "$C$",
+      "$AB = \\sqrt{(5-5)^2 + (14-9)^2 + (6-6)^2} = \\sqrt{0 + 25 + 0} = 5$"
+    ],
+    "out_latex_head": [
+      "$A = (5, 9, 6)$",
+      "$B = (5, 14, 6)$",
+      "$C = (5, 14, 11) $",
+      "$A, B$",
+      "$C$",
+      "$AB = -sqrt-(5-5) -2 + (14-9) + (6-6) -2 -2 = -sqrt -0 + 25 + 0 - = 5$"
+    ],
+    "src_excerpt": "Three vertices of a cube are $A = (5, 9, 6)$, $B = (5, 14, 6)$, and $C = (5, 14, 11)$. What is the surface area of the cube?\n\nCalculate the distances between the points $A, B$, and $C$ which represent adjacent edges of one face of the cube.\n- $AB = \\sqrt{(5-5)^2 + (14-9)^2 + (6-6)^2} = \\sqrt{0 + 25 + 0} = 5$\n- $BC = \\sqrt{(5-5)^2 + (14-14)^2 + (11-6)^2} = \\sqrt{0 + 0 + 25} = 5$\n- $AC = \\sqrt{(5-5)^2 + (14-9)^2 + (11-6)^2} = \\sqrt{25+25} = 5\\sqrt{2}$\n\nCheck that the diagonal is correct for $a = 5$: $AC = a\\sqrt{2} = 5\\sqrt{2}$, which matches with the calculated distance $AC$.\n\nTherefore, $a = 5$, and the surface area of the cube is $6a^2 = 6 \\cdot 5^2 = 150$. The surface area of the cube is $\\boxed{150}$.",
+    "out_excerpt": "Três vértices de um cubo são $A = (5, 9, 6)$, $B = (5, 14, 6)$ e $C = (5, 14, 11) $. Qual é a área de superfície do cubo? Calcule as distâncias entre os pontos $A, B$ e $C$ que representam bordas adjacentes de uma face do cubo.\n- $AB = -sqrt-(5-5) -2 + (14-9) + (6-6) -2 -2 = -sqrt -0 + 25 + 0 - = 5$\n- $BC = -sqrt-(5-5) -2 + (14-14) -2 + (11-6) -2 - = sqrt -0 + 0 + 25' = 5$\n- $AC = -sqrt (52-5) -2 + (14-9) -2 + (11-6) -2 - 2 = -sqrt-25+25' = 5-sqrt Verifique se a diagonal está correta por $a = 5$: $: $AC = a-sqrt -2 = 5-sqrt -2$, que corresponde com a distância calculada $AC$. Portanto, $a = 5$, e a área de superfície do cubo é de US$ 6a -2 = 6 -cdot 5 a 2 = 150$. A área de superfície do cubo é $-boxed 150 $."
+  },
+  {
+    "idx": 107,
+    "dataset": "gsm8k",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 3,
+    "out_latex_count": 2,
+    "src_latex_head": [
+      "$200 and spent $",
+      "$46 on suit pants, $",
+      "$11 on socks, and $"
+    ],
+    "out_latex_head": [
+      "$ 200 e gastou US $",
+      "$ 11 em meias e US $"
+    ],
+    "src_excerpt": "Alexis is applying for a new job and bought a new set of business clothes to wear to the interview. She went to a department store with a budget of $200 and spent $30 on a button-up shirt, $46 on suit pants, $38 on a suit coat, $11 on socks, and $18 on a belt. She also purchased a pair of shoes, but lost the receipt for them. She has $16 left from her budget. How much did Alexis pay for the shoes?\n\nLet S be the amount Alexis paid for the shoes.\nShe spent S + 30 + 46 + 38 + 11 + 18 = S + <<+30+46+38+11+18=143>>143.\nShe used all but $16 of her budget, so S + 143 = 200 - 16 = 184.\nThus, Alexis paid S = 184 - 143 = $<<184-143=41>>41 for the shoes.\n#### 41",
+    "out_excerpt": "Alexis está se candidatando para um novo emprego e comprou um novo conjunto de roupas de negócios para usar para a entrevista. Ela foi para uma loja de departamento com um orçamento de US $ 200 e gastou US $ 30 em uma camisa de botão, US $ 46 em calças de terno, US $ 38 em um casaco de terno, US $ 11 em meias e US $ 18 em um cinto. Ela também comprou um par de sapatos, mas perdeu o recibo para eles. Ela tem $16 deixado de seu orçamento. Quanto Alexis pagou pelos sapatos? Seja S o valor que Alexis pagou pelos sapatos.\nEla gastou S + 30 + 46 + 38 + 11 + 11 + 18 = S + 30+46+38+11+18=143>>143.\nEla usou tudo menos $16 de seu orçamento, então S + 143 = 200 - 16 = 184.\nAssim, Alexis pagou S = 184 - 143 = $184-143=41>>41 para os sapatos.\n41 anos"
+  },
+  {
+    "idx": 114,
+    "dataset": "lambda-kimi",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 0,
+    "out_latex_count": 1,
+    "src_latex_head": [],
+    "out_latex_head": [
+      "$17474746202.3791933940. /diff_tool/diff_algorithm. py-n1774747433.48883079tool/algorithm. py-n1774744993.9923452620. /diff_tool/tests/test_formatters. py-n17747494.0043454990. /diff_tool/tests/test_cli. py-n1774744993.9963453410. /diff_tool/tests/conftest. py-n177474748980.8751135070. /diff_tool/tests/__pycache_/test_cli. cpython-310. pyc-n1774748189.2594966910. /diff_tool/tests/__pycache_/test_io. cpython-310-pytest-8.0.0. pyc-n1774748184810-pytest-8.0.0. pyc-n1774748980.8751135070. /diff_tool/tests/_pycache__/test_diff_tool. cpython-310. pyc-n17747489898807535070. /diff_tool/tests/_pycache_/conftest. cpython-310. pyc.74.74test_cli. cpython-310-pytest-8.0.0. pyc-n1774748189.2194759000. /diff_tool/tests/__pycache_/test_diff_tool. cpython-310-pytest-8.0.0. pyc-n. pyc-n1774747818.2001396240. /diff_tool___tests/__pyca_8980.8791135870. /diff_tool/tests/__pycache_/test_io. cpython-310. pyc-n1774747817.5601269700. /diff_tool/tests/__pycache_/test_cli. cpython-310-pytest-9.0.2. pyc-n1774748189.24_thon-310-pytest-8.0.0. pyc-n1774747818.1761391490. /diff_tool/tests/__pycache_/test_diff_tool. cpython-310-pytest-9.0.2. pyc-n-n1774748989898801135070. /diff_tool/tests/__pycache__________________tool/tests/___/test_formatters. cpython-310. pyc-n1774747817.4921256250. /diff_tool/tests/__pycache__/conftest. cpython-310-pytest-9.0.2. pyc-n.1774747818.2201400190. /diff_tool/tests/_py_ca77474499123456560. /diff_tool/tests/_init_. py-n177479499463457350. /diff_tool/tests/test_io. py-n1774898989810981133500. /diff_tool/__pycache_/formatter. cpython-310. pyc'n177474748do sn 1774748980.8631132710. /diff_tool/__/diff_tool_. cpython-310. pyc-n1774748980.8711134290. /diff_tool/__pycache_//algorithm. cpython-310. pyc-n 1774748980.8711134290. _d_748980.8711134290. /diff_tool/__pycache_/io_utils. cpython-310. pyc-n 1774748980.8711134290. /diff_tool/__pycache_/diff_algorithm. cpython-310. pyc-n.1774748980.8711134290. /diff_.774748980.8671133500. /diff_tool/__pycache_/formatters. cpython-310. pyc-n17747494.0043454990. /diff_tool/pyproject. tom. pt-n1774746598.77529210. /diff_tool/__init__. py-n17747474714141484/diff_tool/README. md-n177474748640.91240550. /automated-remediation/src/remediation/core/escalation. py-n1774747740.5346040950. /automated-remediation/src/remediation/core/core. py-n17747478809166469740. /automated-remediation/src/remediation/core/dry_run. py-n1774748980.8951139020. /automated-remediation/src/remediation/core/__pycache_/base. cpython-310. pyc-n1774748980.8911118240. /automated-remediation/on-310. pyc-n1774748980.8951139020. /automated-remediation/src/remediation/core/__pycache_/dry_run. cpython-310. pyc-n17747489808080.8951139020. /automated-remediation/src/src/remediation/core/__pycache___________________/automated-remediation/src/remediation/core/___. py-n1774748980.8911138240. /automated-remediation/src/remediation/__pycache_/___init__. cpython-310. pyc-n.8974747633.6724914580. /automated-remediation/________. cpython-310. pyc-n-n.1774747633.6724914580. /automated-remediation/remediation/____________. cpython-310. pyc-n.1774747633.6724914580. /automated-remediation/remediation/__pycache________. cpython-310. pyc-n.897474747633.6724914580. /srrc/remediation/remediation/__pycache_/_____. cpython-310. pyc-n$"
+    ],
+    "src_excerpt": "Run code to generate a cleaned dataset from raw log entries\n\n[system] You are a function calling AI model. You are provided with function signatures within <tools> </tools> XML tags. You may call one or more functions to assist with the user query. If available tools are not relevant in assisting with user query, just respond in natural conversational language. Don't make assumptions about what values to plug into functions. After calling & executing the functions, you will be provided with function results within <tool_response> </tool_response> XML tags. Here are the available tools:\n<tools>\n[{\"type\": \"function\", \"function\": {\"name\": \"clarify\", \"description\": \"Ask the user a question when you need clarification, feedback, or a decision before proceeding. Supports two modes:\\n\\n1. **Multiple choice** — provide up to 4 choices. The user picks one or types their own answer via a 5th 'Othe",
+    "out_excerpt": "Executar código para gerar um conjunto de dados limpo a partir de entradas de log brutos\n\n[system] Você é uma função chamando modelo de IA. Você é fornecido com assinaturas de função dentro de tags XML 'tools> \"tools>>\". Você pode chamar uma ou mais funções para ajudar com a consulta de usuário. Se as ferramentas disponíveis não forem relevantes para auxiliar na consulta do usuário, basta responder em linguagem de conversação natural. Não faça suposições sobre quais valores se conectarem às funções. Depois de chamar e executar as funções, você será fornecido com resultados de função dentro das tags XML \"tool_response> \"/tool_response>>. Aqui estão as ferramentas disponíveis:\n'ferramentas>\n[\"tipo\":\"function\",\"function\":\"name\":\"clarificar\",\"description\":\"Pergunte ao usuário uma pergunta quando você precisar de esclarecimento, feedback ou uma decisão antes de prosseguir. Suporta dois modos:"
+  },
+  {
+    "idx": 140,
+    "dataset": "gsm8k",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 3,
+    "out_latex_count": 2,
+    "src_latex_head": [
+      "$2500, each part is therefore $",
+      "$500 = $",
+      "$1000-$"
+    ],
+    "out_latex_head": [
+      "$500 = $",
+      "$1000-$"
+    ],
+    "src_excerpt": "The profit from a business transaction is shared among 2 business partners, Mike and Johnson in the ratio 2:5 respectively. If Johnson got $2500, how much will Mike have after spending some of his share on a shirt that costs $200?\n\nAccording to the ratio, for every 5 parts that Johnson gets, Mike gets 2 parts\nSince Johnson got $2500, each part is therefore $2500/5 = $<<2500/5=500>>500\nMike will get 2*$500 = $<<2*500=1000>>1000\nAfter buying the shirt he will have $1000-$200 = $<<1000-200=800>>800 left\n#### 800",
+    "out_excerpt": "O lucro de uma transação de negócios é compartilhado entre 2 parceiros de negócios, Mike e Johnson na proporção 2:5 respectivamente. Se Johnson obteve $2500, quanto Mike terá depois de gastar parte de sua participação em uma camisa que custa $200? De acordo com a proporção, para cada 5 partes que Johnson recebe, Mike recebe 2 partes\nDesde que Johnson obteve $2500, cada parte é, portanto, $2500/5 = $2500/5=500>>500\nMike receberá 2 * $500 = $2 * 500=1000>>1000\nDepois de comprar a camisa, ele terá $1000-$200 = $1000-200=800>>800\n800 euros"
+  },
+  {
+    "idx": 146,
+    "dataset": "gsm8k",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 4,
+    "out_latex_count": 4,
+    "src_latex_head": [
+      "$60 from washing cars all week. However, half of the $",
+      "$60 * 1/2 = $",
+      "$30 * 1/2 = $",
+      "$30 - $"
+    ],
+    "out_latex_head": [
+      "$60 de lavar carros durante toda a semana. No entanto, metade dos $",
+      "$60 * 1/2 = $",
+      "$30 * 1/2 = $",
+      "$30 - $"
+    ],
+    "src_excerpt": "Lisa, Jack, and Tommy earned $60 from washing cars all week. However, half of the $60 was earned by Lisa. Tommy earned half of what Lisa earned. How much more money did Lisa earn than Tommy?\n\nLisa earned $60 * 1/2 = $<<60*1/2=30>>30.\nTommy earned $30 * 1/2 = $<<30*1/2=15>>15.\nLisa earned $30 - $15 = $<<30-15=15>>15 more than Tommy.\n#### 15",
+    "out_excerpt": "Lisa, Jack e Tommy ganharam $60 de lavar carros durante toda a semana. No entanto, metade dos $60 foi ganho por Lisa. Tommy ganhou metade do que Lisa ganhou. Quanto mais dinheiro Lisa ganhou do que Tommy? Lisa ganhou $60 * 1/2 = $60 * / 1/2=30>>30.\nTommy ganhou $30 * 1/2 = $ 30 * 1 / 2=15>>15.\nLisa ganhou $30 - $15 = $ 30-15=15>>15 mais do que Tommy.\n15 euros"
+  },
+  {
+    "idx": 153,
+    "dataset": "gsm8k",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 5,
+    "out_latex_count": 4,
+    "src_latex_head": [
+      "$75 she bought 5 pairs of shorts for $",
+      "$7 each so 5*7=$",
+      "$10 each so 2*10=$",
+      "$55 which left a difference of 75-55 = $",
+      "$20 so 20/4 = $"
+    ],
+    "out_latex_head": [
+      "$ 75 ela comprou 5 pares de shorts por US $",
+      "$ 10 cada um de 2 * 10 = US $",
+      "$55, o que deixou uma diferença de 75-55 = $",
+      "$20 então 20/4 = $"
+    ],
+    "src_excerpt": "Ann's favorite store was having a summer clearance. For $75 she bought 5 pairs of shorts for $7 each and 2 pairs of shoes for $10 each. She also bought 4 tops, all at the same price. How much did each top cost?\n\nShe bought 5 shorts at $7 each so 5*7=$<<5*7=35>>35\nShe bought 2 pair of shoes at $10 each so 2*10=$<<2*10=20>>20\nThe shorts and shoes cost her 35+20 = $<<35+20=55>>55\nWe know she spent 75 total and the shorts and shoes cost $55 which left a difference of 75-55 = $<<75-55=20>>20\nShe bought 4 tops for a total of $20 so 20/4 = $5\n#### 5",
+    "out_excerpt": "A loja favorita de Ann estava tendo uma folga de verão. Por US $ 75 ela comprou 5 pares de shorts por US $ 7 cada e 2 pares de sapatos por US $ 10 cada. Ela também comprou 4 tops, tudo ao mesmo preço. Quanto custaram cada top? Ela comprou 5 shorts em $7 cada um tão 5 * 5 * 7 * 7=35>35\nEla comprou 2 pares de sapatos a US $ 10 cada um de 2 * 10 = US $ 2 * 10 = 20>\nOs shorts e sapatos custam-lhe 35+20 = $35+20=55>55>55\nSabemos que ela gastou 75 não total e os shorts e sapatos custam $55, o que deixou uma diferença de 75-55 = $75-55=20>20\nEla comprou 4 tops por um total de $20 então 20/4 = $5\n5 - 5"
+  },
+  {
+    "idx": 160,
+    "dataset": "numina",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 23,
+    "out_latex_count": 20,
+    "src_latex_head": [
+      "$\\triangle ABC$",
+      "$A$",
+      "$B$",
+      "$C$",
+      "$a$",
+      "$b$"
+    ],
+    "out_latex_head": [
+      "$A$",
+      "$B$",
+      "$C$",
+      "$a$",
+      "$b$",
+      "$c$"
+    ],
+    "src_excerpt": "In $\\triangle ABC$, the lengths of the sides opposite to angles $A$, $B$, and $C$ are $a$, $b$, and $c$ respectively. Given that $\\cos \\frac{C}{2} = \\frac{\\sqrt{5}}{3}$ and $a \\cos B + b \\cos A = 2$, find the maximum area of $\\triangle ABC$.\n\nSince $\\cos \\frac{C}{2} = \\frac{\\sqrt{5}}{3}$, we have $\\cos C = 2\\cos^2 \\frac{C}{2} - 1 = 2 \\left(\\frac{\\sqrt{5}}{3}\\right)^2 - 1 = \\frac{1}{9}$.\n\nUsing the cosine law, we have $a \\cos B + b \\cos A = 2$ can be written as\n\n$a \\frac{a^2 + c^2 - b^2}{2ac} + b \\frac{c^2 + b^2 - a^2}{2bc} = 2$\n\nSimplifying the equation, we obtain $c = 2$.\n\nNow, we have $4 = a^2 + b^2 - 2ab \\cos C \\geq 2ab - 2ab \\frac{1}{9} = \\frac{16}{9}ab$, which implies $ab \\leq \\frac{9}{4}$. The equality holds when $a = b = \\frac{3}{2}$.\n\nUsing the sine law, we have $\\sin C = \\sqrt{1 - \\cos^2 C} = \\sqrt{1 - \\left(\\frac{1}{9}\\right)^2} = \\frac{4\\sqrt{5}}{9}$.\n\nThe area of $\\triangle A",
+    "out_excerpt": "Em $'triangle ABC$, os comprimentos dos lados opostos aos ângulos $A$, $B$ e $C$ são $a$, $b$ e $c$, respectivamente. Dado que $-cos -frac-C -2 = frac sqrt a 5 a 3$ e $a s B + b -cos A = 2$, encontrar a área máxima de $-triangle ABC$. Desde que os $ - s-frac-C-C-2 = frac-sqrt - 5 a 3$, temos $-cos C = 2-cos - 2 - frac-C - 2 - - 4 -left (frac-sqrt - 5 a direita) -2 - 1 = - fraco - 1 -9 $. Usando a lei cosine, temos $a -cos B + b -cos A = 2$ pode ser escrito como $a -frac'a 2 + c - 2 - 2 -2 -2-A + b fraco-c 2 + b -2 - a 2 - 2 - 2$ Simplificando a equação, obtemos $c = 2$. Agora, nós temos US $ 4 = a -2 + b - 2ab -cos C -geq 2ab - 2ab - 2ab frac - 1-9' = frac - 16 a 9 - ab9 R$, que implica $ab -leq -frac 9 a 4 R$. A igualdade é válida quando $a = b = fraco -3 a 2$. Usando a lei do seno, temos $-sin C = -sqrt -1 - -cos - 2 C = sqrt -1 - -left(-frac-1-) -2 - = -frac -4-sqrt -5 a 9$. A área de"
+  },
+  {
+    "idx": 173,
+    "dataset": "ultrachat",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 2,
+    "out_latex_count": 2,
+    "src_latex_head": [
+      "$240 per year is available for employees who bike to work. - A study from the University of California found that employers can save up to $",
+      "$5,000 and $"
+    ],
+    "out_latex_head": [
+      "$ 240 por ano está disponível para os funcionários que andarem de bicicleta para trabalhar. - Um estudo da Universidade da Califórnia descobriu que os empregadores podem economizar até US $",
+      "$ 5.000 e US $"
+    ],
+    "src_excerpt": "Design a series of posters to promote bicycle commuting.\n\nI do not have the ability to create visual posters, but I can provide you with some taglines and content ideas that could be used in promoting bicycle commuting:\n\n1. \"riding a bike to work saves money, the environment, and your health!\"\n2. \"get exercise, fresh air, and beat traffic by riding your bike to work.\"\n3. \"join the bike-to-work movement! help reduce carbon emissions and promote sustainable living, one pedal stroke at a time!\"\n4. \"who needs a gym when you can burn calories on your bike commute?\"\n5. \"experience the freedom and joy of cycling while reducing congestion on the roads.\"\n6. \"riding a bike is good for your body, mind, and wallet. Give it a try!\"\n7. \"less time stuck in traffic. More time enjoying the open road. Ride to work and feel alive!\"\n8. \"reduce your carbon footprint and get in shape by biking to work. It’s a",
+    "out_excerpt": "Projete uma série de cartazes para promover o deslocamento de bicicletas. Eu não tenho a capacidade de criar cartazes visuais, mas posso fornecer algumas taglines e ideias de conteúdo que poderiam ser usadas na promoção de deslocamento de bicicletas: 1.\"Equitar uma bicicleta para trabalhar economiza dinheiro, o meio ambiente e sua saúde!\"\n2.\"Conseguir o exercício, ar fresco e bater o tráfego montando sua bicicleta para o trabalho\".\n3.\"Conheça o movimento da bicicleta-a-trabalho! ajudar a reduzir as emissões de carbono e promover a vida sustentável, um curso de pedal de cada vez!\"\n4.\"Quem precisa de uma academia quando você pode queimar calorias em seu trajeto de bicicleta?\"\n5.\"experiência da liberdade e alegria do ciclismo, reduzindo o congestionamento nas estradas\".\n6.\"Equitar uma bicicleta é bom para o seu corpo, mente e carteira. Dê uma chance!\"\n7.\"a tempo a menos preso não trânsito. "
+  },
+  {
+    "idx": 188,
+    "dataset": "lambda-glm",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 3,
+    "out_latex_count": 3,
+    "src_latex_head": [
+      "$', value) and len(value.split()) >= 2:\\n        return value.title()\\n    return value\\n\\n\\ndef normalize_dates(value: str) -> str:\\n    \\\"\\\"\\\"Attempt to normalize date-like strings to ISO format (YYYY-MM-DD).\\\"\\\"\\\"\\n    if not isinstance(value, str) or not value:\\n        return value\\n    for fmt in (\\\"%m/%d/%Y\\\", \\\"%d-%m-%Y\\\", \\\"%m-%d-%Y\\\", \\\"%Y/%m/%d\\\", \\\"%d.%m.%Y\\\"):\\n        try:\\n            dt = datetime.strptime(value, fmt)\\n            return dt.strftime(\\\"%Y-%m-%d\\\")\\n        except ValueError:\\n            continue\\n    return value\\n\\n\\ndef clean_phone(value: str) -> str:\\n    \\\"\\\"\\\"Normalize phone numbers to a consistent format: (XXX) XXX-XXXX.\\\"\\\"\\\"\\n    if not isinstance(value, str) or not value:\\n        return value\\n    digits = re.sub(r'\\\\D', '', value)\\n    if len(digits) == 11 and digits.startswith('1'):\\n        digits = digits[1:]\\n    if len(digits) == 10:\\n        return f\\\"({digits[:3]}) {digits[3:6]}-{digits[6:]}\\\"\\n    return value  # return as-is if not a standard 10-digit number\\n\\n\\ndef clean_email(value: str) -> str:\\n    \\\"\\\"\\\"Lowercase and validate email addresses.\\\"\\\"\\\"\\n    if not isinstance(value, str) or not value:\\n        return value\\n    value = value.strip().lower()\\n    if not re.match(r'^[a-z0-9._%+-]+@[a-z0-9.-]+\\\\.[a-z]{2,}$",
+      "$75,000.50\\\"\\n\\\"  JANE  SMITH  \\\",\\\"jane.smith@yahoo.com\\\",\\\"5559876543\\\",\\\"03-22-1985\\\",\\\"€60,000\\\"\\n\\\"bob johnson\\\",\\\"bob@gmail.com\\\",\\\"1-555-222-3333\\\",\\\"12/05/1992\\\",\\\"45000\\\"\\n\\\"john doe\\\",\\\"John.Doe@GMAIL.com\\\",\\\"555-123-4567\\\",\\\"01/15/1990\\\",\\\"$",
+      "$92,500.00\\\"\\n\\\"bob johnson\\\",\\\"bob@gmail.com\\\",\\\"1-555-222-3333\\\",\\\"12/05/1992\\\",\\\"45000\\\"\\n\\\"\\\",,,,\\n\\\"  CARLOS  GARCIA  \\\",\\\"carlos.g@invalid\\\",\\\"555-999\\\",\\\"bad-date\\\",\\\"$"
+    ],
+    "out_latex_head": [
+      "$2, $",
+      "$75.000.50\"\"\"Aingulo-Julista\"\"03-22-1985\"\",\"$",
+      "$92,500.00\"\"\"\"\"\"\"\"\"\"\"bob\"\"\"bob-gmail. com\",\"1\"1-555-222-33\", -\"12/05/1992\"\"$"
+    ],
+    "src_excerpt": "Write a Python script that reads a CSV file, cleans the data by removing duplicates and fixing forma\n\n[system] You are a function calling AI model. You are provided with function signatures within <tools> </tools> XML tags. You may call one or more functions to assist with the user query. If available tools are not relevant in assisting with user query, just respond in natural conversational language. Don't make assumptions about what values to plug into functions. After calling & executing the functions, you will be provided with function results within <tool_response> </tool_response> XML tags. Here are the available tools:\n<tools>\n[{\"name\": \"patch\", \"description\": \"Targeted find-and-replace edits in files. Use this instead of sed/awk in terminal. Uses fuzzy matching (9 strategies) so minor whitespace/indentation differences won't break it. Returns a unified diff. Auto-runs syntax chec",
+    "out_excerpt": "Escrever um script Python que lê um arquivo CSV, limpa os dados removendo duplicatas e fixando forma [system] Você é uma função chamando modelo de IA. Você é fornecido com assinaturas de função dentro de tags XML 'tools> \"tools>>\". Você pode chamar uma ou mais funções para ajudar com a consulta de usuário. Se as ferramentas disponíveis não forem relevantes para auxiliar na consulta do usuário, basta responder em linguagem de conversação natural. Não faça suposições sobre quais valores se conectarem às funções. Depois de chamar e executar as funções, você será fornecido com resultados de função dentro das tags XML \"tool_response> \"/tool_response>>. Aqui estão as ferramentas disponíveis:\"ferramentas>\n[\"name\":\"patch\",\"description\":\"Targeted find-e-replace edições em arquivos. Use isso em vez de sed/aw não terminal. Usa correspondência fuzzy (9 estratégias) para que pequenas diferenças de es"
+  },
+  {
+    "idx": 209,
+    "dataset": "numina",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 47,
+    "out_latex_count": 25,
+    "src_latex_head": [
+      "$f(x)=x\\ln x$",
+      "$0 \\lt x_{1} \\lt x_{2}$",
+      "$x_{1}+f(x_{1}) \\lt x_{2}+f(x_{2})$",
+      "$x_{2}f(x_{1}) \\lt x_{1}f(x_{2})$",
+      "${x_2}＞{x_1}＞\\frac{1}{e}$",
+      "$x_{1}f(x_{1})+x_{2}f(x_{2}) \\gt x_{2}f(x_{1})+x_{1}f(x_{2})$"
+    ],
+    "out_latex_head": [
+      "$f(x)=x-ln x$",
+      "$0, x_ -1 -lt x_ -2 s, então qual das seguintes opções está correta? A: $",
+      "$ B: $",
+      "$) C: Quando $",
+      "$x_1-f (f)+x_ -)+x_ -2 'f(x_'2') -gt x_ -2 'f(x_'1')+x_ -1-f_ -1-f (f) D: Se a equação $",
+      "$g'(x)=-ln x + 2$"
+    ],
+    "src_excerpt": "Given the function $f(x)=x\\ln x$, if $0 \\lt x_{1} \\lt x_{2}$, then which of the following options is correct?\n\nA: $x_{1}+f(x_{1}) \\lt x_{2}+f(x_{2})$\n\nB: $x_{2}f(x_{1}) \\lt x_{1}f(x_{2})$\n\nC: When ${x_2}＞{x_1}＞\\frac{1}{e}$, $x_{1}f(x_{1})+x_{2}f(x_{2}) \\gt x_{2}f(x_{1})+x_{1}f(x_{2})$\n\nD: If the equation $f\\left(x\\right)=a$ has a root, then $a=-\\frac{1}{e}$\n\nTo analyze each option step by step, we start with the given function $f(x)=x\\ln x$ and the condition $0 < x_{1} < x_{2}$.\n\n**Option A:**\n\n1. Define $g(x)=f(x)+x=x\\ln x+x$.\n2. Calculate the derivative: $g'(x)=\\ln x + 2$.\n3. Analyze $g'(x)$:\n   - When $0 < x < \\frac{1}{e^2}$, we have $\\ln x + 2 < 0$, so $g(x)$ is decreasing.\n   - When $x > \\frac{1}{e^2}$, we have $\\ln x + 2 > 0$, so $g(x)$ is increasing.\n4. Conclusion for option A:\n   - If $0 < x_{1} < x_{2} < \\frac{1}{e^2}$, then $g(x_{1}) > g(x_{2})$, which means $x_{1}+f(x_{1}) > x",
+    "out_excerpt": "Dada a função $f(x)=x-ln x$, se $0, x_ -1 -lt x_ -2 s, então qual das seguintes opções está correta? A: $x_-1+f(x_ 1') -lt x_ -2+f(x_ -2 -2 -)$ B: $x_ -2 -f(x_ -1') -lt x_ -1-f(x_ -2'$) C: Quando $-x_2> -x_1> -, 1-e-$$, $x_1-f (f)+x_ -)+x_ -2 'f(x_'2') -gt x_ -2 'f(x_'1')+x_ -1-f_ -1-f (f) D: Se a equação $f-left(x'right)=a$ tem uma raiz, então $a=-frac -1'e$ Para analisar cada opção passo a passo, começamos com a função dada $f(x)=x-ln x$ e a condição $0 - x_ -1 - x_ -2$. ** Opção A: ** 1. Defina $g(x)=f(x)+x=x-ln x+x$.\n2. Calcular a derivada: $g'(x)=-ln x + 2$.\n3. Analisar $g'(x)$: - Quando US$0, x,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, - Quando $x > frac -1e -2 $, temos $ ln x + 2 > 0$, então $g(x) $ está aumentando.\n4. Conclusão para a opção A: - Se US$ $0, x_ -1 - x_ -2 - -,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+  },
+  {
+    "idx": 218,
+    "dataset": "gsm8k",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 0,
+    "out_latex_count": 1,
+    "src_latex_head": [],
+    "out_latex_head": [
+      "$ 100. Betty tem apenas metade do dinheiro que ela precisa. Seus pais decidiram dar-lhe $"
+    ],
+    "src_excerpt": "Betty is saving money for a new wallet which costs $100. Betty has only half of the money she needs. Her parents decided to give her $15 for that purpose, and her grandparents twice as much as her parents. How much more money does Betty need to buy the wallet?\n\nIn the beginning, Betty has only 100 / 2 = $<<100/2=50>>50.\nBetty's grandparents gave her 15 * 2 = $<<15*2=30>>30.\nThis means, Betty needs 100 - 50 - 30 - 15 = $<<100-50-30-15=5>>5 more.\n#### 5\n\nKeep `pip install fast-translate` unchanged and translate only normal text.",
+    "out_excerpt": "Betty está economizando dinheiro para uma nova carteira que custa US $ 100. Betty tem apenas metade do dinheiro que ela precisa. Seus pais decidiram dar-lhe $15 para esse propósito, e seus avós duas vezes mais do que seus pais. Quanto mais dinheiro a Betty precisa comprar a carteira?\n\nNo início, Betty tem apenas 100 / 2 = $ 100/2=50>50.\nOs avós de Betty lhe deram 15 * 2 = $15*2=30>30>30.\nIsso significa que Betty precisa de 100 - 50 - 30 - 15 = $ 100-50-30-15=5>>5 mais.\n5 - 5\n\nManter `pip install fast-translate` inalterados e traduzir apenas texto normal."
+  },
+  {
+    "idx": 234,
+    "dataset": "lambda-glm",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 6,
+    "out_latex_count": 9,
+    "src_latex_head": [
+      "\\( -name \\\"*.py\\\" -o -name \\\"*.js\\\" -o -name \\\"*.ts\\\" -o -name \\\"*.go\\\" -o -name \\\"*.java\\\" -o -name \\\"*.rb\\\" -o -name \\\"*.yml\\\" -o -name \\\"*.yaml\\\" -o -name \\\"*.json\\\" -o -name \\\"*.toml\\\" -o -name \\\"*.env*\\\" -o -name \\\"Dockerfile\\\" -o -name \\\"Makefile\\\" \\\\)",
+      "$(curl -sf https://app.example.com/api/users/00000000-0000-0000-0000-000000000001 | jq .)\\necho \\\"$",
+      "$(curl -sf -X POST https://app.example.com/api/orders \\\\\\n  -H 'Content-Type: application/json' \\\\\\n  -d '{\\\"user_id\\\":\\\"00000000-0000-0000-0000-000000000001\\\",\\\"total\\\":9.99}' \\\\\\n  | jq -r '.id')\\nsleep 1\\ncurl -sf \\\"https://app.example.com/api/orders/$",
+      "$DB_DSN\\\" -c \\\"SELECT 1 FROM users LIMIT 1\\\" > /dev/null\\necho \\\"✅ Direct DB query passed\\\"\\n\\necho \\\"=== All smoke tests passed ===\\\"\\n```\\n\\n---\\n\\n## 9. Phase 5 — Decommission REST API\\n\\n### 9.1 Decommission Checklist\\n\\n- [ ] Feature flags `USE_POSTGRES_READ` and `USE_POSTGRES_WRITE` set to 100% for ≥ 7 days with no issues\\n- [ ] Shadow read / dual-write code paths removed from codebase\\n- [ ] `APIUserRepository` and `APIOrderRepository` code deleted\\n- [ ] REST API credentials rotated / revoked\\n- [ ] DNS entries for API internal endpoints removed\\n- [ ] API provider billing cancelled (if external)\\n- [ ] Monitoring alerts for REST API latency/errors removed\\n- [ ] Documentation updated to reflect PostgreSQL as source of truth\\n\\n### 9.2 Code Cleanup PR\\n\\n```diff\\n- type APIUserRepository struct { ... }\\n- type DualWriter struct { ... }\\n- type ShadowReader struct { ... }\\n+ // PgUserRepository is now the sole implementation\\n```\\n\\n---\\n\\n## 10. Rollback Strategy\\n\\n### 10.1 Rollback Principles\\n\\n1. **Every phase is independently reversible** — you can roll back reads without rolling back writes.\\n2. **Rollback is a feature-flag flip** — no redeployment required for emergency rollback.\\n3. **Data written to PG during dual-write is not lost** — REST API remains the source of truth until write cutover.\\n4. **Maximum rollback time: < 2 minutes** (feature flag propagation).\\n\\n### 10.2 Phase-Specific Rollback Procedures\\n\\n#### Phase 2 — Data Migration (Backfill)\\n\\n| Symptom | Action |\\n|---------|--------|\\n| Bulk load fails midway | Drop and recreate affected tables; re-run from last checkpoint (resume from NDJSON line offset) |\\n| Data corruption detected | Truncate affected table; re-export from API; verify checksums before re-loading |\\n| Performance degradation on PG | Pause load job; scale PG compute; resume |\\n\\n**Rollback Command:**\\n```bash\\n# Truncate and re-run\\npsql \\\"$",
+      "$(date -d '1 hour ago' -Iseconds)\\n\\n# Step 3: Verify API has all data\\npython3 verify.py --source api --target pg\\n\\n# Step 4: Confirm rollback stable for 30 min before investigating root cause\\n```\\n\\n#### Phase 5 — Post-Decommission\\n\\n| Symptom | Action |\\n|---------|--------|\\n| Critical bug found in PG queries | Patch and deploy fix; if urgent, temporarily re-enable REST API reads via feature flag (code must still be present) |\\n| Need to revert permanently | Re-deploy previous version; re-enable REST API integration; PG remains as replica |\\n\\n### 10.3 Rollback Decision Matrix\\n\\n```\\n                    ┌─────────────────────────────────────────────┐\\n                    │           Observed Impact Level              │\\n                    ├──────────────┬──────────────┬───────────────┤\\n                    │   LOW        │   MEDIUM     │   HIGH        │\\n                    │ (minor diff) │ (SLA breach) │ (data loss)   │\\n┌───────────────────┼──────────────┼──────────────┼───────────────┤\\n│ Shadow Read       │ Log & track  │ Disable      │ Disable       │\\n│ Read Cutover      │ Monitor 1h   │ ROLLBACK     │ ROLLBACK NOW  │\\n│ Dual Write        │ Reconcile    │ ROLLBACK     │ ROLLBACK NOW  │\\n│ Write Cutover     │ Patch & fix  │ ROLLBACK     │ ROLLBACK NOW  │\\n│ Post-Decommission │ Patch & fix  │ Patch/deploy │ Redeploy old  │\\n└───────────────────┴──────────────┴──────────────┴───────────────┘\\n```\\n\\n### 10.4 Rollback Communication Plan\\n\\n| Event | Channel | Audience | Template |\\n|-------|---------|----------|----------|\\n| Rollback initiated | #incident-slack | Engineering | \\\"🚨 ROLLBACK: [phase] — [reason]. Flag flipped to 0%. Investigating.\\\" |\\n| Rollback complete | #incident-slack | Engineering | \\\"✅ ROLLBACK COMPLETE: [phase] — traffic restored to REST API. Monitoring.\\\" |\\n| Post-mortem | Email + Confluence | Engineering + Stakeholders | Full incident report within 48h |\\n\\n---\\n\\n## 11. Risk Register\\n\\n| # | Risk | Likelihood | Impact | Mitigation | Contingency |\\n|---|------|-----------|--------|------------|-------------|\\n| R1 | Data loss during migration | Low | Critical | Dual-write, checksums, PG PITR | Restore from PG backup; re-backfill from API |\\n| R2 | Schema mismatch (API fields not in PG) | Medium | High | Automated schema diff tool; comprehensive field mapping review | Add missing columns with `ALTER TABLE` |\\n| R3 | Performance regression on PG | Medium | Medium | Load test at 2x production volume; index tuning | Scale PG compute; fall back to API reads |\\n| R4 | Rate-limited by REST API during backfill | High | Medium | Throttle export; respect `X-RateLimit-Reset` header | Spread backfill over multiple windows |\\n| R5 | Dual-write inconsistency | Medium | High | Reconciliation job every 5 min; diff alerting | Flip write flag to 0%; re-sync |\\n| R6 | Feature flag misconfiguration | Low | High | Flag changes require 2-person approval; audit log | Manual env var override |\\n| R7 | Network partition between app and PG | Low | Critical | Multi-AZ PG deployment; health checks | Automatic failover; flip reads to API |\\n| R8 | Large JSONB columns cause slow queries | Medium | Medium | GIN indexes on JSONB; benchmark | Extract frequently queried fields to columns |\\n\\n---\\n\\n## 12. Timeline & Milestones\\n\\n```\\nWeek 1        Week 2        Week 3        Week 4        Week 5        Week 6\\n┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐\\n│ Phase 0  │ │ Phase 1  │ │ Phase 2  │ │ Phase 3  │ │ Phase 4  │ │ Phase 5  │\\n│ Prep     │ │ Schema & │ │ Data     │ │ Cutover  │ │ Validate │ │ Decom    │\\n│          │ │ Infra    │ │ Migration│ │ (ramp)   │ │ & Verify │ │          │\\n├──────────┤ ├──────────┤ ├──────────┤ ├──────────┤ ├──────────┤ ├──────────┤\\n│• API     │ │• Design  │ │• Snapshot│ │• Shadow  │ │• Count   │ │• Delete  │\\n│  audit   │ │  schema  │ │  export  │ │  read    │ │  parity  │ │  API     │\\n│• Abstrac-│ │• Create  │ │• Trans-  │ │• Read    │ │• Sample  │ │  repos   │\\n│  t DAL   │ │  tables  │ │  form &  │ │  cutover │ │  compare │ │• Revoke  │\\n│• Feature │ │• Deploy  │ │  load    │ │• Dual    │ │• Latency │ │  creds   │\\n│  flags   │ │  PgBounce│ │• CDC     │ │  write   │ │  tests   │ │• Update  │\\n│• Monitor │ │• Seed    │ │  catchup │ │• Write   │ │• Smoke   │ │  docs    │\\n│  setup   │ │  indexes │ │• Verify  │ │  cutover│ │  tests   │ │          │\\n└──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────┘\\n  Milestone:    Milestone:    Milestone:    Milestone:    Milestone:    Milestone:\\n  API Audit     Schema Live   Data Parity   Full Cutover  Validated     Decom Done\\n  Complete      & Tested      Confirmed     Complete      & Stable      & Clean\\n```\\n\\n---\\n\\n## 13. Runbook\\n\\n### 13.1 Daily Operations (During Migration)\\n\\n```bash\\n#!/bin/bash\\n# daily_migration_check.sh — Run every morning during migration\\n\\necho \\\"=== Daily Migration Health Check ===\\\"\\n\\n# 1. Row counts\\necho \\\"--- Row Counts ---\\\"\\npsql \\\"$",
+      "$DB_DSN\\\" -c \\\"SELECT now() - pg_last_xact_replay_timestamp() AS replication_lag;\\\"\\n\\n# 5. Connection pool health\\necho \\\"--- PgBouncer Stats ---\\\"\\npsql \\\"$"
+    ],
+    "out_latex_head": [
+      "\\( -name \\\"*.py\\\" -o -name \\\"*.js\\\" -o -name \\\"*.ts\\\" -o -name \\\"*.go\\\" -o -name \\\"*.java\\\" -o -name \\\"*.rb\\\" -o -name \\\"*.yml\\\" -o -name \\\"*.yaml\\\" -o -name \\\"*.json\\\" -o -name \\\"*.toml\\\" -o -name \\\"*.env*\\\" -o -name \\\"Dockerfile\\\" -o -name \\\"Makefile\\\" \\\\)",
+      "$500/min | p95 - 200ms | Bearer | `GET /users/{id}` | GET | id, nome, e-mail, papel, prefs | 2k/min | p95 - 120ms | Bearer | `POST /users`     | POST | nome, e-mail, função | 20 euros/min | p95 - 300m | Bearer | `PUT /users/{id}` | PUT | nome, e-mail, papel, prefs | 50 euros/min | p95 - 300ms | Bearer | `GET /orders`     | GET | id, user_id, total, status | 1k/min | p95 - 250m | API Key | API `GET /orders/{id}`| GET | id, user_id, itens[], total | 5k/min | p95 - 150m | API Key |... |... |... |... |... |...... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |... |...... |...... |...... |...... |... |... |... |... |... |... |... |... |...... |... |... |...... |... |... |... |... |... |... |... |... |... |...... |...... |... |... |...... |...... |... |... |... |... |... |... |...... |... |...... |...... |...... |...... |... |... |... |...... |...... |...... |... |... |... |... |... Registros | Avg. Tamanho recorde | Crescimento diário |---------------------------------------------------------------------------------------------------|Um---------|Um | 2.5M | 1.2 KB | R$",
+      "$ 25.000/dia | R$",
+      "$ 2,00`\\nApplication Services\\n├── User Service ──────── GET/POST/PUT /users\\n├── Order Service ─────── GET /orders, GET /orders/{id}\\n├── Search Service ────── GET /users (list), GET /products\\n├── Notification Service ─ GET /users/{id} (read-only)\\n└── Analytics Service ─── GET /orders (bulk export)\\n`-`\\n\\n---\\n\\n## 3. Target Architecture\\n\\n`-`\\n┌──────────────────────────────────────────────────────┐\\n│                    Application Layer                  │\\n│  ┌──────────┐  ┌──────────┐  ┌──────────┐           │\\n│  │User Svc  │  │Order Svc │  │Search Svc│  …        │\\n│  └────┬─────┘  └────┬─────┘  └────┬─────┘           │\\n│       │              │              │                 │\\n│  ─────┼──────────────┼──────────────┼────────────    │\\n│       │     Data Access Layer (DAL) │                 │\\n│       │  (repository pattern with   │                 │\\n│       │   pluggable backends)        │                 │\\n│  ─────┼──────────────┼──────────────┼────────────    │\\n│       │              │              │                 │\\n│  ┌────▼─────┐  ┌─────▼────┐  ┌─────▼────┐           │\\n│  │PgAdapter │  │PgAdapter │  │PgAdapter │           │\\n│  └────┬─────┘  └─────┬────┘  └─────┬────┘           │\\n└───────┼──────────────┼──────────────┼───────────────┘\\n        │              │              │\\n        ▼              ▼              ▼\\n┌──────────────────────────────────────────────────────┐\\n│              PostgreSQL (Primary + Replica)           │\\n│  ┌─────────┐   Streaming Replication   ┌──────────┐  │\\n│  │ Primary │ ─────────────────────────▶ │ Replica  │  │\\n│  └─────────┘                            └──────────┘  │\\n└──────────────────────────────────────────────────────┘\\n`-`\\n\\n### Key Design Decisions\\n\\n| Decision | Choice | Rationale |\\n|----------|--------|-----------|\\n| ORM / Query Builder | Parameterized queries via `sqlc` / `pgx` or equivalent | Type safety, performance, SQL transparency |\\n| Migration Tool | `golang-migrate em` / `Flyway em` / `Alembic` | Versioned, reversible schema changes |\\n| Connection Pooling | `PgBouncer` (transaction mode) | Limit connection count, improve throughput |\\n| Read Path | Read from replica for analytical / search queries | Offload primary, stay within SLA |\\n| Write Path | Write to primary only | Strong consistency |\\n\\n---\\n\\n## 4. Phase 0 — Preparation\\n\\n### 4.1 Prerequisites Checklist\\n\\n- [ ] REST API fully documented (OpenAPI 3.0+ spec extracted)\\n- [ ] Data access layer abstracted behind repository interfaces\\n- [ ] PostgreSQL cluster provisioned (primary + 1 replica minimum)\\n- [ ] PgBouncer deployed and configured\\n- [ ] CI/CD pipeline supports feature-flag driven rollouts\\n- [ ] Monitoring dashboards for API latency, error rate, and DB metrics\\n- [ ] Rollback feature flag created (`USE_POSTGRES_READ`, `USE_POSTGRES_WRITE`)\\n- [ ] Stakeholder sign-off on migration timeline\\n- [ ] Backup / disaster-recovery runbook for existing REST API data\\n\\n### 4.2 Repository Interface (Example — Go)\\n\\n`-`go\\n// repository.go — Existing interface, no changes needed\\ntype UserRepository interface {\\n    GetByID(ctx context.Context, id string) (*User, error)\\n    List(ctx context.Context, filter UserFilter) ([]User, error)\\n    Create(ctx context.Context, user *User) error\\n    Update(ctx context.Context, user *User) error\\n}\\n`-`\\n\\nThe existing `APIUserRepository (A)` implements this against the REST API.\\nA new `PgUserRepositório` will implement it against PostgreSQL.\\n\\n### 4.3 Feature Flag Configuration\\n\\n`-`yaml\\n# feature-flags.yaml\\nflags:\\n  USE_POSTGRES_READ:\\n    description: \\\"Route read queries to PostgreSQL instead of REST API\\\"\\n    default: false\\n    rules:\\n      - segment: internal_beta\\n        percentage: 0    # ramp 0 → 10 → 50 → 100\\n\\n  USE_POSTGRES_WRITE:\\n    description: \\\"Route write mutations to PostgreSQL instead of REST API\\\"\\n    default: false\\n    rules:\\n      - segment: internal_beta\\n        percentage: 0\\n`-`\\n\\n---\\n\\n## 5. Phase 1 — Schema Design & Provisioning\\n\\n### 5.1 Schema Translation Rules\\n\\n| REST API Pattern               | PostgreSQL Equivalent           | Notes                          |\\n|--------------------------------|---------------------------------|--------------------------------|\\n| Nested JSON object             | `JSONB` column or separate table| Prefer separate table if queried independently |\\n| Array of primitives            | `JSONB` or `int[]` / `texto[]`   | Use native arrays for typed data |\\n| Array of objects               | Junction / child table          | Normalize for indexing         |\\n| `null` or missing field        | `NULL` with `DEFAULT NULL`      | Explicit column nullability    |\\n| ISO-8601 date strings          | `TIMESTAMPTZ (TIMESTAMPTZ)`                   | Always store with timezone     |\\n| Enum-like string fields        | `ENUM` type or `CHECK (O)` constraint| Ensure domain integrity       |\\n| Pagination cursor (offset)     | Keyset pagination columns       | Index on `created_at em`, `id`    |\\n\\n### 5.2 Initial Schema\\n\\n`-`sql\\n-- V1__create_users_table.sql\\nCREATE TABLE users (\\n    id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),\\n    name        TEXT        NOT NULL,\\n    email       TEXT        NOT NULL UNIQUE,\\n    role        TEXT        NOT NULL CHECK (role IN ('admin', 'member', 'guest')),\\n    preferences JSONB       DEFAULT '{}'::jsonb,\\n    created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),\\n    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()\\n);\\n\\nCREATE INDEX idx_users_email ON users (email);\\nCREATE INDEX idx_users_role  ON users (role);\\n\\n-- V1__create_orders_table.sql\\nCREATE TABLE orders (\\n    id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),\\n    user_id     UUID        NOT NULL REFERENCES users(id),\\n    total       NUMERIC(12,2) NOT NULL DEFAULT 0,\\n    status      TEXT        NOT NULL CHECK (status IN ('pending','confirmed','shipped','delivered','cancelled')),\\n    items       JSONB       DEFAULT '[]'::jsonb,\\n    created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),\\n    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()\\n);\\n\\nCREATE INDEX idx_orders_user_id  ON orders (user_id);\\nCREATE INDEX idx_orders_status   ON orders (status);\\nCREATE INDEX idx_orders_created  ON orders (created_at);\\n`-`\\n\\n### 5.3 Infrastructure\\n\\n`-`bash\\n# Provision PostgreSQL (example with cloud-managed)\\n# Ensure:\\n#   - Primary: 4 vCPU, 16 GB RAM, 500 GB SSD\\n#   - Replica: 2 vCPU, 8 GB RAM, 500 GB SSD (async streaming replication)\\n#   - Automated backups: daily, 7-day retention\\n#   - Point-in-time recovery enabled\\n#   - SSL required for all connections\\n\\n# PgBouncer config snippet\\n[databases]\\nmyapp = host=pg-primary.internal port=5432 dbname=myapp\\n\\n[pgbouncer]\\npool_mode = transaction\\nmax_client_conn = 500\\ndefault_pool_size = 25\\nreserve_pool_size = 5\\n`-`\\n\\n---\\n\\n## 6. Phase 2 — Data Migration Pipeline\\n\\n### 6.1 Strategy: Bulk Backfill + CDC (Change Data Capture)\\n\\n`-`\\n┌─────────────┐      Bulk Snapshot       ┌──────────────┐\\n│  REST API   │ ──────────────────────── │  PostgreSQL  │\\n│  (Source)   │                           │  (Target)    │\\n└──────┬──────┘                           └──────┬───────┘\\n       │                                         │\\n       │  ┌──────────────────────────────┐      │\\n       └──│  Change Log / Polling Layer  │──────┘\\n          │  (catches mutations during    │\\n          │   backfill window)            │\\n          └──────────────────────────────┘\\n`-`\\n\\n### 6.2 Step-by-Step Migration Pipeline\\n\\n#### Step 1: Snapshot Export\\n\\n`-`python\\n# migrate_snapshot.py\\nimport requests, json, sys\\nfrom concurrent.futures import ThreadPoolExecutor, as_completed\\n\\nAPI_BASE = \\\"https://api.example.com/v1\\\"\\nBATCH_SIZE = 500\\nOUTPUT_DIR = \\\"/data/snapshots\\\"\\n\\ndef fetch_page(entity: str, page: int) -> list[dict]:\\n    resp = requests.get(\\n        f\\\"{API_BASE}/{entity}\\\",\\n        params={\\\"page\\\": page, \\\"per_page\\\": BATCH_SIZE},\\n        headers={\\\"Authorization\\\": f\\\"Bearer {TOKEN}\\\"},\\n        timeout=30\\n    )\\n    resp.raise_for_status()\\n    return resp.json()[\\\"data\\\"]\\n\\ndef export_entity(entity: str):\\n    \\\"\\\"\\\"Paginate through all records, write NDJSON files.\\\"\\\"\\\"\\n    page = 1\\n    total_exported = 0\\n    with open(f\\\"{OUTPUT_DIR}/{entity}.ndjson\\\", \\\"w\\\") as f:\\n        while True:\\n            records = fetch_page(entity, page)\\n            if not records:\\n                break\\n            for rec in records:\\n                f.write(json.dumps(rec) + \\\"\\\\n\\\")\\n            total_exported += len(records)\\n            print(f\\\"[{entity}] Page {page}: {len(records)} records (total: {total_exported})\\\")\\n            page += 1\\n    print(f\\\"[{entity}] Export complete: {total_exported} records\\\")\\n\\nfor entity in [\\\"users\\\", \\\"orders\\\", \\\"products\\\"]:\\n    export_entity(entity)\\n`-`\\n\\n#### Step 2: Transform & Load\\n\\n`-`python\\n# transform_load.py\\nimport json, psycopg, uuid\\nfrom psycopg.rows import dict_row\\n\\nDB_DSN = \\\"postgresql://myapp:mypass@pg-primary:5432/myapp\\\"\\n\\ndef load_users(path: str):\\n    with psycopg.connect(DB_DSN) as conn, open(path) as f:\\n        with conn.cursor() as cur:\\n            batch = []\\n            for line in f:\\n                raw = json.loads(line)\\n                batch.append((\\n                    raw[\\\"id\\\"],              # or uuid.uuid4() if regenerating\\n                    raw[\\\"name\\\"],\\n                    raw[\\\"email\\\"],\\n                    raw.get(\\\"role\\\", \\\"member\\\"),\\n                    json.dumps(raw.get(\\\"preferences\\\", {})),\\n                    raw.get(\\\"created_at\\\"),\\n                    raw.get(\\\"updated_at\\\"),\\n                ))\\n                if len(batch) >= 1000:\\n                    cur.executemany(\\n                        \\\"\\\"\\\"INSERT INTO users (id, name, email, role, preferences, created_at, updated_at)\\n                           VALUES (%s, %s, %s, %s, %s::jsonb, %s, %s)\\n                           ON CONFLICT (email) DO UPDATE SET\\n                             name = EXCLUDED.name,\\n                             role = EXCLUDED.role,\\n                             preferences = EXCLUDED.preferences,\\n                             updated_at = EXCLUDED.updated_at\\n                        \\\"\\\"\\\",\\n                        batch\\n                    )\\n                    batch.clear()\\n            if batch:\\n                cur.executemany(/* same query */, batch)\\n            conn.commit()\\n    print(\\\"Users loaded successfully\\\")\\n`-`\\n\\n#### Step 3: Catch-Up (CDC via Polling)\\n\\nDuring the bulk export, the REST API continues to receive writes.\\nA catch-up loop polls for recently modified records:\\n\\n`-`python\\n# catchup.py\\nimport time, requests, psycopg\\n\\nPOLL_INTERVAL = 5  # seconds\\n\\ndef catchup_loop(entity: str, last_seen_ts: str):\\n    \\\"\\\"\\\"Poll for records updated after last_seen_ts and upsert into PG.\\\"\\\"\\\"\\n    while True:\\n        resp = requests.get(\\n            f\\\"{API_BASE}/{entity}\\\",\\n            params={\\\"updated_since\\\": last_seen_ts, \\\"per_page\\\": 1000},\\n            headers={\\\"Authorization\\\": f\\\"Bearer {TOKEN}\\\"},\\n        )\\n        records = resp.json()[\\\"data\\\"]\\n        if records:\\n            upsert_to_pg(entity, records)\\n            last_seen_ts = records[-1][\\\"updated_at\\\"]\\n        time.sleep(POLL_INTERVAL)\\n`-`\\n\\n#### Step 4: Consistency Checksum\\n\\n`-`python\\n# verify.py — Compare counts, checksums, and sample records\\n\\ndef verify_entity(entity: str):\\n    # Count comparison\\n    api_count = requests.get(f\\\"{API_BASE}/{entity}/count\\\").json()[\\\"count\\\"]\\n    with psycopg.connect(DB_DSN) as conn:\\n        pg_count = conn.execute(f\\\"SELECT count(*) FROM {entity}\\\").fetchone()[0]\\n\\n    assert api_count == pg_count, f\\\"Count mismatch for {entity}: API={api_count} PG={pg_count}\\\"\\n\\n    # Sample comparison (spot-check 100 random records)\\n    api_samples = requests.get(f\\\"{API_BASE}/{entity}/random?n=100\\\").json()[\\\"data\\\"]\\n    for rec in api_samples:\\n        pg_rec = fetch_from_pg(entity, rec[\\\"id\\\"])\\n        assert rec[\\\"email\\\"] == pg_rec[\\\"email\\\"], f\\\"Data mismatch for {entity}/{rec['id']}\\\"\\n\\n    print(f\\\"✅ {entity}: verification passed ({pg_count} records)\\\")\\n`-`\\n\\n---\\n\\n## 7. Phase 3 — Application Cutover (Dual-Write)\\n\\n### 7.1 Cutover Sequence\\n\\n`-`\\nStage 1: Shadow Read     → App reads from REST API; same read also hits PG (logged, not served)\\nStage 2: Read Cutover    → App reads from PG; REST API is fallback\\nStage 3: Dual Write      → App writes to BOTH REST API and PG; compare results\\nStage 4: Write Cutover   → App writes to PG only; REST API is disabled\\n`-`\\n\\n### 7.2 Shadow Read Implementation\\n\\n`-`go\\n// shadow_read.go\\nfunc (s *ShadowReader) GetByID(ctx context.Context, id string) (*User, error) {\\n    // Primary read — still from REST API\\n    user, err := s.apiRepo.GetByID(ctx, id)\\n    if err != nil {\\n        return nil, err\\n    }\\n\\n    // Shadow read — fire-and-forget comparison\\n    go func() {\\n        pgUser, pgErr := s.pgRepo.GetByID(context.Background(), id)\\n        if pgErr != nil {\\n            s.metrics.Inc(\\\"shadow_read_pg_error\\\", 1)\\n            s.logger.Warn(\\\"shadow read PG error\\\", \\\"id\\\", id, \\\"err\\\", pgErr)\\n            return\\n        }\\n        if !user.Equal(pgUser) {\\n            s.metrics.Inc(\\\"shadow_read_mismatch\\\", 1)\\n            s.logger.Warn(\\\"shadow read mismatch\\\",\\n                \\\"id\\\", id,\\n                \\\"api_hash\\\", user.Hash(),\\n                \\\"pg_hash\\\", pgUser.Hash(),\\n            )\\n        } else {\\n            s.metrics.Inc(\\\"shadow_read_match\\\", 1)\\n        }\\n    }()\\n\\n    return user, nil\\n}\\n`-`\\n\\n### 7.3 Dual-Write Implementation\\n\\n`-`go\\n// dual_write.go\\nfunc (s *DualWriter) Create(ctx context.Context, user *User) error {\\n    // Write to PRIMARY (REST API) first\\n    if err := s.apiRepo.Create(ctx, user); err != nil {\\n        return fmt.Errorf(\\\"api write failed: %w\\\", err)\\n    }\\n\\n    // Write to SECONDARY (PostgreSQL) — best effort, log failures\\n    if err := s.pgRepo.Create(ctx, user); err != nil {\\n        s.metrics.Inc(\\\"dual_write_pg_error\\\", 1)\\n        s.logger.Error(\\\"dual write PG error\\\", \\\"id\\\", user.ID, \\\"err\\\", err)\\n        // Do NOT fail the request — PG is secondary at this stage\\n        // Reconcile later via catch-up job\\n    } else {\\n        s.metrics.Inc(\\\"dual_write_pg_success\\\", 1)\\n    }\\n\\n    return nil\\n}\\n`-`\\n\\n### 7.4 Reconciliation Job\\n\\nRuns every 5 minutes during dual-write phase to fix any PG write failures:\\n\\n`-`sql\\n-- Find records in REST API that are missing/different in PG\\n-- (application-level comparison, executed as a cron job)\\n\\n-- Example: users missing in PG\\nSELECT api.id\\nFROM   api_export.users api\\nLEFT   JOIN pg_public.users pg ON pg.id = api.id\\nWHERE  pg.id IS NULL\\n   OR  pg.updated_at < api.updated_at;\\n`-`\\n\\n### 7.5 Feature Flag Ramp Schedule\\n\\n| Time | `USE_POSTGRES_READ` | `USE_POSTGRES_WRITE` | Notes |\\n|------|----------------------|-----------------------|-------|\\n| T+0h | 0% (shadow only)    | 0%                    | Shadow read logging begins |\\n| T+24h| 10%                 | 0%                    | Internal beta users read from PG |\\n| T+48h| 50%                 | 0%                    | Half traffic reads from PG |\\n| T+72h| 100%                | 0%                    | All reads from PG |\\n| T+96h| 100%                | 10% (dual-write on)   | Dual-write begins for beta |\\n| T+120h| 100%               | 50%                   | Half traffic writes to PG |\\n| T+144h| 100%               | 100%                  | All writes to PG; API is shadow |\\n| T+168h| 100%               | 100%                  | Soak period — monitor for 24h |\\n\\n---\\n\\n## 8. Phase 4 — Validation & Verification\\n\\n### 8.1 Automated Validation Suite\\n\\n| Check | Method | Threshold | Action on Failure |\\n|-------|--------|-----------|-------------------|\\n| Row count parity | `Contagem SELECT(*)` vs API `/count` | 0 difference | Block cutover |\\n| Field-level diff | Sample 1% of records, deep-compare | 0 mismatches | Investigate, re-migrate |\\n| Latency comparison | p50/p95/p99 of read queries | PG ≤ API latency | Tune PG indexes |\\n| Error rate | 5xx from application logs | < 0.1% | Rollback reads |\\n| Write consistency | Dual-write diff counter | 0 uncompensated diffs | Reconcile before write cutover |\\n| FK integrity | `Esquerda JOIN... ONDE É NULL` | 0 orphans | Repair data |\\n| Index usage | `pg_stat_user_indexes em` | All hot indexes used | Add missing indexes |\\n\\n### 8.2 Smoke Tests (Post-Cutover)\\n\\n`-`bash\\n#!/bin/bash\\nset -euo pipefail\\n\\necho \\\"=== Smoke Tests ===\\\"\\n\\n# 1. Health check\\ncurl -sf https://app.example.com/healthz | jq . > /dev/null\\necho \\\"✅ Health check passed\\\"\\n\\n# 2. Read a known user\\nUSER=$",
+      "$USER\\\" | jq -e '.email' > /dev/null\\necho \\\"✅ User read passed\\\"\\n\\n# 3. Write a test order, read it back\\nORDER_ID=$",
+      "$ORDER_ID\\\" | jq -e '.total == 9.99' > /dev/null\\necho \\\"✅ Order write+read passed\\\"\\n\\n# 4. DB direct check\\npsql \\\"$"
+    ],
+    "src_excerpt": "Plan the migration from REST API to PostgreSQL. Include rollback strategy.\n\n[system] You are a function calling AI model. You are provided with function signatures within <tools> </tools> XML tags. You may call one or more functions to assist with the user query. If available tools are not relevant in assisting with user query, just respond in natural conversational language. Don't make assumptions about what values to plug into functions. After calling & executing the functions, you will be provided with function results within <tool_response> </tool_response> XML tags. Here are the available tools:\n<tools>\n[{\"name\": \"patch\", \"description\": \"Targeted find-and-replace edits in files. Use this instead of sed/awk in terminal. Uses fuzzy matching (9 strategies) so minor whitespace/indentation differences won't break it. Returns a unified diff. Auto-runs syntax checks after editing.\\n\\nRepla",
+    "out_excerpt": "Planeje a migração da API REST para o PostgreSQL. Incluir estratégia de rollback.\n\n[system] Você é uma função chamando modelo de IA. Você é fornecido com assinaturas de função dentro de tags XML 'tools> \"tools>>\". Você pode chamar uma ou mais funções para ajudar com a consulta de usuário. Se as ferramentas disponíveis não forem relevantes para auxiliar na consulta do usuário, basta responder em linguagem de conversação natural. Não faça suposições sobre quais valores se conectarem às funções. Depois de chamar e executar as funções, você será fornecido com resultados de função dentro das tags XML \"tool_response> \"/tool_response>>. Aqui estão as ferramentas disponíveis:\n'ferramentas>\n['name\":\"patch\",\"description\":\"Targeted find-e-replace edições em arquivos. Use isso em vez de sed/aw não terminal. Usa correspondência fuzzy (9 estratégias) para que pequenas diferenças de espaço branco/inden"
+  },
+  {
+    "idx": 240,
+    "dataset": "numina",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_count": 1,
+    "out_latex_count": 1,
+    "src_latex_head": [
+      "$\\boxed{4}$"
+    ],
+    "out_latex_head": [
+      "$-boxed $"
+    ],
+    "src_excerpt": "Jimmy decides to make sandwiches for a picnic.  He makes 8 sandwiches in total, using two slices of bread each.  How many packs of bread does he need to buy to make these sandwiches, assuming he starts with no bread and each pack has 4 slices of bread in it?\n\nTo make 8 sandwiches, Jimmy needs 2 slices of bread for each sandwich. So, he needs a total of 8 sandwiches * 2 slices of bread/sandwich = 16 slices of bread.\n\nEach pack of bread has 4 slices, so to get 16 slices, Jimmy needs to buy 16 slices / 4 slices/pack = $\\boxed{4}$  packs of bread.",
+    "out_excerpt": "Jimmy decide fazer sanduíches para um piquenique. Ele faz 8 sanduíches não total, usando duas fatias de pão cada. Quantos pacotes de pão ele precisa comprar para fazer esses sanduíches, supondo que ele começa sem pão e cada pacote tem 4 fatias de pão nele? Para fazer 8 sanduíches, Jimmy precisa de 2 fatias de pão para cada sanduíche. Então, ele precisa de um total de 8 sanduíches * 2 fatias de pão/sanduíche = 16 fatias de pão. Cada pacote de pão tem 4 fatias, então para obter 16 fatias, Jimmy precisa comprar 16 fatias / 4 fatias / pacote = $-boxed $ 3 $ pacotes de pão."
+  }
+]

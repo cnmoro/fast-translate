@@ -1,0 +1,11 @@
+{
+  "dataset": "openai/gsm8k",
+  "split": "main/train",
+  "total": 7473,
+  "passed": 7473,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "failure_types": {},
+  "criterion": "qa_failures direct with runtime-integrated source-aware postprocess",
+  "bad_examples": []
+}

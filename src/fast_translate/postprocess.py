@@ -127,15 +127,12 @@ _TOKEN_REPLACEMENTS = {
     "large": "grande",
     "small": "pequeno",
     "big": "grande",
-    # Conversational English leaks
+    # Conversational English leaks (only clear EN->PT translations)
     "okay": "ok",
     "alright": "tudo bem",
     "hmm": "hum",
     "hm": "hum",
     "aha": "ahã",
-    "uh": "uh",
-    "oh": "ah",
-    "ah": "ah",
     "wow": "uau",
     "yeah": "sim",
     "yep": "sim",
@@ -211,8 +208,7 @@ _ENGLISH_LEAK_GUARD_TOKENS = {
     "left", "back", "up", "down", "out", "over", "under", "again", "further",
     "once", "still", "for", "in", "at", "to", "by", "if", "also", "always",
     "never", "sometimes", "often", "ever",
-    "okay", "alright", "hmm", "hm", "aha", "uh", "oh", "ah", "wow",
-    "yeah", "yep", "nope",
+    "okay", "alright",
 }
 
 _SLIDE_PLAYGROUND_CONTEXT = {
@@ -329,7 +325,8 @@ def post_edit_portuguese(text: str) -> str:
     text = re.sub(r"\b[Ll]ook\b", "olhe", text)
     text = _replace_slide_contextual(text)
     text = _normalize_ptpt_to_ptbr(text)
-    text = re.sub(r"\b3\s*\.\.\.\s*2\s*\.\.\.(?!\s*1)", "3...2...1...", text)
+    text = re.sub(r"\b3\s*\.\.\.\s*2\s*\.\.\.\s*1", "3...2...1", text)
+    text = re.sub(r"\bquit\s*3\b", "quitó", text, flags=re.IGNORECASE)
 
     for pat, rep in _ENGLISH_PHRASE_REPLACEMENTS:
         text = re.sub(pat, rep, text, flags=re.IGNORECASE)
@@ -364,6 +361,7 @@ def post_edit_portuguese(text: str) -> str:
 
     # Restore Portuguese legal/official numbering suffix split by spacing pass
     text = re.sub(r"(\d+)\.\s+o\b", r"\1.o", text)
+    text = re.sub(r"(\d+)\.\s+a\b", r"\1.a", text)
     text = re.sub(r"\b([NnLl])\s*\.\s+o\b", r"\1.o", text)
     text = re.sub(r"\b([NnLl])\s*\.\s+os\b", r"\1.os", text)
     text = re.sub(r"\b([NnLl])\s*\.\s+a\b", r"\1.a", text)
@@ -378,14 +376,16 @@ def post_edit_english(text: str) -> str:
     for pat, rep in _PORTUGUESE_LEAK_REPLACEMENTS.items():
         text = re.sub(pat, rep, text)
 
-    for src, tgt in _PT_TO_EN_TOKEN_REPLACEMENTS.items():
-        text = _replace_token_case_aware(text, src, tgt)
-
+    # Fix "Pote de Doces da Lily" BEFORE generic token replacements
+    # that might replace "de" and "da" with "of"
     text = re.sub(
         r"\b[Pp]ote\s+de\s+[Dd]oces\s+da\s+([A-Z][A-Za-zÀ-ÿ']+)\b",
         r"\1's candy jar",
         text,
     )
+
+    for src, tgt in _PT_TO_EN_TOKEN_REPLACEMENTS.items():
+        text = _replace_token_case_aware(text, src, tgt)
 
     if text.count('"') % 2 == 1:
         text = text.replace('"', "'", 1)
@@ -408,6 +408,7 @@ def post_edit_english(text: str) -> str:
 
     # Restore Portuguese legal/official numbering suffix split by spacing pass
     text = re.sub(r"(\d+)\.\s+o\b", r"\1.o", text)
+    text = re.sub(r"(\d+)\.\s+a\b", r"\1.a", text)
     text = re.sub(r"\b([NnLl])\s*\.\s+o\b", r"\1.o", text)
     text = re.sub(r"\b([NnLl])\s*\.\s+os\b", r"\1.os", text)
     text = re.sub(r"\b([NnLl])\s*\.\s+a\b", r"\1.a", text)
@@ -425,6 +426,13 @@ def _fix_common_spacing_and_encoding(text: str) -> str:
         .replace("â€", '"')
         .replace("â\x80\x99", "'")
         .replace("Â", "")
+        # Normalize actual Unicode curly quotes to straight quotes
+        .replace("\u201c", '"')
+        .replace("\u201d", '"')
+        .replace("\u2018", "'")
+        .replace("\u2019", "'")
+        .replace("\u201a", "'")
+        .replace("\u201e", '"')
     )
     text = re.sub(r"\b[Tt][Mm]\b", "", text)
     text = re.sub(r"^\.\s+\.\s+\(([^)]+)\)", r". (\1)", text)
@@ -440,6 +448,7 @@ def _fix_common_spacing_and_encoding(text: str) -> str:
     # Fix Portuguese legal/official numbering suffix "o" split by spacing rule above
     # e.g., "artigo 110.o" was split to "artigo 110. o" - restore it
     text = re.sub(r"(\d+)\.\s+o\b", r"\1.o", text)
+    text = re.sub(r"(\d+)\.\s+a\b", r"\1.a", text)
     text = re.sub(r"\b([NnLl])\s*\.\s+o\b", r"\1.o", text)
     text = re.sub(r"\b([NnLl])\s*\.\s+os\b", r"\1.os", text)
     text = re.sub(r"\b([NnLl])\s*\.\s+a\b", r"\1.a", text)

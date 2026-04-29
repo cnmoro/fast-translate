@@ -1,0 +1,14 @@
+{
+  "total": 7473,
+  "passed": 6282,
+  "failed": 1191,
+  "pass_rate": 0.8406262545162585,
+  "failure_types": {
+    "english_leak": 1167,
+    "double_spaces": 205,
+    "number_mismatch": 2,
+    "parenthesis_mismatch": 3,
+    "unbalanced_quotes": 1
+  },
+  "criterion": "qa_failures direct"
+}

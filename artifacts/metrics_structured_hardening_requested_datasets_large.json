@@ -1,0 +1,38 @@
+{
+  "datasets_requested": [
+    "lambda/hermes-agent-reasoning-traces",
+    "Crownelius/Opus-4.6-Reasoning-3300x",
+    "ScaleAI/SWE-bench_Pro",
+    "openai/gsm8k"
+  ],
+  "dataset_counts_en": {
+    "HuggingFaceH4/ultrachat_200k(train_sft)": 40,
+    "AI-MO/NuminaMath-CoT(train)": 40,
+    "code_search_net/python(train)": 40,
+    "lambda/hermes-agent-reasoning-traces(kimi/train)": 40,
+    "lambda/hermes-agent-reasoning-traces(glm-5.1/train)": 40,
+    "Crownelius/Opus-4.6-Reasoning-3300x(train)": 40,
+    "ScaleAI/SWE-bench_Pro(test)": 40,
+    "openai/gsm8k(main/train)": 40
+  },
+  "limits": {
+    "en": 320,
+    "pt": 320
+  },
+  "metrics": {
+    "en_pt": {
+      "total": 320,
+      "code_exact_rate": 1.0,
+      "latex_exact_rate": 0.996875,
+      "combined_exact_rate": 0.996875
+    },
+    "pt_en": {
+      "total": 320,
+      "code_exact_rate": 1.0,
+      "latex_exact_rate": 0.996875,
+      "combined_exact_rate": 0.996875
+    }
+  },
+  "target_combined_exact_rate": 0.99,
+  "warnings": []
+}

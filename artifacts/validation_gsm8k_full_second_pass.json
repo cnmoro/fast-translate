@@ -1,0 +1,12 @@
+{
+  "total": 7473,
+  "passed": 7428,
+  "failed": 45,
+  "pass_rate": 0.9939783219590526,
+  "failure_types": {
+    "number_mismatch": 30,
+    "space_before_punct": 14,
+    "parenthesis_mismatch": 1
+  },
+  "criterion": "qa_failures after removing code/latex/formulas and applying extra postprocess pass"
+}

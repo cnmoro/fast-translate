@@ -1,0 +1,34 @@
+[
+  {
+    "idx": 161,
+    "dataset": "crown",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex": [
+      "$$$m=3$$",
+      "$$$a = [0, 0, 2, 1], b = [2, 0, 1, 1]$$",
+      "$$$x=1$$",
+      "$$$a$$",
+      "$$$[1, 1, 0, 2]$$",
+      "$$$[2, 0, 1, 1]$$",
+      "$$$b$$",
+      "$$a_i' = (a_i + x) \\mod m$$",
+      "$$a_i' = (a_i + x) \\mod m$$"
+    ],
+    "out_latex": [
+      "$$$m=3$$",
+      "$$$a = [0, 0, 2, 1], b = [2, 0, 1, 1]$$",
+      "$$$x=1$$",
+      "$$$a$$",
+      "$$$[1, 1, 0, 2]$$",
+      "$$$[2, 0, 1, 1]$$",
+      "$$$b$$",
+      "$$a_i' = (a_i + x) \\mod m$$",
+      "$$ de US$0 para $m-1$:\n   - Crie uma matriz transformada: $a' = [(a_i + x) \\mod m \\text{ for all } i]$\n   - Classificar $a'$\n   - Se $a' = b$ (sorted), então $x$ é válido\n\n3. Retornar todos os valores de $x$ válidos (ou contagem, ou apenas existência)\n\nComplexidade\n- Tempo: $O(m \\cdot n \\log n)$\n- Espaço: $O(n) $\n\nVerificação: Verificando todos os valores possíveis $x$\n\nPara $a = [0, 0, 2, 1]$ com $m = 3$:\n\n| $x$ | Transformado | Sorted | Matches $b$ classificado?\n\nDevo verificar esta abordagem contra os exemplos para garantir que funciona.\n\n- Análise de Problemas\n\nCom base não exemplo fornecido, eu posso identificar isso como um problema de transformação aritmética **modular**.\n\nDeclaração de Problema (Reconstruído)\n\nDado:\n- Um módulo $m $m\n- Duas matrizes $ a$ e $b $ de comprimento $n$\n\nDetermine se existe um valor $x$ tal que quando adicionarmos $x$ a cada elemento de $a$ (mmodulo $m$) e, em seguida, rearranjo, podemos obter matriz $b$.\n\nRegra Transformação\n\nPara cada elemento $a_i$, o valor transformado é:\n$$"
+    ],
+    "src_code_n": 0,
+    "out_code_n": 0,
+    "src_excerpt": "For example, if $$$m=3$$$, $$$a = [0, 0, 2, 1], b = [2, 0, 1, 1]$$$, you can choose $$$x=1$$$, and $$$a$$$ will be equal to $$$[1, 1, 0, 2]$$$ and you can rearrange it to make it equal $$$[2, 0, 1, 1]$$$, which is equal to $$$b$$$.\n\nLet me analyze this problem carefully.\n\nFrom the problem fragment: For example, if $m=3$, $a = [0, 0, 2, 1], b = [2, 0, 1, 1]$, you can choose $x=1$, and $a$ will be equal to $[1, 1, 0, 2]$ and you can rearrange it to make it equal $[2, 0, 1, 1]$, which is equal to $b$.\n\nKey insight: Based on the example provided, I can identify this as a modular arithmetic transformation problem.\n\nThis appears to involve: sort, modular\n\nWorking through the approach: Problem Analysis\n\nBased on the example provided, I can identify this as a modular arithmetic transformation problem. Problem Statement (Reconstructed)\n\nGiven:\n- A modulus $m$\n- Two arrays $a$ and $b$ of length $n$\n\nDetermine if there exists a value $x$ such that when we add $x$ to each element of $a$ (modulo $m$) and then rearrange, we can obtain array $b$. Transformation Rule\n\nFor each element $a_i$, the transformed value is:\n$$a_i' = (a_i + x) \\mod m$$\n\nVerification of the Example\n\nGiven: $m = 3$, $a = [0",
+    "out_excerpt": "Por exemplo, se $$$m=3$$$, $$$a = [0, 0, 2, 1], b = [2, 0, 1, 1]$$$, você pode escolher $$$x=1$$$, e $$$a$$$ será igual a $$$[1, 1, 0, 2]$$$ e você pode rearranjá-lo para torná-lo igual $$$[2, 0, 1, 1]$$$, que é igual a $$$b$$$.\n\nDeixe-me analisar este problema com cuidado.\n\nA partir do fragmento do problema: Por exemplo, se $m=3$, $a = [0, 0, 2, 1], b = [2, 0, 1, 1]$, você pode escolher $x=1$, e $a$ será igual a $[1, 1, 0, 2] $ e você pode rearranjá-lo para torná-lo igual a $[2, 0, 1] $, que é igual a $b$.\n\nVisão-chave: Com base não exemplo fornecido, eu posso identificar isso como um problema de transformação aritmética modular.\n\nIsto parece envolver: classificar, modular\n\nTrabalhando através da abordagem: Problema Análise\n\nCom base não exemplo fornecido, posso identificar isso como um problema de transformação aritmética modular. Declaração de Problema (Reconstruído)\n\nDado:\n- Um módulo $m $m\n- Duas matrizes $ a$ e $b $ de comprimento $n$\n\nDetermine se existe um valor $x$ tal que quando adicionarmos $x$ a cada elemento de $a$ (mmodulo $m$) e, em seguida, rearranjo, podemos obter matriz $b$. Regra Transformação\n\nPara cada elemento $a_i$, o valor transformado é:\n$$a_i' = (a_i + x) "
+  }
+]

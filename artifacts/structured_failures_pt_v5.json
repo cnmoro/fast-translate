@@ -1,0 +1,14 @@
+[
+  {
+    "idx": 41,
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex": [
+      "$20 so 20/4 = $",
+      "$$E = mc^2$$"
+    ],
+    "out_latex": [],
+    "src_excerpt": "Analise o conteúdo abaixo e mantenha blocos técnicos sem alterações.\n\nAnn's favorite store was having a summer clearance. For $75 she bought 5 pairs of shorts for $7 each and 2 pairs of shoes for $10 each. She also bought 4 tops, all at the same price. How much did each top cost?\n\nShe bought 5 shorts at $7 each so 5*7=$<<5*7=35>>35\nShe bought 2 pair of shoes at $10 each so 2*10=$<<2*10=20>>20\nThe shorts and shoes cost her 35+20 = $<<35+20=55>>55\nWe know she spent 75 total and the shorts and shoes cost $55 which left a difference of 75-55 = $<<75-55=20>>20\nShe bought 4 tops for a total of $20 so 20/4 = $5\n#### 5\n\nConsidere a fórmula: $$E = mc^2$$ e descreva em linguagem simples.",
+    "out_excerpt": "Analyze the content below and keep technical blocks with no changes.\n\nAnn's favorite store was having a summer clearance. For $75 she bought 5 pairs of shorts for $7 each and 2 pairs of shoes for $10 each. She also bought 4 tops, all at the same price. How much did each top cost?\n\nbought She 5 shorts at $7 each so 5*7=$5*7=35>35\nbought She 2 pair of shoes at $10 each so 2*10=$2*10=20=20>>20\nThe shorts and shoes cost her 35+20 = $35+20=55>>55\nWe know she spent 75 total and the shorts and shoes cost $55 which left a difference of 75-55 = $$75-55=20>20>20\nbought She 4 tops for the total of $20 so 20/4 = $5\n### 5\n\nConsider the formula: $$E = mc^2$$ and describe in simple language."
+  }
+]

@@ -1,0 +1,172 @@
+[
+  {
+    "mode": "en",
+    "idx": 9,
+    "dataset": "lambda-kimi",
+    "direction": "en-pt",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_head": [
+      "$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = \\\":.*?## \\\"}; {printf \\\"  \\\\033[36m%-20s\\\\033[0m %s\\\\n\\\", $$",
+      "\\[\\\\]"
+    ],
+    "out_latex_head": [
+      "$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = \\\":.*?## \\\"}; {printf \\\"  \\\\033[36m%-20s\\\\033[0m %s\\\\n\\\", $$",
+      "$$2'n 18| -------------------------------------------------------------------------------------------------------------------------- - -n 21|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------n 18 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------Instale as dependências com o pip'n 27|'t$(PYTHON) -m pip install -e\". [all]\"\"\"\"n 29|-install-dev: - Instale as dependências com dev extras. n 30|-t$(UV) pip install -e \".\". [dev]\"\" -n 31|n. --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------n 36|-teste: - Executar todos os testes (excluindo testes de integração) -n 37|t$(PYTHON) -m pytest tests -m -m \"não integração\" -v --tb=short'n 38|-n 39|test-unit: - - Executar testes unit unit only'n 40|t$)n. 42|test-fast: - Executar testes em paralelo com xdist (fastest)n 43|t$(PYTHON) -m pytest tests -m \"não integração\" -n auto -v --tb=sh. ort. n 44|n 45|test-integration: - Executar testes de integração apenas (requer chaves de API/serviços externos) -n 46|t$-ort'n 47|-pt-all: - Executar todos os testes, incluindo testes de integração. n 49|t$(PYTHON) -m pytest tests -v --tb=sh. br. 50|n 51|test-coverage: - Executar testes com relatório de cobertura -n 52. tools --cov=gateway --cov=hermes_cli --cov=cron -n 54|'t-t-cov-report=term-missing -n 55|t-t--cov-report=html'n 56|n 57|test-coverage-xml: - Executar testes com relatório de cobertura XML (para CI) -n 58|t$n-? n 59|t-t--cov=agent --cov=tools --cov=gateway --cov=hermes_cli --cov=cron -n 60|t. t--cov-report=xml-n 61|-n 62|test-verbose: - Executar testes com verbose outputn 63|65|test-failed: - Re-executar apenas testes falhou anteriormente -t$(PYTHON) -m pytest tests --lf -v. n 67|-pt 68|test-debug: - Executar testes com depurador na falha em falha -n 69|t$$",
+      "\\[\\\\]"
+    ],
+    "src_excerpt": "Start the API server and the log aggregator as background processes\n\n[system] You are a function calling AI model. You are provided with function signatures within <tools> </tools> XML tags. You may call one or more functions to assist with the user query. If available tools are not relevant in assisting with user query, just respond in natural conversational language. Don't make assumptions about what values to plug into functions. After calling & executing the functions, you will be provided with function results within <tool_response> </tool_response> XML tags. Here are the available tools:\n<tools>\n[{\"type\": \"function\", \"function\": {\"name\": \"clarify\", \"description\": \"Ask the user a question when you need clarification, feedback, or a decision before proceeding. Supports two modes:\\n\\n1.",
+    "out_excerpt": "Inicie o servidor de API e o agregador de log como processos em segundo plano\n\n[system] Você é uma função chamando modelo de IA. Você é fornecido com assinaturas de função dentro de tags XML 'tools> \"tools>>\". Você pode chamar uma ou mais funções para ajudar com a consulta de usuário. Se as ferramentas disponíveis não forem relevantes para auxiliar na consulta do usuário, basta responder em linguagem de conversação natural. Não faça suposições sobre quais valores se conectarem às funções. Depois de chamar e executar as funções, você será fornecido com resultados de função dentro das tags XML \"tool_response> \"/tool_response>>. Aqui estão as ferramentas disponíveis:\n'ferramentas>\n[\"tipo\":\"function\",\"function\":\"name\":\"clarificar\",\"description\":\"Pergunte ao usuário uma pergunta quando você pre"
+  },
+  {
+    "mode": "en",
+    "idx": 36,
+    "dataset": "numina",
+    "direction": "en-pt",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_head": [
+      "$AB0AB$",
+      "$A$",
+      "$B$",
+      "\\( N \\)",
+      "\\( N = AB0AB \\)"
+    ],
+    "out_latex_head": [
+      "$AB0AB$",
+      "$A$",
+      "$B$",
+      "$ e $",
+      "\\( N \\)"
+    ],
+    "src_excerpt": "A set consists of five different odd positive integers, each greater than 2. When these five integers are multiplied together, their product is a five-digit integer of the form $AB0AB$, where $A$ and $B$ are digits with $A \\neq 0$ and $A \\neq B$. (The hundreds digit of the product is zero.) In total, how many different sets of five different odd positive integers have these properties?\n\n1. **Observe the Structure of \\( N \\)**:\n    Let \\( N = AB0AB \\) and let \\( t \\) be the two-digit integer \\( AB \\).\n\n    We recognize that \\( N = 1001 \\cdot t \\), where \\( 1001 = 11 \\cdot 91 = 11 \\cdot 7 \\cdot 13 \\).\n\n    Thus, \n    \\[\n    N = t \\cdot 7 \\cdot 11 \\cdot 13 \n    \\]\n\n2. **Formulate the Problem**:\n    We need to write \\( N \\) as the product of 5 distinct odd integers, each greater than 2, and co",
+    "out_excerpt": "Um conjunto consiste em cinco inteiros ímpares diferentes, cada um maior que 2. Quando estes cinco inteiros são multiplicados juntos, o seu produto é um inteiro de cinco dígitos da forma $AB0AB$, onde $A$ e $B$ são dígitos com $A - $ / $ e $A - $A - $neq B$. (As centenas de dígitos do produto são zero.) No total, quantos conjuntos diferentes de cinco inteiros ímpares diferentes têm essas propriedades?\n\n1. **Observe a estrutura da \\( N \\)**:\n    Deixe que \\( N = AB0AB \\) e deixe que \\( t \\) ser o inteiro de dois dígitos \\( AB \\)..\n\n    Nós reconhecemos que \\( N = 1001 \\cdot t \\), onde \\( 1001 = 11 \\cdot 91 = 11 \\cdot 7 \\cdot 13 \\)..\n\n    Assim, \n    \\[\n    N = t \\cdot 7 \\cdot 11 \\cdot 13 \n    \\]\n\n2. **Formule o problema**:\n    Nós precisamos escrever \\( N \\) como o produto de 5 inteiros ímp"
+  },
+  {
+    "mode": "en",
+    "idx": 46,
+    "dataset": "lambda-glm",
+    "direction": "en-pt",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_head": [
+      "$status $",
+      "$host$"
+    ],
+    "out_latex_head": [
+      "$host$"
+    ],
+    "src_excerpt": "Create a configuration file for Docker Compose with multiple services with SSL termination and rate\n\n[system] You are a function calling AI model. You are provided with function signatures within <tools> </tools> XML tags. You may call one or more functions to assist with the user query. If available tools are not relevant in assisting with user query, just respond in natural conversational language. Don't make assumptions about what values to plug into functions. After calling & executing the functions, you will be provided with function results within <tool_response> </tool_response> XML tags. Here are the available tools:\n<tools>\n[{\"name\": \"patch\", \"description\": \"Targeted find-and-replace edits in files. Use this instead of sed/awk in terminal. Uses fuzzy matching (9 strategies) so min",
+    "out_excerpt": "Criar um arquivo de configuração para Docker Compose com vários serviços com terminação e taxa SSL\n\n[system] Você é uma função chamando modelo de IA. Você é fornecido com assinaturas de função dentro de tags XML 'tools> \"tools>>\". Você pode chamar uma ou mais funções para ajudar com a consulta de usuário. Se as ferramentas disponíveis não forem relevantes para auxiliar na consulta do usuário, basta responder em linguagem de conversação natural. Não faça suposições sobre quais valores se conectarem às funções. Depois de chamar e executar as funções, você será fornecido com resultados de função dentro das tags XML \"tool_response> \"/tool_response>>. Aqui estão as ferramentas disponíveis:\n'ferramentas>\n['name\":\"patch\",\"description\":\"Targeted find-e-replace edições em arquivos. Use isso em vez "
+  },
+  {
+    "mode": "en",
+    "idx": 97,
+    "dataset": "crown",
+    "direction": "en-pt",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_head": [
+      "$x$",
+      "$$47 + x = 2(16 + x)$$",
+      "$$47 + x = 32 + 2x$$",
+      "$$47 - 32 = 2x - x$$",
+      "$$15 = x$$"
+    ],
+    "out_latex_head": [
+      "$x$",
+      "$$47 + x = 2(16 + x)$$",
+      "$$47 + x = 32 + 2x$$",
+      "$$47 - 32 = 2x - x$$",
+      "$$15 = x$$"
+    ],
+    "src_excerpt": "A few years ago, when Jimin was 16, his father was 47. If the father is twice Jimin's age this year, how many years have passed?\n\nLet me work through this problem systematically.\n\n**Define the variables:**\n- Let $x$ = number of years that have passed since \"a few years ago\"\n\n**A few years ago:**\n- Jimin's age: 16 years old\n- Father's age: 47 years old\n\n**This year (x years later):**\n- Jimin's age: $16 + x$ years old\n- Father's age: $47 + x$ years old\n\n**Set up the equation:**\nThe problem states that this year, the father is twice Jimin's age:\n$$47 + x = 2(16 + x)$$\n\n**Solve:**\n$$47 + x = 32 + 2x$$\n$$47 - 32 = 2x - x$$\n$$15 = x$$\n\n**Verification:**\n- 15 years ago: Jimin was 16, Father was 47 ✓\n- This year: Jimin is $16 + 15 = 31$ years old\n- This year: Father is $47 + 15 = 62$ years old\n- C",
+    "out_excerpt": "Alguns anos atrás, quando Jimin tinha 16 anos, seu pai tinha 47 anos. Se o pai tem duas vezes a idade de Jimin este ano, quantos anos se passaram?\n\nPermitam-me que trabalhe sistematicamente neste problema.\n\n** Definir as variáveis: **\n- Deixe $x$ = número de anos que se passaram desde \"alguns anos atrás\"\n\n** Há alguns anos: **\n- A idade de Jimin: 16 anos\n- idade do pai: 47 anos\n\n**Este ano (x anos depois): **\n- Idade de Jimin: $16 + x $ anos\n- Idade do Pai: $47 + x $ anos\n\n**Configurar a equação: **\nO problema afirma que este ano, o pai é duas vezes a idade de Jimin:\n$$47 + x = 2(16 + x)$$\n\n**Solve: **\n$$47 + x = 32 + 2x$$\n$$47 - 32 = 2x - x$$\n$$15 = x$$\n\n**Verificação: **\n- Há 15 anos: Jimin tinha 16 anos, o Pai tinha 47 anos\n- Este ano: Jimin é $16 + 15 = 31$ anos de idade\n- Este ano: Pa"
+  },
+  {
+    "mode": "en",
+    "idx": 99,
+    "dataset": "numina",
+    "direction": "en-pt",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_head": [
+      "$Q$",
+      "$x$",
+      "$Q$",
+      "$x$",
+      "$y$"
+    ],
+    "out_latex_head": [
+      "$Q$",
+      "$x$",
+      "$ e $",
+      "$Q$",
+      "$x$"
+    ],
+    "src_excerpt": "Compute $\\cos 225^\\circ$.\n\nLet $Q$ be the point on the unit circle that corresponds to $225^\\circ$ measured counterclockwise from the positive $x$-axis. \n\nThe angle $225^\\circ$ is $180^\\circ + 45^\\circ$, placing $Q$ in the third quadrant of the unit circle. A point in the third quadrant has both negative $x$ and $y$ coordinates. Since the reference angle here (the acute angle with the $x$-axis) is $45^\\circ$, we know from symmetry and the properties of $45^\\circ-45^\\circ-90^\\circ$ triangles that the coordinates of $Q$ must be negative versions of those at $45^\\circ$, which are $\\left(\\frac{\\sqrt{2}}{2}, \\frac{\\sqrt{2}}{2}\\right)$.\n\nThus, the coordinates of $Q$ are $\\left(-\\frac{\\sqrt{2}}{2}, -\\frac{\\sqrt{2}}{2}\\right)$. Therefore, $\\cos 225^\\circ$, which is the $x$-coordinate of $Q$, equal",
+    "out_excerpt": "Compute $'cos 225'$.\n\nDeixe que $Q$ ser o ponto não círculo unitário que corresponde a US $ 225 - circu $ medido não sentido anti-horário a partir do positivo $x$- A exe. \n\nO ângulo de US$ 225 R$ é de US$ 180 írcirco + 45 ícirco, colocando $Q$ não terceiro quadrante do círculo da unidade. Um ponto não terceiro quadrante tem ambos negativos $x$ e $y$ Coordenadas. Desde o ângulo de referência aqui o ângulo agudo com o $x$-eixo é de US $ 45 í$, nós sabemos da simetria e das propriedades de US $ 45 - circ-90'-circ-90'$ triângulos que as coordenadas de $Q$ deve ser versões negativas daqueles em $45-circ $, que são $-left-frac-sqrt -2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, 2 a 2\n\nAssim, as coordenadas de $Q$ são $-left(--frac-sqrt -2 - 2x, --frac-sqrt -2-*direita) $. Portanto, $ s 225'circ"
+  },
+  {
+    "mode": "pt",
+    "idx": 46,
+    "dataset": "projected",
+    "direction": "pt-en",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_head": [
+      "$status $",
+      "$host$"
+    ],
+    "out_latex_head": [
+      "$host$"
+    ],
+    "src_excerpt": "Analise o conteúdo abaixo e mantenha blocos técnicos sem alterações.\n\nCreate a configuration file for Docker Compose with multiple services with SSL termination and rate\n\n[system] You are a function calling AI model. You are provided with function signatures within <tools> </tools> XML tags. You may call one or more functions to assist with the user query. If available tools are not relevant in assisting with user query, just respond in natural conversational language. Don't make assumptions about what values to plug into functions. After calling & executing the functions, you will be provided with function results within <tool_response> </tool_response> XML tags. Here are the available tools:\n<tools>\n[{\"name\": \"patch\", \"description\": \"Targeted find-and-replace edits in files. Use this ins",
+    "out_excerpt": "Analyze the content below and keep technical blocks with no changes.\n\nCreate a configuration file for Docker Compose with multiple services with SSL termination and rate\n\n[system] You are a function calling AI model. You are provided with function signatures within \"tools>\" \"tools> XML tags.\" You may call one or more functions to assist with the user query. If available tools are not relevant in assisting with user query, just respond in natural conversational language. Don't make assumptions about what values to plug into functions. After calling & executing the functions, you will be provided with function results within,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, Here are the available tools:\n'tools>\n\"name\":\"patch,\" \"description\":\"Targeted find-and-replace edits in files.\" Use this instead of"
+  },
+  {
+    "mode": "pt",
+    "idx": 63,
+    "dataset": "projected",
+    "direction": "pt-en",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_head": [
+      "$C$",
+      "$D$",
+      "$C$",
+      "$D$",
+      "$C_C = 2\\pi R_C$"
+    ],
+    "out_latex_head": [
+      "$D$",
+      "$C$",
+      "$D$",
+      "$C_C = 2\\pi R_C$",
+      "$C$"
+    ],
+    "src_excerpt": "Analise o conteúdo abaixo e mantenha blocos técnicos sem alterações.\n\nIf an arc of $60^{\\circ}$ on circle $C$ has the same length as an arc of $40^{\\circ}$ on circle $D$, what is the ratio of the area of circle $C$ to the area of circle $D$? Express your answer as a common fraction.\n\nLet $C_C = 2\\pi R_C$ be the circumference of circle $C$, and let $C_D = 2\\pi R_D$ be the circumference of circle $D$. Let $L$ be the common length of the two arcs. Then,\n\\[\n\\frac{60}{360}C_C = L = \\frac{40}{360}C_D.\n\\]\nThis simplifies to:\n\\[\n\\frac{1}{6}C_C = \\frac{1}{9}C_D.\n\\]\nThus,\n\\[\n\\frac{C_C}{C_D} = \\frac{3}{2}\\quad\\text{so}\\quad\n\\frac{3}{2} = \\frac{2\\pi R_C}{2\\pi R_D} = \\frac{R_C}{R_D}.\n\\]\nTherefore, the ratio of the areas is:\n\\[\n\\frac{\\text{Area of Circle }(C)}{\\text{Area of Circle }(D)}\n= \\frac{\\pi R_C^",
+    "out_excerpt": "Analyze the content below and keep technical blocks with no changes.\n\nIf an arc of $60-circ - on circle $C$ has the same length as an arc of $40'circ' on circle $D$, what is the ratio of the area of circle $C$ to the area of circle $D$? Express your answer as a common fraction.\n\nLet $C_C = 2\\pi R_C$ the circumference of circle $C$, and let, $C_D = 2\\pi R_D$ the circumference of circle $D$. Let $L$ be the common length of the two arcs. Then,\n\\[\n\\frac{60}{360}C_C = L = \\frac{40}{360}C_D.\n\\]\nThis simplifies to:\n\\[\n\\frac{1}{6}C_C = \\frac{1}{9}C_D.\n\\]\nThus,\n\\[\n\\frac{C_C}{C_D} = \\frac{3}{2}\\quad\\text{so}\\quad\n\\frac{3}{2} = \\frac{2\\pi R_C}{2\\pi R_D} = \\frac{R_C}{R_D}.\n\\]\nTherefore, the ratio of the areas is:\n\\[\n\\frac{\\text{Area of Circle }(C)}{\\text{Area of Circle }(D)}\n= \\frac{\\pi R_C^2}{\\pi R_D"
+  },
+  {
+    "mode": "pt",
+    "idx": 69,
+    "dataset": "projected",
+    "direction": "pt-en",
+    "code_ok": true,
+    "latex_ok": false,
+    "src_latex_head": [
+      "\\( -name \\\"*.py\\\" -o -name \\\"*.js\\\" -o -name \\\"*.ts\\\" -o -name \\\"*.go\\\" -o -name \\\"*.java\\\" -o -name \\\"*.rb\\\" -o -name \\\"*.yml\\\" -o -name \\\"*.yaml\\\" -o -name \\\"*.json\\\" -o -name \\\"*.toml\\\" -o -name \\\"*.env*\\\" -o -name \\\"Dockerfile\\\" -o -name \\\"Makefile\\\" \\\\)",
+      "$$E = mc^2$$"
+    ],
+    "out_latex_head": [
+      "\\( -name \\\"*.py\\\" -o -name \\\"*.js\\\" -o -name \\\"*.ts\\\" -o -name \\\"*.go\\\" -o -name \\\"*.java\\\" -o -name \\\"*.rb\\\" -o -name \\\"*.yml\\\" -o -name \\\"*.yaml\\\" -o -name \\\"*.json\\\" -o -name \\\"*.toml\\\" -o -name \\\"*.env*\\\" -o -name \\\"Dockerfile\\\" -o -name \\\"Makefile\\\" \\\\)",
+      "$500/min | p95 $",
+      "$20/min | p95 $",
+      "$50/min | p95 $",
+      "$1k/min | p95 $"
+    ],
+    "src_excerpt": "Analise o conteúdo abaixo e mantenha blocos técnicos sem alterações.\n\nPlan the migration from REST API to PostgreSQL. Include rollback strategy.\n\n[system] You are a function calling AI model. You are provided with function signatures within <tools> </tools> XML tags. You may call one or more functions to assist with the user query. If available tools are not relevant in assisting with user query, just respond in natural conversational language. Don't make assumptions about what values to plug into functions. After calling & executing the functions, you will be provided with function results within <tool_response> </tool_response> XML tags. Here are the available tools:\n<tools>\n[{\"name\": \"patch\", \"description\": \"Targeted find-and-replace edits in files. Use this instead of sed/awk in termin",
+    "out_excerpt": "Analyze the content below and keep technical blocks with no changes.\n\nPlan the migration from REST API to PostgreSQL. Include rollback strategy.\n\n[system] You are a function calling AI model. You are provided with function signatures within \"tools>\" \"tools> XML tags.\" You may call one or more functions to assist with the user query. If available tools are not relevant in assisting with user query, just respond in natural conversational language. Don't make assumptions about what values to plug into functions. After calling & executing the functions, you will be provided with function results within,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, Here are the available tools:\n'tools>\n\"name\":\"patch,\" \"description\":\"Targeted find-and-replace edits in files.\" Use this instead of sed/awk in terminal. Use"
+  }
+]

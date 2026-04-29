@@ -1,0 +1,17 @@
+{
+  "dataset": "DCAgent/c1_gpt53_codex",
+  "split": "train",
+  "rows_total": 9868,
+  "rows_passed": 6383,
+  "rows_failed": 3485,
+  "rows_pass_rate": 0.6468382650993109,
+  "messages_total": 657332,
+  "messages_passed": 649860,
+  "messages_failed": 7472,
+  "messages_pass_rate": 0.9886328369834422,
+  "criterion": "Structured spans (code/latex) are preserved exactly while translating non-structured text",
+  "failure_types": {
+    "code_changed": 1351,
+    "latex_changed": 6325
+  }
+}

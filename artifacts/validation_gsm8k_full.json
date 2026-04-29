@@ -1,0 +1,175 @@
+{
+  "dataset": "openai/gsm8k",
+  "split": "main/train",
+  "total": 7473,
+  "passed": 7429,
+  "failed": 44,
+  "pass_rate": 0.9941121370266292,
+  "criterion": "qa_failures on text after removing code/latex/formula spans",
+  "failure_types": {
+    "number_mismatch": 30,
+    "space_before_punct": 14
+  },
+  "bad_examples": [
+    {
+      "index": 243,
+      "failures": [
+        "number_mismatch"
+      ],
+      "src": "Mckenna starts her day at 8:00 a.m. She works in her office up to 11:00 a.m. then joins her team of developers at the conference room to talk about projects up to 13:00, from which she works for another two hours and then heads home. How many hours does Mckenna stay at work?",
+      "out": "Mckenna começa seu dia às 8:00 da manhã. Ela trabalha em seu escritório até às 11:00, em seguida, se junta a sua equipe de desenvolvedores na sala de conferências para falar sobre projetos até 13:00, a partir faz qual ela trabalha por mais duas horas e depois vai para casa. Quantas horas Mckenna fica não trabalho?"
+    },
+    {
+      "index": 636,
+      "failures": [
+        "number_mismatch"
+      ],
+      "src": "Tina is working on her homework when she realizes she's having a hard time typing out her answers on her laptop because a lot of the keys are sticky. She is trying to get her homework done before dinner, though, so she needs to decide if she has time to clean her keyboard first. Tina knows her assignment will only take 10 minutes to complete. Dinner will be ready at 5:30 p.m. Tina decides to time how long it takes to remove and clean one key and will then multiply that time by how many keys she ",
+      "out": "Tina está trabalhando em sua lição de casa quando ela percebe que está tendo dificuldade em digitar suas respostas em seu laptop, porque muitas das chaves são pegajosas. Ela está tentando fazer sua lição de casa antes faz jantar, então ela precisa decidir se ela tem tempo para limpar seu teclado primeiro. Tina sabe que sua tarefa levará apenas 10 minutos para ser concluída. O jantar estará pronto às 17:30. Tina decide tempo quanto tempo leva para remover e limpar uma chave e, em seguida, multipl"
+    },
+    {
+      "index": 691,
+      "failures": [
+        "number_mismatch"
+      ],
+      "src": "Chance boarded a plane departing from London to New York at 6:00 a.m. ET on Monday. He arrived in New York 18 hours later. If he took another plane flying to Cape town the day he arrived in New York and arrived in Cape town at 10:00 a.m ET on Tuesday, calculate the number of hours his flight took from New York to cape town.",
+      "out": "Chance embarcou em um avião saindo de Londres para Nova York às 6:00 da manhã. ET na segunda-feira. Ele chegou em Nova York 18 horas depois. Se ele tomou outro avião voando para a cidade de Cape não dia em que ele chegou em Nova York e chegou à cidade de Cabo às 10:00 horas na terça-feira, calcular o número de horas que seu voo levou de Nova York para a capa."
+    },
+    {
+      "index": 734,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "Chang's Garden has two kinds of apples. Sweet ones and sour ones. He can sell the sweet ones for $.5 an apple. The sour ones sell for $.1 an apple. 75% of the apples he gets are sweet and the rest are sour. If he earns $40, how many apples did his trees give him?",
+      "out": "Chang's Garden tem dois tipos de maçãs. Doce e azedos. Ele pode vender os doces para $.5 an apple. The sour ones sell for $.1 uma maçã. 75% das maçãs que ele fica doce e o resto é azedo. Se ele ganha US $ 40, quantas maçãs suas árvores lhe deram?"
+    },
+    {
+      "index": 759,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "Tom wants to make the world's largest dough ball.  He needs 500 pounds of flour and he can buy 50-pound bags of flour for $20.  He also needs 10 pounds of salt and salt cost $.2 a pound.  He also spends $1000 promoting everything.  He then sells tickets for $20 each and sells 500 tickets.  How much money did he make?",
+      "out": "Tom quer fazer a maior bola de massa faz mundo. Ele precisa de 500 quilos de farinha e ele pode comprar 50 libras sacos de farinha para $20.  He also needs 10 pounds of salt and salt cost $.2 uma libra. Ele também gasta $1000 promoting everything.  He then sells tickets for $20 cada e vende 500 bilhetes. Quanto dinheiro ele fez?"
+    },
+    {
+      "index": 770,
+      "failures": [
+        "number_mismatch"
+      ],
+      "src": "Based on a 2008 study, children 6–11 years old spend 45 minutes each day watching television. How many hours do these children watch television in 2 weeks if they are allowed to watch television 4 days a week?",
+      "out": "Com base em um estudo de 2008, as crianças de 6 a 11 anos passam 45 minutos por dia assistindo televisão. Quantas horas essas crianças assistem à televisão em 2 semanas, se lhes para permitido assistir televisão 4 dias por semana?"
+    },
+    {
+      "index": 1231,
+      "failures": [
+        "number_mismatch"
+      ],
+      "src": "Two alien spacecraft on a sightseeing tour of Earth left New Orleans airport at 3:00 pm to travel the 448-mile distance to Dallas by air.  Traveling nonstop, the first spacecraft landed in Dallas at 3:30 pm, while the second spacecraft landed in Dallas thirty minutes later. Assuming both spacecraft traveled at constant speed, what was the difference in speed, in miles per hour, between the two spacecraft?",
+      "out": "Duas naves alienígenas em um passeio turístico pela Terra deixaram o aeroporto de Nova Orleans às 15:00 para viajar a distância de 448 milhas para Dallas de avião. Viajando sem parar, a primeira espaçonave desembarcou em Dallas às 15:30, enquanto a segunda nave espacial desembarcou em Dallas trinta minutos depois. Assumindo que ambas as naves viajavam em velocidade constante, qual foi a diferença de velocidade, em milhas por hora, entre as duas naves espaciais?"
+    },
+    {
+      "index": 1713,
+      "failures": [
+        "number_mismatch"
+      ],
+      "src": "The hobby store normally sells 21,122 trading cards per month. In June, the hobby store sold 3,922 more trading cards than normal. If the hobby store sold the regular number of trading cards in July, how many trading cards did the hobby store sell in June and July combined?",
+      "out": "A loja de passatempos normalmente vende 22.112 cartões por mês. Em junho, a loja de passatempos vendeu 3.922 mais cartões faz que o normal. Se a loja de passatempos vendeu o número regular de cartões de negociação em julho, quantos cartões de negociação a loja de passatempos vendeu em junho e julho combinados?"
+    },
+    {
+      "index": 1837,
+      "failures": [
+        "number_mismatch"
+      ],
+      "src": "Mr. Langsley commutes to work every day by bus. The bus picks him up at 6:00 a.m. and takes forty minutes to arrive at the first station. If Mr. Langsley arrives at work at 9:00 a.m., what's the total time taken in minutes from the first station to Mr. Langsley's workplace?",
+      "out": "O Sr. Langsley viaja para trabalhar todos os dias de ônibus. O ônibus o pega às 6:00 da manhã e leva quarenta minutos para chegar à primeira estação. Se o Sr. Langsley chega ao trabalho às 9:00 da manhã, qual é o tempo total feito em minutos da primeira estação para o Sr. O local de trabalho de Langsley?"
+    },
+    {
+      "index": 1858,
+      "failures": [
+        "number_mismatch"
+      ],
+      "src": "Jill and Bob want to finally buy a house for themselves, so they went with a real estate agent to see some houses before making a decision. The first house was not too far from their work and the price was accessible. The second house was really big and Jill loved it but was twice as expensive as the first one and was way over their budget. They ended up buying the first one, knowing that the price of both houses altogether is $600,000. How much did Jill and Bob end up paying for their new house",
+      "out": "Jill e Bob querem finalmente comprar uma casa para si mesmos, então eles foram com um agente imobiliário para ver algumas casas antes de tomar uma decisão. A primeira casa não foi muito longe faz seu trabalho e o preço foi acessível. A segunda casa foi muito grande e Jill adorou, mas foi duas vezes mais caro que o primeiro e foi muito sobre o seu orçamento. Eles acabaram comprando o primeiro, sabendo que o preço de ambas as casas é de US $ 600 mil. Quanto Jill e Bob acabaram pagando por sua nova"
+    },
+    {
+      "index": 1917,
+      "failures": [
+        "number_mismatch"
+      ],
+      "src": "A secretary who has been working for 6 years and who earns €10,000 a month has obtained a salary increase of 2%. What is her new salary?",
+      "out": "Um secretário que trabalha há 6 anos e que ganha 10 mil euros por mês obteve um aumento salarial de 2%. Qual é o seu novo salário?"
+    },
+    {
+      "index": 2098,
+      "failures": [
+        "number_mismatch"
+      ],
+      "src": "At the Boisjoli farm, there is a chicken coop where 270 hens and 3 roosters live. Every morning, around 8 a.m., Ms. Mosel goes to collect the eggs because, every morning, each hen lays one. Then, after 1 hour of collection, she puts all these eggs in boxes of 6. It takes her another 40 minutes. Once all this is done, Ms. Mosel brings all the boxes of eggs to her village. She does it from Monday to Sunday, because chickens don't have a day off. How many boxes does Ms. Mosel fill each week?",
+      "out": "Na fazenda Boisjoli, há um galinheiro onde 270 galinhas e 3 galos vivem. Todas as manhãs, por volta das 8 da manhã, Ms. Mosel vai para recolher os ovos porque, todas as manhãs, cada galinha coloca um. Depois de 1 hora de coleta, ela coloca todos esses ovos em caixas de 6. Leva mais 40 minutos. Uma vez que tudo isso é feito, Sra. Mosel traz todas as caixas de ovos para sua aldeia. Ela faz isso de segunda a domingo, porque as galinhas não têm um dia de folga. Quantas caixas faz a Sra. Mosel enche "
+    },
+    {
+      "index": 2167,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "A truck driver has to spend $2 per gallon of gas. She can drive 10 miles per gallon. She drives at a rate of 30 miles per hour. If she is paid $.50 per mile, how much money does she make if she drives for 10 hours?",
+      "out": "Um motorista de caminhão tem que gastar $2 per gallon of gas. She can drive 10 miles per gallon. She drives at a rate of 30 miles per hour. If she is paid $.50 por milha, quanto dinheiro ela ganha se ela dirige por 10 horas?"
+    },
+    {
+      "index": 2182,
+      "failures": [
+        "number_mismatch"
+      ],
+      "src": "At peak hours, 11 am - 1 pm and 5 pm - 6 pm, the local fast-food restaurant serves 12 cars every 15 minutes.  Off-peak times, they serve 8 cars every 15 minutes.  From 4 pm - 6 pm, how many customers do they serve?",
+      "out": "Nas horas de pico, das 11h às 1h e das 17h às 18h, o restaurante local de rápido-food serve 12 carros a cada 15 minutos. Tempos fora faz pico, eles servem 8 carros a cada 15 minutos. Das 16h - 18:00, quantos clientes eles servem?"
+    },
+    {
+      "index": 2401,
+      "failures": [
+        "number_mismatch"
+      ],
+      "src": "A wild tiger escapes the zoo.  He escapes at 1 AM and zookeepers do not notice he is missing until 4 AM.  He runs at a speed of 25 mph.  It takes 2 more hours to find him but after 4 hours of running, the tiger slows his speed to 10 mph.  He then gets chased for half an hour going 50 mph.  How far away from the zoo was he caught?",
+      "out": "Um tigre selvagem escapa faz zoológico. Ele escapa às 01:00 e os zoólogos não percebem que está faltando até as 4 da manhã. Ele corre a uma velocidade de 25 mph. Leva mais 2 horas para encontrá-lo, mas depois de 4 horas de corrida, o tigre retarda sua velocidade para 10 mph. Ele então é perseguido por meia hora indo 50 mph. Quão longe faz zoológico ele foi pego?"
+    },
+    {
+      "index": 2949,
+      "failures": [
+        "number_mismatch"
+      ],
+      "src": "The Parker family needs to leave the house by 5 pm for a dinner party. Mrs. Parker was waiting to get into the bathroom at 2:30 pm. Her oldest daughter used the bathroom for 45 minutes and her youngest daughter used the bathroom for another 30 minutes. Then her husband used it for 20 minutes. How much time will Mrs. Parker have to use the bathroom to leave on time?",
+      "out": "A família Parker precisa sair de casa às 17:00 para um jantar. Sra. Parker estava esperando para entrar não banheiro às 14:30. Sua filha mais velha usou o banheiro por 45 minutos e sua filha mais nova usou o banheiro por mais 30 minutos. Então seu marido usou por 20 minutos. Quanto tempo será a Sra. Parker tem que usar o banheiro para sair a tempo?"
+    },
+    {
+      "index": 3273,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "A farmer is growing corn. For every 4 seeds he plants, he gets one ear of corn, that he can sell for $.1. It costs $.5 for a bag with 100 seeds. If he makes $40 in profit, how many ears did he sell?",
+      "out": "Um agricultor está crescendo milho. Para cada 4 sementes que ele planta, ele recebe uma orelha de milho, que ele pode vender para $.1. It costs $.5 para um saco com 100 sementes. Se ele ganha $40 em lucro, quantos ouvidos ele vendeu?"
+    },
+    {
+      "index": 3852,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "John has to replace the ball bearings for machines he works with.  He has 10 machines and they take 30 ball bearings each.  It normally costs $1 per ball bearing but right now there is a sale where they are only $.75.  Also since he is buying in bulk he gets a further 20% discount.  How much money did he save by buying them all during the sale rather than 1 at a time?",
+      "out": "John tem que substituir os rolamentos de esferas para máquinas com as quais ele trabalha. Ele tem 10 máquinas e eles levam 30 rolamentos de esferas cada. Normalmente custa $1 per ball bearing but right now there is a sale where they are only $.75. Também como ele está comprando a granel, ele recebe mais 20% de desconto. Quanto dinheiro ele economu comprando todos durante a venda em vez de 1 de cada vez?"
+    },
+    {
+      "index": 4144,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "You have 32$ to spend on groceries.  You buy a loaf of bread for 3$, a candy bar for 2$, and 1/3 of whats left on a Turkey.  How much money do you have left?",
+      "out": "Você tem 32$ to spend on groceries.  You buy a loaf of bread for 3$, uma barra de doces por 2$ e 1/3 faz que resta em uma Turquia. Quanto dinheiro você deixou?"
+    },
+    {
+      "index": 4435,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "Steve bought $25 worth of groceries. He bought a gallon of milk for $3, two boxes of cereal for $3.5 each, 4 bananas for $.25 each, four apples that cost $.5 each and a number of boxes of cookies. The cookies cost twice as much per box as the gallon of milk. How many boxes of cookies did he get?",
+      "out": "Steve comprou $25 worth of groceries. He bought a gallon of milk for $3, duas caixas de cereais para $3.5 each, 4 bananas for $.25 cada, quatro maçãs que custam US $ 5 cada e uma série de caixas de cookies. Os cookies custam duas vezes por caixa que o galão de leite. Quantas caixas de cookies ele conseguiu?"
+    }
+  ]
+}

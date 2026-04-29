@@ -1,0 +1,143 @@
+{
+  "dataset": "openai/gsm8k",
+  "split": "main/train",
+  "total": 7473,
+  "passed": 7457,
+  "failed": 16,
+  "pass_rate": 0.9978589589187743,
+  "failure_types": {
+    "number_mismatch": 2,
+    "space_before_punct": 14
+  },
+  "criterion": "qa_failures on stripped structured spans using runtime-integrated postprocess(source-aware)",
+  "bad_examples": [
+    {
+      "index": 691,
+      "failures": [
+        "number_mismatch"
+      ],
+      "src": "Chance boarded a plane departing from London to New York at 6:00 a.m. ET on Monday. He arrived in New York 18 hours later. If he took another plane flying to Cape town the day he arrived in New York and arrived in Cape town at 10:00 a.m ET on Tuesday, calculate the number of hours his flight took from New York to cape town.",
+      "out": "Chance embarcou em um avião saindo de Londres para Nova York às 6:00 da manhã. ET na segunda-feira. Ele chegou em Nova York 18 horas depois. Se ele tomou outro avião voando para a cidade de Cape não dia em que ele chegou em Nova York e chegou à cidade de Cabo às 10:00 horas na terça-feira, calcular o número de horas que seu voo levou de Nova York p"
+    },
+    {
+      "index": 734,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "Chang's Garden has two kinds of apples. Sweet ones and sour ones. He can sell the sweet ones for $.5 an apple. The sour ones sell for $.1 an apple. 75% of the apples he gets are sweet and the rest are sour. If he earns $40, how many apples did his trees give him?",
+      "out": "Chang's Garden tem dois tipos de maçãs. Doce e azedos. Ele pode vender os doces para $.5 an apple. The sour ones sell for $.1 uma maçã. 75% das maçãs que ele fica doce e o resto é azedo. Se ele ganha US $ 40, quantas maçãs suas árvores lhe deram?"
+    },
+    {
+      "index": 759,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "Tom wants to make the world's largest dough ball.  He needs 500 pounds of flour and he can buy 50-pound bags of flour for $20.  He also needs 10 pounds of salt and salt cost $.2 a pound.  He also spends $1000 promoting everything.  He then sells tickets for $20 each and sells 500 tickets.  How much money did he make?",
+      "out": "Tom quer fazer a maior bola de massa faz mundo. Ele precisa de 500 quilos de farinha e ele pode comprar 50 libras sacos de farinha para $20.  He also needs 10 pounds of salt and salt cost $.2 uma libra. Ele também gasta $1000 promoting everything.  He then sells tickets for $20 cada e vende 500 bilhetes. Quanto dinheiro ele fez?"
+    },
+    {
+      "index": 770,
+      "failures": [
+        "number_mismatch"
+      ],
+      "src": "Based on a 2008 study, children 6–11 years old spend 45 minutes each day watching television. How many hours do these children watch television in 2 weeks if they are allowed to watch television 4 days a week?",
+      "out": "Com base em um estudo de 2008, as crianças de 6 a 11 anos passam 45 minutos por dia assistindo televisão. Quantas horas essas crianças assistem à televisão em 2 semanas, se lhes para permitido assistir televisão 4 dias por semana?"
+    },
+    {
+      "index": 2167,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "A truck driver has to spend $2 per gallon of gas. She can drive 10 miles per gallon. She drives at a rate of 30 miles per hour. If she is paid $.50 per mile, how much money does she make if she drives for 10 hours?",
+      "out": "Um motorista de caminhão tem que gastar $2 per gallon of gas. She can drive 10 miles per gallon. She drives at a rate of 30 miles per hour. If she is paid $.50 por milha, quanto dinheiro ela ganha se ela dirige por 10 horas?"
+    },
+    {
+      "index": 3273,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "A farmer is growing corn. For every 4 seeds he plants, he gets one ear of corn, that he can sell for $.1. It costs $.5 for a bag with 100 seeds. If he makes $40 in profit, how many ears did he sell?",
+      "out": "Um agricultor está crescendo milho. Para cada 4 sementes que ele planta, ele recebe uma orelha de milho, que ele pode vender para $.1. It costs $.5 para um saco com 100 sementes. Se ele ganha $40 em lucro, quantos ouvidos ele vendeu?"
+    },
+    {
+      "index": 3852,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "John has to replace the ball bearings for machines he works with.  He has 10 machines and they take 30 ball bearings each.  It normally costs $1 per ball bearing but right now there is a sale where they are only $.75.  Also since he is buying in bulk he gets a further 20% discount.  How much money did he save by buying them all during the sale rath",
+      "out": "John tem que substituir os rolamentos de esferas para máquinas com as quais ele trabalha. Ele tem 10 máquinas e eles levam 30 rolamentos de esferas cada. Normalmente custa $1 per ball bearing but right now there is a sale where they are only $.75. Também como ele está comprando a granel, ele recebe mais 20% de desconto. Quanto dinheiro ele economu "
+    },
+    {
+      "index": 4144,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "You have 32$ to spend on groceries.  You buy a loaf of bread for 3$, a candy bar for 2$, and 1/3 of whats left on a Turkey.  How much money do you have left?",
+      "out": "Você tem 32$ to spend on groceries.  You buy a loaf of bread for 3$, uma barra de doces por 2$ e 1/3 faz que resta em uma Turquia. Quanto dinheiro você deixou?"
+    },
+    {
+      "index": 4435,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "Steve bought $25 worth of groceries. He bought a gallon of milk for $3, two boxes of cereal for $3.5 each, 4 bananas for $.25 each, four apples that cost $.5 each and a number of boxes of cookies. The cookies cost twice as much per box as the gallon of milk. How many boxes of cookies did he get?",
+      "out": "Steve comprou $25 worth of groceries. He bought a gallon of milk for $3, duas caixas de cereais para $3.5 each, 4 bananas for $.25 cada, quatro maçãs que custam US $ 5 cada e uma série de caixas de cookies. Os cookies custam duas vezes por caixa que o galão de leite. Quantas caixas de cookies ele conseguiu?"
+    },
+    {
+      "index": 4633,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "Toby is dining out with his friend. They each order a cheeseburger for $3.65. He gets a milkshake for $2 and his friend gets a coke for $1. They split a large fries that cost $4. His friend also gets three cookies that cost $.5 each. The tax is $.2. They agree to split the bill. If Toby arrived with $15, how much change is he bringing home?",
+      "out": "Toby está jantando com seu amigo. Cada um deles encomendar um cheeseburger para $3.65. He gets a milkshake for $2 e seu amigo recebe um coque para $1. They split a large fries that cost $4. Seu amigo também recebe três cookies que custam $.5 each. The tax is $.. 2. Eles concordam em dividir o projeto de lei. Se Toby chegou com $15, quanta mudança e"
+    },
+    {
+      "index": 4669,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "Tom plays an online trading card game.  His deck has 19 rare cards, 11 uncommon, and 30 commons.  The rare cards cost $1, the uncommon are $.50, and the commons are $.25 each.  How much did his deck cost?",
+      "out": "Tom joga um jogo de cartas de negociação online. Seu baralho tem 19 cartas raras, 11 comuns e 30 comuns. Os cartões raros custam $1, the uncommon are $.50, e os comuns são $.25 cada. Quanto custou o seu deck?"
+    },
+    {
+      "index": 5202,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "The snack machine at Richmond High School sells candy bars for $2 each and chips for $.50 each. How much money, in dollars, will 5 students need in total if each of them gets 1 candy bar and 2 bags of chips?",
+      "out": "A máquina de lanches da Richmond Alto School vende barras de doces para $2 each and chips for $.50 cada. Quanto dinheiro, em dólares, 5 estudantes precisarão não total se cada um deles receber 1 barra de doces e 2 sacos de batatas fritas?"
+    },
+    {
+      "index": 5794,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "Todd borrowed $100 from his brother to start a snow-cone stand. He has to repay him $110 as soon as he can. Todd spent $75 on ingredients for the snow cones. He sells 200 of them for $.75 each. After he pays back his brother, how much money does Todd have?",
+      "out": "Todd emprestado $100 from his brother to start a snow-cone stand. He has to repay him $110 assim que ele pode. Todd gastou $75 on ingredients for the snow cones. He sells 200 of them for $.75 cada. Depois que ele paga de volta seu irmão, quanto dinheiro Todd tem?"
+    },
+    {
+      "index": 6404,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "Jimmy is at the candy store and buys 2 candy bars for $.75 each. He then buys 4 lollipops that cost $.25 each. He spent 1/6 of the money he earned from shoveling snow. If he charges $1.5 per driveway, how many driveways did he shovel?",
+      "out": "Jimmy está na loja de doces e compra 2 barras de doces para $.75 each. He then buys 4 lollipops that cost $.25 cada. Ele gastou 1/6 faz dinheiro que ganhou com a neve de pás. Se ele cobra US $ 1,5 por garagem, quantas calçadas ele escava a pá?"
+    },
+    {
+      "index": 6656,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "The pet store can buy a goldfish for $.25 and sell it for $.75. The owner plans to use the profits from goldfish sales to buy a new tank, which costs $100. After one week, he is 45% short of the price. How many goldfish did he sell that week?",
+      "out": "A loja de animais de estimação pode comprar um peixinho dourado para $.25 and sell it for $.75. O proprietário planeja usar os lucros das vendas de peixinho dourado para comprar um novo tanque, que custa US $ 100. Depois de uma semana, ele é 45% curto faz preço. Quantos peixinhos ele vendeu naquela semana?"
+    },
+    {
+      "index": 6785,
+      "failures": [
+        "space_before_punct"
+      ],
+      "src": "Hannah bought 3 sweatshirts and 2 T-shirts. Each sweatshirt cost 15$ and each t-shirt cost 10$. How much money did Hannah spend in all?",
+      "out": "Hannah comprou 3 camisolas e 2 camisetas. Cada camisola custa 15$ and each t-shirt cost 10$.. Quanto dinheiro Hannah gastou em tudo?"
+    }
+  ]
+}
