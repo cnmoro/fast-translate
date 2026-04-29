@@ -550,6 +550,97 @@ class TestEdgeCases:
 # ─── 12. PT-EN DIRECTION ─────────────────────────────────────────────
 
 
+
+
+class TestContextualTagReplacement:
+    def test_tag_in_game_context(self):
+        """tag in game context -> pega-pega"""
+        result = post_edit_portuguese("The kids play tag at the park.")
+        assert "pega-pega" in result.lower()
+        assert "tag" not in result.lower()
+
+    def test_tag_in_label_context(self):
+        """tag in price/label context -> etiqueta"""
+        result = post_edit_portuguese("Read the price tag before buying.")
+        assert "etiqueta" in result.lower()
+        assert "tag" not in result.lower()
+
+    def test_tag_html_context(self):
+        result = post_edit_portuguese("This HTML tag is not closed.")
+        assert "etiqueta" in result.lower()
+
+    def test_tag_name_context(self):
+        result = post_edit_portuguese("Write your name tag for the event.")
+        assert "etiqueta" in result.lower()
+
+    def test_tag_id_context(self):
+        result = post_edit_portuguese("Scan the RFID tag for identification.")
+        assert "etiqueta" in result.lower()
+
+    def test_tags_plural(self):
+        result = post_edit_portuguese("The price tags are on the shelf.")
+        assert "etiquetas" in result.lower() or "etiqueta" in result.lower()
+
+    def test_tag_default_no_context(self):
+        """No context clues: default to etiqueta"""
+        result = post_edit_portuguese("I saw a tag on the floor.")
+        assert "etiqueta" in result.lower()
+
+    def test_tag_titlecase_game(self):
+        result = post_edit_portuguese("Tag is a fun game for children.")
+        assert "pega-pega" in result.lower() or "Pega-pega" in result
+
+    def test_tag_with_running_context(self):
+        result = post_edit_portuguese("They were running and playing tag.")
+        assert "pega-pega" in result.lower()
+
+
+# ─── 14. TIME FORMAT WITH H SEPARATOR ─────────────────────────────────
+
+
+class TestTimeHSeparator:
+    def test_12h00_format(self):
+        """12H00 should be detected as time matching 12 p.m."""
+        src = "The vote will take place at 12 p.m."
+        raw = "A votação terá lugar às 12H00."
+        fails = qa_failures(src, raw)
+        assert "number_mismatch" not in fails
+
+    def test_20h30_format(self):
+        src = "The meeting is at 20:30."
+        raw = "A reunião é às 20H30."
+        fails = qa_failures(src, raw)
+        assert "number_mismatch" not in fails
+
+    def test_8h00_morning_format(self):
+        src = "The class starts at 8 a.m."
+        raw = "A aula começa às 8H00."
+        fails = qa_failures(src, raw)
+        assert "number_mismatch" not in fails
+
+
+
+class TestTimeHSeparator:
+    def test_12h00_format(self):
+        """12H00 should be detected as time matching 12 p.m."""
+        src = "The vote will take place at 12 p.m."
+        raw = "A votação terá lugar às 12H00."
+        fails = qa_failures(src, raw)
+        assert "number_mismatch" not in fails
+
+    def test_20h30_format(self):
+        src = "The meeting is at 20:30."
+        raw = "A reunião é às 20H30."
+        fails = qa_failures(src, raw)
+        assert "number_mismatch" not in fails
+
+    def test_8h00_morning_format(self):
+        src = "The class starts at 8 a.m."
+        raw = "A aula começa às 8H00."
+        fails = qa_failures(src, raw)
+        assert "number_mismatch" not in fails
+
+
 class TestPTENDirection:
     def test_portuguese_leak_fixed(self):
         src = "Ela disse que não viria."

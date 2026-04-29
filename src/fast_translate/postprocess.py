@@ -5,8 +5,19 @@ import re
 _WORD_RE = re.compile(r"[A-Za-zÀ-ÿ']+")
 _SUPERSCRIPT_MAP = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹", "0123456789")
 
+_TAG_GAME_CONTEXT = {
+    "play", "plays", "played", "playing", "game", "games",
+    "kids", "children", "child", "playground", "park",
+    "run", "running", "chase", "recess", "fun", "crianças",
+    "brincar", "jogar", "jogo", "parque", "recreio",
+}
+_TAG_LABEL_CONTEXT = {
+    "price", "prices", "html", "label", "labels", "name", "names",
+    "identification", "sticker", "stickers", "rfid", "preço",
+    "etiqueta", "identificação", "código", "cód",
+}
+
 _TOKEN_REPLACEMENTS = {
-    "tag": "pega-pega",
     "mixer": "misturador",
     "mom": "mamãe",
     "dad": "papai",
@@ -324,6 +335,7 @@ def post_edit_portuguese(text: str) -> str:
     text = re.sub(r"\b[Ss]aid\b", "disse", text)
     text = re.sub(r"\b[Ll]ook\b", "olhe", text)
     text = _replace_slide_contextual(text)
+    text = _replace_tag_contextual(text)
     text = _normalize_ptpt_to_ptbr(text)
     text = re.sub(r"\b3\s*\.\.\.\s*2\s*\.\.\.\s*1", "3...2...1", text)
     text = re.sub(r"\bquit\s*3\b", "quitó", text, flags=re.IGNORECASE)
@@ -475,6 +487,29 @@ def _replace_slide_contextual(text: str) -> str:
     return re.sub(r"\bslides?\b", repl, text, flags=re.IGNORECASE)
 
 
+def _replace_tag_contextual(text: str) -> str:
+    def repl(match: re.Match[str]) -> str:
+        token = match.group(0)
+        low = token.lower()
+        window = text[max(0, match.start() - 50) : min(len(text), match.end() + 50)].lower()
+
+        game_hits = sum(1 for ctx in _TAG_GAME_CONTEXT if ctx in window)
+        label_hits = sum(1 for ctx in _TAG_LABEL_CONTEXT if ctx in window)
+
+        if game_hits > label_hits:
+            tgt = "pega-pega"
+        else:
+            tgt = "etiqueta"
+
+        if token.isupper():
+            return tgt.upper()
+        if token[:1].isupper():
+            return tgt[:1].upper() + tgt[1:]
+        return tgt
+
+    return re.sub(r"\btags?\b", repl, text, flags=re.IGNORECASE)
+
+
 def _normalize_ptpt_to_ptbr(text: str) -> str:
     for pat, repl in _PTPT_TO_PTBR_PHRASE_REPLACEMENTS:
         text = re.sub(pat, repl, text, flags=re.IGNORECASE)
@@ -513,10 +548,13 @@ def _critical_numbers(text: str) -> set[str]:
 
     norm = re.sub(r"\b(\d{1,2})\s*([ap])\.?\s*m\.?\b", pm_repl, norm, flags=re.IGNORECASE)
 
-    for a, b in re.findall(r"\b(\d{1,2})\s*[:hH]\s*(\d{2})\b", norm):
-        h = int(a)
-        m = int(b)
+    def hm_repl(match: re.Match[str]) -> str:
+        h = int(match.group(1))
+        m = int(match.group(2))
         out.add(f"t{h:02d}" if m == 0 else f"t{h:02d}:{m:02d}")
+        return " "
+
+    norm = re.sub(r"\b(\d{1,2})\s*[:hH]\s*(\d{2})\b", hm_repl, norm)
 
     for m in re.findall(r"\b(\d+(?:[.,]\d+)?)\s*%", norm):
         out.add(f"p{m.replace(',', '.')}")
