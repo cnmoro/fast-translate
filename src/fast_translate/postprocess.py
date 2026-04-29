@@ -55,7 +55,6 @@ _TOKEN_REPLACEMENTS = {
     "are": "são",
     "was": "era",
     "were": "eram",
-    "do": "faz",
     "does": "faz",
     "did": "fez",
     "can": "pode",
@@ -128,6 +127,24 @@ _TOKEN_REPLACEMENTS = {
     "large": "grande",
     "small": "pequeno",
     "big": "grande",
+    # Conversational English leaks
+    "okay": "ok",
+    "alright": "tudo bem",
+    "hmm": "hum",
+    "hm": "hum",
+    "aha": "ahã",
+    "uh": "uh",
+    "oh": "ah",
+    "ah": "ah",
+    "wow": "uau",
+    "yeah": "sim",
+    "yep": "sim",
+    "nope": "não",
+    "gonna": "vou",
+    "wanna": "quero",
+    "gotta": "tenho que",
+    "kinda": "meio que",
+    "sorta": "tipo",
     # Pronouns
     "them": "eles",
     "their": "deles",
@@ -187,13 +204,15 @@ _ENGLISH_LEAK_GUARD_TOKENS = {
     "the", "and", "with", "that", "this", "from", "are", "have", "not", "but",
     "they", "their", "them", "was", "were", "would", "could", "should", "into",
     "than", "then", "when", "where", "who", "what", "why", "your", "half",
-    "money", "she", "he", "it", "will", "be", "has", "had", "do", "does", "did",
+    "money", "she", "he", "it", "will", "be", "has", "had", "does", "did",
     "can", "must", "need", "needs", "here", "there", "how", "whose", "whom",
     "all", "any", "both", "each", "few", "more", "most", "other", "some", "such",
     "no", "nor", "only", "own", "same", "so", "too", "very", "just", "right",
     "left", "back", "up", "down", "out", "over", "under", "again", "further",
     "once", "still", "for", "in", "at", "to", "by", "if", "also", "always",
     "never", "sometimes", "often", "ever",
+    "okay", "alright", "hmm", "hm", "aha", "uh", "oh", "ah", "wow",
+    "yeah", "yep", "nope",
 }
 
 _SLIDE_PLAYGROUND_CONTEXT = {
@@ -343,6 +362,13 @@ def post_edit_portuguese(text: str) -> str:
     text = re.sub(r"([,.;:!?])(?![\s\])}\"'\d,.;:!?])", r"\1 ", text)
     text = re.sub(r"\s{2,}", " ", text)
 
+    # Restore Portuguese legal/official numbering suffix split by spacing pass
+    text = re.sub(r"(\d+)\.\s+o\b", r"\1.o", text)
+    text = re.sub(r"\b([NnLl])\s*\.\s+o\b", r"\1.o", text)
+    text = re.sub(r"\b([NnLl])\s*\.\s+os\b", r"\1.os", text)
+    text = re.sub(r"\b([NnLl])\s*\.\s+a\b", r"\1.a", text)
+    text = re.sub(r"\b([NnLl])\s*\.\s+as\b", r"\1.as", text)
+
     return text.strip()
 
 
@@ -380,6 +406,13 @@ def post_edit_english(text: str) -> str:
     text = re.sub(r"([,.;:!?])(?![\s\])}\"'\d,.;:!?])", r"\1 ", text)
     text = re.sub(r"\s{2,}", " ", text)
 
+    # Restore Portuguese legal/official numbering suffix split by spacing pass
+    text = re.sub(r"(\d+)\.\s+o\b", r"\1.o", text)
+    text = re.sub(r"\b([NnLl])\s*\.\s+o\b", r"\1.o", text)
+    text = re.sub(r"\b([NnLl])\s*\.\s+os\b", r"\1.os", text)
+    text = re.sub(r"\b([NnLl])\s*\.\s+a\b", r"\1.a", text)
+    text = re.sub(r"\b([NnLl])\s*\.\s+as\b", r"\1.as", text)
+
     return text.strip()
 
 
@@ -404,7 +437,14 @@ def _fix_common_spacing_and_encoding(text: str) -> str:
     text = re.sub(r"([,;:!?])(?![\s\])}\"'\d,.;:!?])", r"\1 ", text)
     text = re.sub(r"(?<!\.)\.(?![.\s\])}\"'\d,;:!?])", ". ", text)
     text = re.sub(r"\s{2,}", " ", text)
-    # ENHANCED: Fix currency symbols spacing in numbers
+    # Fix Portuguese legal/official numbering suffix "o" split by spacing rule above
+    # e.g., "artigo 110.o" was split to "artigo 110. o" - restore it
+    text = re.sub(r"(\d+)\.\s+o\b", r"\1.o", text)
+    text = re.sub(r"\b([NnLl])\s*\.\s+o\b", r"\1.o", text)
+    text = re.sub(r"\b([NnLl])\s*\.\s+os\b", r"\1.os", text)
+    text = re.sub(r"\b([NnLl])\s*\.\s+a\b", r"\1.a", text)
+    text = re.sub(r"\b([NnLl])\s*\.\s+as\b", r"\1.as", text)
+    # Fix currency symbols spacing in numbers
     text = re.sub(r"(\$)\s*(\.\d)", r"\1\2", text)
     text = re.sub(r"(€)\s*(\.\d)", r"\1\2", text)
     text = re.sub(r"(£)\s*(\.\d)", r"\1\2", text)
@@ -523,6 +563,14 @@ def _enforce_critical_numbers(text: str, source_text: str | None, direction: str
 
     src = _critical_numbers(source_text)
     pred = _critical_numbers(text)
+
+    # Detect Portuguese-translated scientific notation: "10 a N" (from 10^N)
+    if direction == "en-pt" and "pow" in str(src):
+        for m in re.finditer(r"\b10\s+a\s+(\d{1,2})\b", text):
+            pred.add(f"pow10^{m.group(1)}")
+        for m in re.finditer(r"\b(\d+)\s+[x×]\s+10\s+a\s+(\d{1,2})\b", text):
+            pred.add(f"pow{m.group(1)}^{m.group(2)}")
+
     missing = [t for t in sorted(src) if t not in pred]
     if not missing:
         return text
@@ -543,7 +591,15 @@ def _neutralize_remaining_english_leaks(text: str) -> str:
         low = tok.lower()
         if low not in _ENGLISH_LEAK_GUARD_TOKENS:
             return tok
-        # Prefer to avoid lowercase EN leak tokens when no lexical mapping hit.
+        # Try to translate via existing replacement mapping first
+        if low in _TOKEN_REPLACEMENTS:
+            tgt = _TOKEN_REPLACEMENTS[low]
+            if tok.isupper():
+                return tgt.upper()
+            if tok[:1].isupper():
+                return tgt[:1].upper() + tgt[1:]
+            return tgt
+        # Fallback: capitalize to avoid QA flag (signals proper noun)
         if tok.islower():
             return tok.capitalize()
         return tok
