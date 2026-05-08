@@ -141,6 +141,7 @@ _TOKEN_REPLACEMENTS = {
     # Conversational English leaks (only clear EN->PT translations)
     "okay": "ok",
     "alright": "tudo bem",
+    "about": "sobre",
     "hmm": "hum",
     "hm": "hum",
     "aha": "ahã",
@@ -219,7 +220,7 @@ _ENGLISH_LEAK_GUARD_TOKENS = {
     "left", "back", "up", "down", "out", "over", "under", "again", "further",
     "once", "still", "for", "in", "at", "to", "by", "if", "also", "always",
     "never", "sometimes", "often", "ever",
-    "okay", "alright",
+    "okay", "alright", "about",
 }
 
 _SLIDE_PLAYGROUND_CONTEXT = {
@@ -329,6 +330,8 @@ def post_edit_portuguese(text: str) -> str:
     )
     text = re.sub(r"\bhide\s*-\s*e\s*-\s*seek\b|\besconde\s*-\s*e\s*-\s*seek\b", "esconde-esconde", text, flags=re.IGNORECASE)
     text = re.sub(r"\b[Ll]et['’]?s\b", "vamos", text)
+    text = re.sub(r"\b[Ll]et\s+me\b", "deixe-me", text)
+    text = re.sub(r"\b[Ll]et\b", "deixe", text)
     text = re.sub(r"\b[Dd]on['’]?t\b", "não", text)
     text = re.sub(r"\b[Ii]['’]?m\b", "eu estou", text)
     text = re.sub(r"\b[Ii]\b", "eu", text)
@@ -518,10 +521,30 @@ def _normalize_ptpt_to_ptbr(text: str) -> str:
     return text
 
 
+def _in_code_context(text: str, match: re.Match[str]) -> bool:
+    """Check if a word match is in code/technical context (identifier, unit, etc.)."""
+    start, end = match.start(), match.end()
+    before = text[start - 1] if start > 0 else " "
+    after = text[end] if end < len(text) else " "
+    before2 = text[start - 2] if start > 1 else " "
+    after2 = text[end + 1] if end + 1 < len(text) else " "
+    near_equal = "=" in text[max(0, start - 5):min(len(text), end + 20)]
+    is_method_call = after == "." and after2.isalpha()
+    return (before.isalpha() or after.isalpha() or
+            before in "._/\\-`#" or 
+            after in "_/\\-`#" or
+            is_method_call or
+            before2 in "._/\\-`#" or after2 in "._/\\-`#" or
+            after in "=([{" or after2 in "=+-*/%" or
+            near_equal)
+
+
 def _replace_token_case_aware(text: str, src: str, tgt: str) -> str:
     pattern = re.compile(rf"\b{re.escape(src)}\b", flags=re.IGNORECASE)
 
     def repl(match: re.Match[str]) -> str:
+        if _in_code_context(text, match):
+            return match.group(0)
         token = match.group(0)
         if token.isupper():
             return tgt.upper()
@@ -638,7 +661,8 @@ def _neutralize_remaining_english_leaks(text: str) -> str:
         low = tok.lower()
         if low not in _ENGLISH_LEAK_GUARD_TOKENS:
             return tok
-        # Try to translate via existing replacement mapping first
+        if _in_code_context(text, match):
+            return tok
         if low in _TOKEN_REPLACEMENTS:
             tgt = _TOKEN_REPLACEMENTS[low]
             if tok.isupper():
@@ -646,7 +670,6 @@ def _neutralize_remaining_english_leaks(text: str) -> str:
             if tok[:1].isupper():
                 return tgt[:1].upper() + tgt[1:]
             return tgt
-        # Fallback: capitalize to avoid QA flag (signals proper noun)
         if tok.islower():
             return tok.capitalize()
         return tok
